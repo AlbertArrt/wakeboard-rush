@@ -2863,14 +2863,15 @@ const PowerFX = (() => {
 // ---------------------------------------------------------------- PWA: service worker + install button
 const PWA = { deferred: null, installed: false, sw: 'off' };
 // ---- update prompt: a new build is already precached, so offer a reload instead of a full restart
-let swUpdateShown = false, swUpdateLastCheck = 0;
+let swUpdateShown = false, swUpdateLastCheck = 0, swHadController = false;
 function showUpdateBar() {
   if (swUpdateShown) return; swUpdateShown = true;
   const bar = document.getElementById('updatebar'); if (bar) bar.classList.add('on');
 }
 function watchSWUpdate(reg) {
   if (!reg) return;
-  const mark = () => { if (navigator.serviceWorker.controller) showUpdateBar(); };
+  // only a page that was already controlled is looking at an older build; a first visit is not an update
+  const mark = () => { if (swHadController && navigator.serviceWorker.controller) showUpdateBar(); };
   if (reg.waiting) mark();
   reg.addEventListener('updatefound', () => {
     const w = reg.installing; if (!w) return;
@@ -2902,7 +2903,7 @@ function initPWA() {
   if ('serviceWorker' in navigator && window.isSecureContext && /^https?:$/.test(location.protocol)) {
     // this page was already served by an older worker: reload once the new one takes over,
     // otherwise players keep seeing the previous build
-    const hadController = !!navigator.serviceWorker.controller;
+    const hadController = swHadController = !!navigator.serviceWorker.controller;
     let swReloaded = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       if (!hadController || swReloaded) return; swReloaded = true;
