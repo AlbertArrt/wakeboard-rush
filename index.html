@@ -91,6 +91,10 @@ body:has(#trickbtns.on) #hint{bottom:110px}
 #trickbtns .spin{opacity:.35}#trickbtns.air .spin{opacity:1}
 #tb-jump{width:84px!important;height:84px!important;background:rgba(255,138,0,.45)!important;font-size:14px!important}
 #toast{position:fixed;left:50%;top:14%;transform:translateX(-50%);background:rgba(0,0,0,.75);padding:10px 18px;border-radius:14px;z-index:40;font-weight:800;opacity:0;pointer-events:none}#toast.show{animation:toast 2s}
+#updatebar{position:fixed;left:50%;bottom:max(100px,calc(env(safe-area-inset-bottom) + 92px));transform:translate(-50%,140%);z-index:60;display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#123a52,#0a2434);border:1px solid rgba(127,246,255,.35);padding:10px 12px;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.5);font-size:13px;font-weight:800;transition:transform .3s;max-width:92vw}
+#updatebar.on{transform:translate(-50%,0)}
+#updatebar button{border-radius:10px;padding:7px 12px;font-weight:900;background:#00b0ff;font-size:13px}
+#updatebar #update-hide{background:rgba(255,255,255,.14);padding:7px 9px}
 @keyframes toast{10%,80%{opacity:1}100%{opacity:0}}
 .big{font-size:clamp(34px,8vw,60px);font-weight:900;font-style:italic;text-align:center;margin:0}
 #f-title{color:#ff5252;text-shadow:0 4px 0 #4a0000}#c-title{color:#ffd54f;text-shadow:0 4px 0 #6a3a00}
@@ -155,6 +159,7 @@ body.portrait .stats{grid-template-columns:repeat(2,1fr)}
   <div class="hr"><div class="hrbtns"><button id="btn-mute">🔊</button><button id="btn-pause">II</button></div><div id="h-rubybox"><span class="gem">💎</span> <span id="h-rubies">0</span></div><div id="h-dist">0 m</div><div id="h-speed">0 km/h</div><div id="h-ghost"></div></div>
 </div>
 <div id="popups"></div><div id="tricklive"></div><div id="hint"></div><div id="toast"></div>
+<div id="updatebar"><span>Nowa wersja gry jest gotowa.</span><button id="update-reload">ODŚWIEŻ</button><button id="update-hide" aria-label="Zamknij">✕</button></div>
 <div id="trickbtns"><div class="grp"><button id="tb-left" class="spin">⟲<br>SPIN</button><button id="tb-right" class="spin">⟳<br>SPIN</button></div><div class="grp"><button id="tb-down" class="spin">FRONT<br>FLIP ↓</button><button id="tb-jump">JUMP ↑</button></div></div>
 
 <div class="screen" id="scr-menu"><div class="wallet"><span class="gem">💎</span> <span id="m-rubies">0</span></div>
@@ -177,6 +182,8 @@ body.portrait .stats{grid-template-columns:repeat(2,1fr)}
   <div class="set">Ghost rider (your best run)<button class="tg" id="set-ghost">ON</button></div>
   <div class="set">Slow motion on big landings<button class="tg" id="set-slowmo">ON</button></div>
   <div class="set"><span>App &amp; offline<br><small class="pstat" id="set-pwa">…</small></span><button class="tg on" id="set-install" style="display:none">INSTALL</button></div>
+  <div class="set"><span>Save backup · kopia zapisu<br><small class="pstat">Export a file or restore progress on another device</small></span><div class="seg"><button id="set-export">EXPORT</button><button id="set-import">IMPORT</button></div></div>
+  <input type="file" id="save-file" accept="application/json,.json" style="display:none">
   <button class="b danger" id="set-reset" style="margin-top:12px">RESET PROGRESS</button></div></div>
 <div class="screen" id="scr-help"><div class="panel help"><button class="back" data-to="menu">◀ BACK</button><h2>HOW TO PLAY · JAK GRAĆ</h2>
   <p>🏄 Wyciąg linowy ciągnie Cię do przodu. <b>Omijaj</b> skały, kłody, pnie, boje, fale i ciemne kryształy. <b>Zbieraj</b> rubiny 💎 i skacz z ramp!</p>
@@ -192,8 +199,8 @@ body.portrait .stats{grid-template-columns:repeat(2,1fr)}
   <p>📲 Gra działa <b>offline</b>. Na Androidzie (Chrome) użyj przycisku <b>ZAINSTALUJ</b> w menu lub „Dodaj do ekranu głównego”.</p>
   <p style="opacity:.8"><i>EN: Drag to steer, swipe up to jump, swipe in the air for spins (←/→) and flips (↑/↓); tricks can be queued on the ramp. Grab power-ups, earn 3 stars per level, complete missions and the daily challenge, and race your ghost.</i></p></div></div>
 <div class="screen" id="scr-pause"><div class="panel" style="max-width:380px"><h2>PAUSED</h2><button class="b main" id="p-resume">▶ RESUME</button><button class="b cyan" id="p-restart">↻ RESTART</button><button class="b" id="p-settings">SETTINGS</button><button class="b" id="p-menu">MAIN MENU</button></div></div>
-<div class="screen" id="scr-fail"><div class="panel" style="max-width:560px"><p class="big" id="f-title">WIPEOUT!</p><div class="sub" id="f-reason"></div><div id="f-new">★ NEW BEST! ★</div><div class="stats" id="f-stats"></div><div class="stars3" id="f-stars"></div><div id="f-goal"></div><div class="tip" id="f-extra"></div><button class="b main" id="f-retry">↻ RETRY</button><div class="row"><button class="b" id="f-levels">LEVELS</button><button class="b" id="f-menu">MENU</button></div><div class="tip" id="f-tip"></div></div></div>
-<div class="screen" id="scr-complete"><div class="panel" style="max-width:560px"><p class="big" id="c-title">LEVEL COMPLETE!</p><div class="sub" id="c-sub"></div><div class="stars3" id="c-stars"></div><div id="c-goal"></div><div class="stats" id="c-stats"></div><div id="c-unlock"></div><button class="b main" id="c-next">NEXT LEVEL ▶</button><div class="row"><button class="b cyan" id="c-keep">KEEP RIDING</button><button class="b" id="c-replay">REPLAY</button><button class="b" id="c-menu">MENU</button></div></div></div>
+<div class="screen" id="scr-fail"><div class="panel" style="max-width:560px"><p class="big" id="f-title">WIPEOUT!</p><div class="sub" id="f-reason"></div><div id="f-new">★ NEW BEST! ★</div><div class="stats" id="f-stats"></div><div class="stars3" id="f-stars"></div><div id="f-goal"></div><div class="tip" id="f-extra"></div><button class="b main" id="f-retry">↻ RETRY</button><button class="b cyan" id="f-share">📤 SHARE RESULT · UDOSTĘPNIJ</button><div class="row"><button class="b" id="f-levels">LEVELS</button><button class="b" id="f-menu">MENU</button></div><div class="tip" id="f-tip"></div></div></div>
+<div class="screen" id="scr-complete"><div class="panel" style="max-width:560px"><p class="big" id="c-title">LEVEL COMPLETE!</p><div class="sub" id="c-sub"></div><div class="stars3" id="c-stars"></div><div id="c-goal"></div><div class="stats" id="c-stats"></div><div id="c-unlock"></div><button class="b cyan" id="c-share">📤 SHARE RESULT · UDOSTĘPNIJ</button><button class="b main" id="c-next">NEXT LEVEL ▶</button><div class="row"><button class="b cyan" id="c-keep">KEEP RIDING</button><button class="b" id="c-replay">REPLAY</button><button class="b" id="c-menu">MENU</button></div></div></div>
 <script type="module">
 // =====================================================================
 //  WAKEBOARD RUSH 3D  —  core: utils, data, save
@@ -2855,12 +2862,54 @@ const PowerFX = (() => {
 
 // ---------------------------------------------------------------- PWA: service worker + install button
 const PWA = { deferred: null, installed: false, sw: 'off' };
+// ---- update prompt: a new build is already precached, so offer a reload instead of a full restart
+let swUpdateShown = false, swUpdateLastCheck = 0;
+function showUpdateBar() {
+  if (swUpdateShown) return; swUpdateShown = true;
+  const bar = document.getElementById('updatebar'); if (bar) bar.classList.add('on');
+}
+function watchSWUpdate(reg) {
+  if (!reg) return;
+  const mark = () => { if (navigator.serviceWorker.controller) showUpdateBar(); };
+  if (reg.waiting) mark();
+  reg.addEventListener('updatefound', () => {
+    const w = reg.installing; if (!w) return;
+    w.addEventListener('statechange', () => { if (w.state === 'installed') mark(); });
+  });
+  const bar = document.getElementById('updatebar');
+  if (bar) {
+    bar.querySelector('#update-reload').addEventListener('click', () => {
+      if (S.mode === 'play' || S.mode === 'paused' || S.mode === 'crashed') {
+        if (!confirm('Nowa wersja jest gotowa. Odświeżyć teraz? Bieżący przejazd zostanie przerwany.')) return;
+        endRunRecord();
+      }
+      location.reload();
+    });
+    bar.querySelector('#update-hide').addEventListener('click', () => bar.classList.remove('on'));
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) return;
+    const now = Date.now(); if (now - swUpdateLastCheck < 60000) return;
+    swUpdateLastCheck = now; reg.update().catch(() => {});
+  });
+}
 function initPWA() {
   addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); PWA.deferred = e; UI.updateInstall(); });
   addEventListener('appinstalled', () => { PWA.deferred = null; PWA.installed = true; UI.updateInstall(); });
   if (matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches) PWA.installed = true;
+  // ask the browser not to evict the save under storage pressure (Android especially)
+  try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {}); } catch (e) { }
   if ('serviceWorker' in navigator && window.isSecureContext && /^https?:$/.test(location.protocol)) {
-    const reg = () => navigator.serviceWorker.register('./sw.js').then(() => { PWA.sw = 'registered'; UI.updateInstall(); return navigator.serviceWorker.ready; })
+    // this page was already served by an older worker: reload once the new one takes over,
+    // otherwise players keep seeing the previous build
+    const hadController = !!navigator.serviceWorker.controller;
+    let swReloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadController || swReloaded) return; swReloaded = true;
+      if (S.mode === 'play' || S.mode === 'paused' || S.mode === 'crashed') { showUpdateBar(); return; }
+      location.reload();
+    });
+    const reg = () => navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then((r) => { PWA.sw = 'registered'; UI.updateInstall(); watchSWUpdate(r); r.update().catch(() => { }); return navigator.serviceWorker.ready; })
       .then(() => { PWA.sw = 'ready'; UI.updateInstall(); }).catch((err) => { PWA.sw = 'error'; console.warn('SW registration failed', err); UI.updateInstall(); });
     if (document.readyState === 'complete') reg(); else addEventListener('load', reg);
   }
@@ -3142,6 +3191,87 @@ const UI = (() => {
     el('c-next').textContent = l < 4 ? 'NEXT LEVEL ▶' : 'NEXT LOCATION ▶';
   }
 
+  // ------------------------------------------------ share card + save backup
+  async function shareRun() {
+    if (!S.cfg || (S.mode !== 'over' && S.mode !== 'complete')) return;
+    let blob = null;
+    try {
+      // WebGL canvas has no preserveDrawingBuffer: copy it in the same task as a fresh render
+      renderer.render(scene, camera);
+      const src = renderer.domElement, W = 1080, H = 1080;
+      const c = document.createElement('canvas'); c.width = W; c.height = H;
+      const g = c.getContext('2d');
+      const sc = Math.max(W / src.width, H / src.height), dw = src.width * sc, dh = src.height * sc;
+      g.drawImage(src, (W - dw) / 2, (H - dh) / 2, dw, dh);
+      const grd = g.createLinearGradient(0, H * 0.42, 0, H);
+      grd.addColorStop(0, 'rgba(4,18,28,0)'); grd.addColorStop(0.5, 'rgba(4,18,28,.76)'); grd.addColorStop(1, 'rgba(4,18,28,.97)');
+      g.fillStyle = grd; g.fillRect(0, 0, W, H);
+      g.fillStyle = '#ffd54f'; g.fillRect(48, 48, 140, 8);
+      g.fillStyle = '#7ff6ff'; g.font = 'italic 900 42px "Trebuchet MS", sans-serif'; g.fillText('WAKEBOARD RUSH 3D', 48, 112);
+      g.fillStyle = 'rgba(255,255,255,.85)'; g.font = '700 30px "Trebuchet MS", sans-serif';
+      g.fillText(`${STAGES[S.stage].name} · ${LEVEL_NAMES[S.level]}`, 48, 160);
+      if (S.newBest) {
+        g.fillStyle = '#ffd54f'; g.font = '900 28px "Trebuchet MS", sans-serif'; g.textAlign = 'right';
+        g.fillText('★ NEW BEST ★', W - 48, 114); g.textAlign = 'left';
+      }
+      g.fillStyle = 'rgba(255,255,255,.7)'; g.font = '700 28px "Trebuchet MS", sans-serif'; g.fillText('SCORE', 48, 784);
+      g.fillStyle = '#ffd54f'; g.font = 'italic 900 138px "Trebuchet MS", sans-serif'; g.fillText(fmt(Math.floor(S.score)), 44, 896);
+      g.fillStyle = '#fff'; g.font = '700 34px "Trebuchet MS", sans-serif';
+      g.fillText(`${fmt(Math.floor(S.dist))} m  ·  ${S.rubies} RUBIES  ·  x${S.maxMult} MAX`, 48, 946);
+      g.fillStyle = 'rgba(255,255,255,.72)'; g.font = '600 26px "Trebuchet MS", sans-serif';
+      g.fillText(`PERFECT ${S.perfectCount}  ·  NEAR MISS ${S.nearMiss}  ·  BEST COMBO ${S.bestCombo}`, 48, 988);
+      g.fillStyle = 'rgba(255,255,255,.5)'; g.font = '600 24px "Trebuchet MS", sans-serif';
+      g.fillText(location.host || 'wakeboarding arcade', 48, 1036);
+      blob = await new Promise((r) => c.toBlob(r, 'image/png'));
+    } catch (e) { blob = null; }
+    if (!blob) { popupMenu('Nie udało się utworzyć karty · could not create card'); return; }
+    const file = new File([blob], 'wakeboard-rush.png', { type: 'image/png' });
+    const text = `Mój wynik: ${fmt(Math.floor(S.score))} pkt — ${STAGES[S.stage].name}, ${LEVEL_NAMES[S.level]}`;
+    try {
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: 'WAKEBOARD RUSH 3D', text });
+        popupMenu('Udostępniono! · Shared!');
+      } else throw new Error('no file share');
+    } catch (e) {
+      if (e && e.name === 'AbortError') return; // user closed the share sheet
+      try {
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'wakeboard-rush.png';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+        popupMenu('Karta wyniku zapisana · card saved');
+      } catch (e2) { popupMenu('Udostępnianie niedostępne'); }
+    }
+  }
+  function exportSave() {
+    try {
+      const payload = { game: 'wbr3d', ver: SAVE.ver || 2, exported: new Date().toISOString(), save: SAVE, ghosts: localStorage.getItem('wakeboardRush3D_ghosts_v1') };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      a.download = `wakeboard-rush-save-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      popupMenu('Zapis wyeksportowany · save exported');
+    } catch (e) { popupMenu('Eksport nieudany · export failed'); }
+  }
+  function importSave(file) {
+    if (!file || file.size > 2 * 1024 * 1024) { popupMenu('Plik za duży · file too large'); return; }
+    const rd = new FileReader();
+    rd.onload = () => {
+      try {
+        const data = JSON.parse(rd.result);
+        const sv = data && data.save ? data.save : (data && data.rubies !== undefined ? data : null);
+        const okRows = (a) => Array.isArray(a) && a.length === 3 && a.every(r => Array.isArray(r) && r.length === 5);
+        if (!sv || !okRows(sv.best) || !okRows(sv.completed) || !okRows(sv.stars)) throw new Error('format');
+        if (!confirm('Import zastąpi obecny postęp. Kontynuować?\nImport will replace current progress. Continue?')) return;
+        localStorage.setItem(SAVE_KEY, JSON.stringify(sv));
+        if (typeof data.ghosts === 'string' && data.ghosts.length < 1024 * 1024) localStorage.setItem('wakeboardRush3D_ghosts_v1', data.ghosts);
+        location.reload();
+      } catch (e) { popupMenu('Nieprawidłowy plik zapisu · invalid save file'); }
+    };
+    rd.onerror = () => popupMenu('Nie udało się odczytać pliku');
+    rd.readAsText(file);
+  }
+
   // ------------------------------------------------ wiring
   function init() {
     btn('m-play', () => startRun(SAVE.sel.stage, SAVE.sel.level));
@@ -3179,6 +3309,11 @@ const UI = (() => {
     btn('p-settings', () => { settingsBack = 'pause'; show('settings'); });
     btn('p-menu', () => toMenu());
     btn('f-retry', () => startRun(S.stage, S.level));
+    btn('f-share', shareRun);
+    btn('c-share', shareRun);
+    btn('set-export', exportSave);
+    btn('set-import', () => el('save-file').click());
+    el('save-file').addEventListener('change', (e) => { const f = e.target.files && e.target.files[0]; if (f) importSave(f); e.target.value = ''; });
     btn('f-levels', () => { toMenu(); show('levels'); });
     btn('f-menu', () => toMenu());
     btn('c-next', () => { endRunRecord(); const s = S.stage, l = S.level; if (l < 4) { SAVE.sel.level = l + 1; startRun(s, l + 1); } else { SAVE.sel.stage = s + 1; SAVE.sel.level = 0; startRun(s + 1, 0); } });
