@@ -91,10 +91,6 @@ body:has(#trickbtns.on) #hint{bottom:110px}
 #trickbtns .spin{opacity:.35}#trickbtns.air .spin{opacity:1}
 #tb-jump{width:84px!important;height:84px!important;background:rgba(255,138,0,.45)!important;font-size:14px!important}
 #toast{position:fixed;left:50%;top:14%;transform:translateX(-50%);background:rgba(0,0,0,.75);padding:10px 18px;border-radius:14px;z-index:40;font-weight:800;opacity:0;pointer-events:none}#toast.show{animation:toast 2s}
-#updatebar{position:fixed;left:50%;bottom:max(100px,calc(env(safe-area-inset-bottom) + 92px));transform:translate(-50%,140%);z-index:60;display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#123a52,#0a2434);border:1px solid rgba(127,246,255,.35);padding:10px 12px;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.5);font-size:13px;font-weight:800;transition:transform .3s;max-width:92vw}
-#updatebar.on{transform:translate(-50%,0)}
-#updatebar button{border-radius:10px;padding:7px 12px;font-weight:900;background:#00b0ff;font-size:13px}
-#updatebar #update-hide{background:rgba(255,255,255,.14);padding:7px 9px}
 @keyframes toast{10%,80%{opacity:1}100%{opacity:0}}
 .big{font-size:clamp(34px,8vw,60px);font-weight:900;font-style:italic;text-align:center;margin:0}
 #f-title{color:#ff5252;text-shadow:0 4px 0 #4a0000}#c-title{color:#ffd54f;text-shadow:0 4px 0 #6a3a00}
@@ -159,7 +155,6 @@ body.portrait .stats{grid-template-columns:repeat(2,1fr)}
   <div class="hr"><div class="hrbtns"><button id="btn-mute">🔊</button><button id="btn-pause">II</button></div><div id="h-rubybox"><span class="gem">💎</span> <span id="h-rubies">0</span></div><div id="h-dist">0 m</div><div id="h-speed">0 km/h</div><div id="h-ghost"></div></div>
 </div>
 <div id="popups"></div><div id="tricklive"></div><div id="hint"></div><div id="toast"></div>
-<div id="updatebar"><span>Nowa wersja gry jest gotowa.</span><button id="update-reload">ODŚWIEŻ</button><button id="update-hide" aria-label="Zamknij">✕</button></div>
 <div id="trickbtns"><div class="grp"><button id="tb-left" class="spin">⟲<br>SPIN</button><button id="tb-right" class="spin">⟳<br>SPIN</button></div><div class="grp"><button id="tb-down" class="spin">FRONT<br>FLIP ↓</button><button id="tb-jump">JUMP ↑</button></div></div>
 
 <div class="screen" id="scr-menu"><div class="wallet"><span class="gem">💎</span> <span id="m-rubies">0</span></div>
@@ -2862,32 +2857,10 @@ const PowerFX = (() => {
 
 // ---------------------------------------------------------------- PWA: service worker + install button
 const PWA = { deferred: null, installed: false, sw: 'off' };
-// ---- update prompt: a new build is already precached, so offer a reload instead of a full restart
-let swUpdateShown = false, swUpdateLastCheck = 0, swHadController = false;
-function showUpdateBar() {
-  if (swUpdateShown) return; swUpdateShown = true;
-  const bar = document.getElementById('updatebar'); if (bar) bar.classList.add('on');
-}
+// ---- updates are silent: a new build is picked up in the background, with no prompt UI
+let swUpdateLastCheck = 0;
 function watchSWUpdate(reg) {
   if (!reg) return;
-  // only a page that was already controlled is looking at an older build; a first visit is not an update
-  const mark = () => { if (swHadController && navigator.serviceWorker.controller) showUpdateBar(); };
-  if (reg.waiting) mark();
-  reg.addEventListener('updatefound', () => {
-    const w = reg.installing; if (!w) return;
-    w.addEventListener('statechange', () => { if (w.state === 'installed') mark(); });
-  });
-  const bar = document.getElementById('updatebar');
-  if (bar) {
-    bar.querySelector('#update-reload').addEventListener('click', () => {
-      if (S.mode === 'play' || S.mode === 'paused' || S.mode === 'crashed') {
-        if (!confirm('Nowa wersja jest gotowa. Odświeżyć teraz? Bieżący przejazd zostanie przerwany.')) return;
-        endRunRecord();
-      }
-      location.reload();
-    });
-    bar.querySelector('#update-hide').addEventListener('click', () => bar.classList.remove('on'));
-  }
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) return;
     const now = Date.now(); if (now - swUpdateLastCheck < 60000) return;
@@ -2903,11 +2876,12 @@ function initPWA() {
   if ('serviceWorker' in navigator && window.isSecureContext && /^https?:$/.test(location.protocol)) {
     // this page was already served by an older worker: reload once the new one takes over,
     // otherwise players keep seeing the previous build
-    const hadController = swHadController = !!navigator.serviceWorker.controller;
+    const hadController = !!navigator.serviceWorker.controller;
     let swReloaded = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       if (!hadController || swReloaded) return; swReloaded = true;
-      if (S.mode === 'play' || S.mode === 'paused' || S.mode === 'crashed') { showUpdateBar(); return; }
+      // never yank the page away mid-run; the next load already gets the new build
+      if (S.mode === 'play' || S.mode === 'paused' || S.mode === 'crashed') return;
       location.reload();
     });
     const reg = () => navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then((r) => { PWA.sw = 'registered'; UI.updateInstall(); watchSWUpdate(r); r.update().catch(() => { }); return navigator.serviceWorker.ready; })
