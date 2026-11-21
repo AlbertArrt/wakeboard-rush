@@ -1,6 +1,6 @@
 // WAKEBOARD RUSH 3D — service worker: cache every game file for full offline play.
 // Bump VERSION whenever any published file changes so clients pick up the update.
-const VERSION = 'wbr3d-v2.0.4';
+const VERSION = 'wbr3d-v2.0.5';
 const FILES = [
   './',
   './index.html',
@@ -25,7 +25,7 @@ self.addEventListener('fetch', (e) => {
   // load; the cached index.html is only a fallback for offline play.
   if (req.mode === 'navigate') {
     e.respondWith(
-      fetch(req).then((res) => {
+      fetch(req, { cache: 'no-cache' }).then((res) => {
         if (res && res.ok) {
           const copy = res.clone();
           caches.open(VERSION).then((c) => c.put('./index.html', copy)).catch(() => { });
