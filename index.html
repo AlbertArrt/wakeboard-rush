@@ -505,7 +505,7 @@ function defaultSave() {
     ver: 2,
     stars: [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]],   // bitmask per level: 1 goal, 2 score, 4 mission
     stats: { grinds: 0, perfect: 0, golden: 0, powerups: 0, shieldSaves: 0, flips: 0, spins: 0, missionsDone: 0, dailyDone: 0 },
-    missions: { active: [], next: 0 },                          // active: [{id, base}]
+    missions: { active: [], next: 0, condNext: 0, condIntro: false }, // active: [{id, base}]
     daily: { date: '', streak: 0, best: 0, lastDone: '', doneDate: '', freezes: 0, freezeUsed: '' },
     lastSeen: '',                                                // launch date, for the comeback bonus
   };
@@ -2684,9 +2684,22 @@ const Meta = (() => {
   const fmtV = (m, v) => (m === 'dist' || m === 'grindM') ? `${Math.floor(v)} m` : m === 'score' ? fmt(Math.floor(v)) : String(Math.floor(v));
 
   // ---------- missions
+  const COND_MISSIONS = MISSION_POOL.filter(m => m.cond);
   function ensureMissions() {
     const M = SAVE.missions; M.active = (M.active || []).filter(a => byId(a.id));
+    const isCond = (a) => { const d = byId(a.id); return !!(d && d.cond); };
+    // one constrained mission always stays on the board; the update also hands one to saves that already had three
     let guard = 0;
+    if (!M.active.some(isCond) && (!M.condIntro || M.active.length < 3)) {
+      for (let tries = 0; tries < COND_MISSIONS.length; tries++) {
+        const def = COND_MISSIONS[(M.condNext || 0) % COND_MISSIONS.length]; M.condNext = ((M.condNext || 0) + 1) % COND_MISSIONS.length;
+        if (M.active.some(a => a.id === def.id)) continue;
+        if (M.active.length >= 3) M.active.pop();
+        M.active.push({ id: def.id, base: def.run ? 0 : totVal(def.m), best: 0 });
+        break;
+      }
+    }
+    M.condIntro = true;
     while (M.active.length < 3 && guard++ < MISSION_POOL.length * 2) {
       const def = MISSION_POOL[M.next % MISSION_POOL.length]; M.next = (M.next + 1) % MISSION_POOL.length;
       if (M.active.some(a => a.id === def.id)) continue;
