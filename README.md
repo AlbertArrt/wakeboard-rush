@@ -12,7 +12,7 @@ Przeglądarkowa gra 3D (three.js r160) o wakeboardingu za wyciągiem linowym. Mo
 - **Pojedynczy swipe nigdy nie kończy biegu** – nieudany prosty trik = „BAILED” (bez punktów), wywrotka grozi tylko przy przesadzonym combo.
 - Płynniejszy skręt (wygładzone sterowanie palcem i klawiaturą).
 - **Mnożnik rośnie wolniej i znaczy więcej**: pasek XP pod mnożnikiem napełniają triki, PERFECT, grindy i mijanki o włos; po osiągnięciu limitu poziomu pokazuje „MAX”. Cele poziomów przeliczono pod nowy mnożnik.
-- Łagodniejsza krzywa trudności (prędkość, gęstość przeszkód i czas reakcji rosną stopniowo przez 25 poziomów). Każdy poziom ma **stały, powtarzalny układ trasy** (seed) – dzięki temu można się go nauczyć i ścigać z duchem.
+- Łagodniejsza krzywa trudności (prędkość, gęstość przeszkód i czas reakcji rosną stopniowo przez 40 poziomów). Każdy poziom ma **stały, powtarzalny układ trasy** (seed) – dzięki temu można się go nauczyć i ścigać z ducha.
 
 **Gwiazdki, misje, wyzwanie dnia**
 - **3 gwiazdki na poziom**: ★ cel poziomu, ★ próg punktów, ★ misja poziomu. Widoczne w wyborze poziomu, w karcie lokacji, w menu i na ekranie ukończenia. Każda nowa gwiazdka = +10 💎. Po ukończeniu celu możesz wybrać **KEEP RIDING**, żeby dobić punkty do gwiazdki.
@@ -31,6 +31,14 @@ Przeglądarkowa gra 3D (three.js r160) o wakeboardingu za wyciągiem linowym. Mo
 - **VOLCANO LAGOON**: bazaltowe kolumny, czarna plaża, świecące szczeliny z lawą, wulkany na horyzoncie, unoszące się iskry i popiół w powietrzu. Najszybsza lokacja w grze.
 - Razem **5 lokacji × 5 poziomów = 25 poziomów** i **75 gwiazdek**. Nowe lokacje mają własne cele, progi punktowe, misje poziomów i muzykę; odblokowują się po ukończeniu PRO RIDER w poprzedniej lokacji (stare zapisy dostają od razu to, co już sobie wywalczyły).
 
+**Zjazd na snowboardzie (trasy górskie)**
+- **ALPINE RIDGE**: zjazd o wschodzie słońca szeroką trasą – slalomowe bramki, ośnieżone sosny, skalne ściany doliny i kolejka nad głową. Wstęp do snowboardu.
+- **POWDER FOREST**: gęsty las i puszysty śnieg – wąskie przejścia między sosnami, zasypane skocznie, mgła i gęsta zamieć.
+- **GLACIER EDGE**: lodowiec w środku burzy – lód, ostre granie, mocna zamieć i najwyższa prędkość w grze.
+- Na trasach górskich zawodnik stoi na **szerszej desce snowboardowej** (z bindingami), a woda znika: podłoże to śnieg, zamiast rozbryzgu leci **puch**, a za deską zostają **dwie wąskie koleiny** zamiast fali. Prędkość jest wyższa (dodatkowy „zjazd” z góry), a wiatr i śnieg tworzą klimat zjazdu.
+- Podłoże, przeszkody, skocznie i raile używają własnych, śnieżnych materiałów; „fale” na trasach górskich są zamienione na skały, bo na śniegu ich nie ma.
+- Razem **8 lokacji × 5 poziomów = 40 poziomów** i **120 gwiazdek** (5 tras wakeboardowych + 3 snowboardowe). Trasy górskie mają własne cele, progi punktowe, misje i muzykę i odblokowują się tak samo: po ukończeniu PRO RIDER w poprzedniej lokacji (czyli VOLCANO LAGOON otwiera ALPINE RIDGE).
+
 **Duch i power‑upy**
 - **Duch najlepszego przejazdu** (półprzezroczysty, błękitny) dla każdego poziomu; w HUD widać przewagę/stratę w metrach. Wyłącznik: SETTINGS → GHOST.
 - **Power‑upy** na trasie: 🧲 **MAGNES** (przyciąga rubiny), 🛡️ **TARCZA** (pochłania jedną wywrotkę), ⚡ **BOOST** (przyspieszenie, rozbija przeszkody), ✖2 **SCORE x2**. Każdy ma licznik czasu w HUD, własny efekt i dźwięk.
@@ -41,7 +49,7 @@ Przeglądarkowa gra 3D (three.js r160) o wakeboardingu za wyciągiem linowym. Mo
 - Service worker (`sw.js`) zapisuje w pamięci podręcznej wszystkie pliki – po pierwszym uruchomieniu gra działa bez internetu.
 - Przycisk **INSTALL APP · ZAINSTALUJ** w menu i w SETTINGS (pojawia się, gdy przeglądarka pozwala zainstalować grę).
 
-Zapis jest **zgodny wstecz**: stare postępy (rubiny, garaż, odblokowania, rekordy) są automatycznie migrowane do nowego formatu, a za już pobite rekordy/cele od razu przyznawane są pasujące gwiazdki. Migracja v3 dokłada wiersze dla nowych lokacji, nie ruszając starych wyników.
+Zapis jest **zgodny wstecz**: stare postępy (rubiny, garaż, odblokowania, rekordy) są automatycznie migrowane do nowego formatu, a za już pobite rekordy/cele od razu przyznawane są pasujące gwiazdki. Migracja v4 dokłada wiersze dla nowych lokacji (w tym tras górskich), nie ruszając starych wyników, i przenosi odblokowania zgodnie z dotychczasowym postępem.
 
 ## Struktura
 
@@ -164,4 +172,4 @@ python3 tests/calibrate.py  # bot z trikami na wszystkich 15 poziomach (kontrola
 
 ## Zapis
 
-Postęp (rubiny, garaż, odblokowania, rekordy, gwiazdki, misje, wyzwanie dnia i seria, statystyki, ustawienia) jest w `localStorage` pod kluczem `wakeboardRush3D_save_v1` (format v3, automatyczna migracja z v1/v2). Duchy przejazdów są w osobnym kluczu `wakeboardRush3D_ghosts_v1`. Wyczyszczenie danych strony resetuje postęp; RESET PROGRESS w SETTINGS czyści też duchy.
+Postęp (rubiny, garaż, odblokowania, rekordy, gwiazdki, misje, wyzwanie dnia i seria, statystyki, ustawienia) jest w `localStorage` pod kluczem `wakeboardRush3D_save_v1` (format v4, automatyczna migracja z v1/v2/v3). Duchy przejazdów są w osobnym kluczu `wakeboardRush3D_ghosts_v1`. Wyczyszczenie danych strony resetuje postęp; RESET PROGRESS w SETTINGS czyści też duchy.

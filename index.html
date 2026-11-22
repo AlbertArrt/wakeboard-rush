@@ -346,6 +346,9 @@ const STAGE_EXTRA = [
   { hazards: ['barrier', 'crystal', 'buoyGate'], features: ['curvedRail', 'kicker', 'bigRamp'] },  // Neon: fast sequences
   { hazards: ['rockGap', 'driftLog', 'buoyGate'], features: ['rail', 'bigRamp', 'curvedRail'] },     // Arctic: drifting ice, wide gaps
   { hazards: ['barrier', 'rockGap', 'crystal', 'double'], features: ['highBox', 'bigRamp', 'curvedRail'] }, // Volcano: brutal speed lines
+  { hazards: ['fallenTree', 'rockGap'], features: ['kicker', 'rail', 'bigRamp'] },                 // Alpine Ridge: pines and slalom gaps
+  { hazards: ['fallenTree', 'fallenTree', 'rockGap'], features: ['bigRamp', 'curvedRail', 'platform'] }, // Powder Forest: tree slalom, powder drops
+  { hazards: ['rockGap', 'barrier', 'crystal', 'double'], features: ['bigRamp', 'highBox', 'curvedRail'] }, // Glacier: ice gates, storm speed
 ];
 const STAGES = [
   {
@@ -372,6 +375,21 @@ const STAGES = [
     id: 'volcano', name: 'VOLCANO LAGOON', speedAdd: 4, laneAdd: -2,
     blurb: 'Wulkaniczna laguna: bazaltowe skały, lawa, popiół i pomarańczowa poświata. Ekstremalna prędkość.',
     card: 'linear-gradient(160deg,#0a0505 0%,#3a1208 35%,#ff5a00 70%,#ffd166 100%)',
+  },
+  {
+    id: 'alpine', sport: 'snow', name: 'ALPINE RIDGE', speedAdd: 5, laneAdd: 1,
+    blurb: 'Snowboardowy zjazd o wschodzie słońca: szeroka trasa, slalomowe bramki, sosny i ostry zakręt w dół.',
+    card: 'linear-gradient(160deg,#123a63 0%,#5a9bd0 40%,#ffd3a8 70%,#f6fbff 100%)',
+  },
+  {
+    id: 'powder', sport: 'snow', name: 'POWDER FOREST', speedAdd: 6, laneAdd: 0,
+    blurb: 'Puszysty śnieg i gęsty las: wąskie przejścia między sosnami, zasypane skocznie i mgła.',
+    card: 'linear-gradient(160deg,#33474f 0%,#7a97a4 40%,#d9e8ef 75%,#f7fdff 100%)',
+  },
+  {
+    id: 'glacier', sport: 'snow', name: 'GLACIER EDGE', speedAdd: 7, laneAdd: -0.5,
+    blurb: 'Lodowiec w środku burzy: lód, ostre granie, zamieć i prędkość, od której drętwieją nogi.',
+    card: 'linear-gradient(160deg,#04121f 0%,#2b5d7a 40%,#8fd4ef 70%,#ffffff 100%)',
   },
 ];
 // 25 level goals
@@ -411,6 +429,27 @@ const GOALS = [
     { type: 'mult', value: 8, text: 'Reach multiplier x8', pl: 'Osiągnij mnożnik x8' },
     { type: 'score', value: 120000, text: 'Score 120,000 points', pl: 'Zdobądź 120 000 pkt' },
   ],
+  [
+    { type: 'distance', value: 500, text: 'Ride 500 m', pl: 'Zjedź 500 m' },
+    { type: 'rubies', value: 14, text: 'Collect 14 rubies', pl: 'Zbierz 14 rubinów' },
+    { type: 'trick', trick: 'spin360', value: 1, text: 'Land a 360 spin', pl: 'Wyląduj obrót 360°' },
+    { type: 'score', value: 14000, text: 'Score 14,000 points', pl: 'Zdobądź 14 000 pkt' },
+    { type: 'score', value: 30000, text: 'Score 30,000 points', pl: 'Zdobądź 30 000 pkt' },
+  ],
+  [
+    { type: 'distance', value: 800, text: 'Ride 800 m', pl: 'Zjedź 800 m' },
+    { type: 'grind', value: 35, text: 'Grind 35 m on rails/boxes', pl: 'Grinduj łącznie 35 m' },
+    { type: 'trick', trick: 'spin540', value: 1, text: 'Land a 540 spin', pl: 'Wyląduj obrót 540°' },
+    { type: 'rubies', value: 26, text: 'Collect 26 rubies', pl: 'Zbierz 26 rubinów' },
+    { type: 'score', value: 50000, text: 'Score 50,000 points', pl: 'Zdobądź 50 000 pkt' },
+  ],
+  [
+    { type: 'distance', value: 1000, text: 'Ride 1000 m', pl: 'Zjedź 1000 m' },
+    { type: 'trick', trick: 'backflip', value: 1, text: 'Land a BACKFLIP', pl: 'Wyląduj salto w tył' },
+    { type: 'grind', value: 50, text: 'Grind 50 m on rails/boxes', pl: 'Grinduj łącznie 50 m' },
+    { type: 'mult', value: 8, text: 'Reach multiplier x8', pl: 'Osiągnij mnożnik x8' },
+    { type: 'score', value: 85000, text: 'Score 85,000 points', pl: 'Zdobądź 85 000 pkt' },
+  ],
 ];
 // ---- 3 stars per level: ★ goal, ★ score threshold, ★ level mission (all in one run) ----
 const STAR_SCORE = [
@@ -419,6 +458,9 @@ const STAR_SCORE = [
   [25000, 40000, 55000, 75000, 110000],
   [30000, 38000, 50000, 70000, 95000],
   [40000, 55000, 75000, 105000, 150000],
+  [8000, 14000, 20000, 26000, 34000],
+  [16000, 24000, 34000, 46000, 60000],
+  [24000, 36000, 50000, 70000, 95000],
 ];
 // metric names are read by Meta.runVal(): dist, score, rubies, mult, grinds, grindM, perfect, near,
 // flips, spins, combo (spin+flip in one jump), powerups, golden, spin360/540/720, backflip, frontflip
@@ -457,6 +499,27 @@ const LEVEL_MISSIONS = [
     { m: 'spin720', v: 1, text: 'Land a 720', pl: 'Wyląduj obrót 720°' },
     { m: 'near', v: 8, text: '8 near misses', pl: '8 mijanek o włos' },
     { m: 'score', v: 60000, text: 'Score 60,000 in one run', pl: '60 000 pkt w jednym przejeździe' },
+  ],
+  [
+    { m: 'rubies', v: 12, text: 'Collect 12 rubies', pl: 'Zbierz 12 rubinów' },
+    { m: 'near', v: 2, text: '2 near misses', pl: '2 mijanki o włos (NEAR MISS)' },
+    { m: 'perfect', v: 3, text: '3 PERFECT landings', pl: '3 lądowania PERFECT' },
+    { m: 'grinds', v: 2, text: 'Grind 2 boxes', pl: '2 grindy na boxach' },
+    { m: 'mult', v: 5, text: 'Reach multiplier x5', pl: 'Osiągnij mnożnik x5' },
+  ],
+  [
+    { m: 'rubies', v: 20, text: 'Collect 20 rubies', pl: 'Zbierz 20 rubinów' },
+    { m: 'grinds', v: 4, text: 'Do 4 grinds', pl: 'Zrób 4 grindy' },
+    { m: 'flips', v: 2, text: 'Land 2 flips', pl: 'Wyląduj 2 salta' },
+    { m: 'powerups', v: 2, text: 'Pick up 2 power-ups', pl: 'Zbierz 2 power-upy' },
+    { m: 'spin540', v: 1, text: 'Land a 540', pl: 'Wyląduj obrót 540°' },
+  ],
+  [
+    { m: 'near', v: 5, text: '5 near misses', pl: '5 mijanek o włos' },
+    { m: 'golden', v: 1, text: 'Grab a golden ruby', pl: 'Złap złoty rubin' },
+    { m: 'perfect', v: 5, text: '5 PERFECT landings', pl: '5 lądowań PERFECT' },
+    { m: 'combo', v: 1, text: 'Land a spin + flip combo', pl: 'Wyląduj combo obrót + salto' },
+    { m: 'dist', v: 1400, text: 'Ride 1400 m', pl: 'Zjedź 1400 m' },
   ],
 ];
 // ---- rotating missions (3 active). run: must happen in one run; total: counted across runs ----
@@ -559,9 +622,10 @@ function defaultSave() {
     lastSeen: '',                                                // launch date, for the comeback bonus
   };
 }
-const SAVE_VERSION = 3;
+const SAVE_VERSION = 4;
 // v1 -> v2: keep every v1 field, derive stars from what the player already achieved.
 // v3: the new locations — pad the per-stage tables and unlock what the old progress already earned.
+// v4: the snowboard mountain routes — same padding rule, no new fields.
 function migrateSave(out, raw) {
   const v = raw.ver || 1;
   if (v < 2) {
@@ -627,6 +691,13 @@ const SND = (() => {
       melody: [12, -1, 15, 19, -1, 17, 15, -1, 12, 10, -1, 7, 10, 12, -1, -1] },
     { bpm: 142, chords: [[52, 'm'], [55, 'M'], [58, 'M'], [50, 'm']], lead: 'saw', bass: 'saw', swing: 0.0,
       melody: [12, 12, 15, 12, 18, 15, 12, 7, 12, 12, 15, 19, 18, 15, 12, 7] },
+    // snowboard routes: dawn alpine, mellow powder, storm-charged glacier
+    { bpm: 116, chords: [[57, 'm'], [64, 'M'], [62, 'm'], [60, 'M']], lead: 'pluck', bass: 'square', swing: 0.05,
+      melody: [12, -1, 15, 19, -1, 17, 15, -1, 12, 10, -1, 7, 10, 12, -1, -1] },
+    { bpm: 126, chords: [[62, 'm'], [67, 'M'], [60, 'm'], [65, 'M']], lead: 'surf', bass: 'saw', swing: 0.0,
+      melody: [12, -1, -1, 15, 14, -1, 12, -1, 10, -1, 12, -1, 7, -1, -1, -1] },
+    { bpm: 138, chords: [[55, 'm'], [62, 'M'], [58, 'M'], [53, 'm']], lead: 'saw', bass: 'saw', swing: 0.0,
+      melody: [12, 15, 19, 15, 24, 19, 15, 12, 12, 15, 19, 22, 19, 15, 12, 7] },
   ];
   const triad = (root, t) => t === 'm' ? [root, root + 3, root + 7] : [root, root + 4, root + 7];
 
@@ -1181,6 +1252,20 @@ function buildLaneBuoys(group, colA, colB, glow) {
     set(0, 1, mat(W.laneHalf + 0.6, 0.05, s.z), alt ? cB : cA);
   });
 }
+// slalom gate flags marking the snowboard piste
+function buildGateFlags(group, colA, colB) {
+  const poleGeo = bake(new THREE.CylinderGeometry(0.05, 0.07, 2.3, 5), '#e8f4ff', mat(0, 1.15, 0));
+  const flagGeo = new THREE.BoxGeometry(0.48, 0.34, 0.05);
+  const cA = new THREE.Color(colA), cB = new THREE.Color(colB);
+  return new Recycler(group, [{ geo: poleGeo, mat: lambertVC(), per: 2 },
+    { geo: flagGeo, mat: new THREE.MeshLambertMaterial({ color: 0xffffff }), per: 2, colors: true }], 26, 11, (s, set) => {
+    const alt = Math.round(-s.z / 11) % 2 === 0;
+    const x = W.laneHalf + 1.1;
+    set(0, 0, mat(-x, 0, s.z)); set(0, 1, mat(x, 0, s.z));
+    set(1, 0, mat(-x + 0.3, 2.0, s.z), alt ? cA : cB);
+    set(1, 1, mat(x + 0.3, 2.0, s.z), alt ? cB : cA);
+  });
+}
 
 // =====================================================================
 const ENV_THEMES = [
@@ -1213,6 +1298,24 @@ const ENV_THEMES = [
     fog: '#4a1a0e', fogDen: 0.012, deep: '#0b0505', shallow: '#3a1508', skyRef: '#7a2c12', sunDir: [0.35, 0.4, -0.85], spec: 0.6,
     hemiSky: '#ff9a5a', hemiGround: '#170707', hemiI: 0.85, sunI: 1.6, sunLightCol: '#ffb27a', neon: 0, waveAmp: 1.2,
     cable: '#2a2a2a', tower: '#3a302c', accent: '#ff6a00', buoyA: '#ff3d00', buoyB: '#ffd54f', exposure: 1.08,
+  },
+  { // ALPINE RIDGE (dawn snowboard downhill)
+    skyTop: '#163a68', skyHorizon: '#ffd2ac', skyBottom: '#a9cde2', sunCol: '#fff0d0', sunSize: 1.7, stars: 0, cloud: 0.22,
+    fog: '#cfe4f2', fogDen: 0.0052, deep: '#dcecf8', shallow: '#ffffff', skyRef: '#bcdcf2', sunDir: [-0.4, 0.4, -0.82], spec: 0.35,
+    hemiSky: '#f0f9ff', hemiGround: '#8fb4c9', hemiI: 1.15, sunI: 2.1, sunLightCol: '#fff2dc', neon: 0, waveAmp: 0.05,
+    cable: '#3a3a3a', tower: '#8c9aa6', accent: '#e53935', buoyA: '#e53935', buoyB: '#1565c0', exposure: 1.0,
+  },
+  { // POWDER FOREST (overcast tree run)
+    skyTop: '#5d7285', skyHorizon: '#cfdde6', skyBottom: '#93a9b8', sunCol: '#f2f7fb', sunSize: 4, stars: 0, cloud: 0.85,
+    fog: '#d8e4ec', fogDen: 0.0125, deep: '#e6f2fb', shallow: '#ffffff', skyRef: '#d6e7f2', sunDir: [0.28, 0.42, -0.86], spec: 0.3,
+    hemiSky: '#e6f2fa', hemiGround: '#7d95a5', hemiI: 1.2, sunI: 1.4, sunLightCol: '#eef6ff', neon: 0, waveAmp: 0.06,
+    cable: '#252525', tower: '#6d7c88', accent: '#ffb300', buoyA: '#ffca28', buoyB: '#263238', exposure: 1.02,
+  },
+  { // GLACIER EDGE (night storm)
+    skyTop: '#04121f', skyHorizon: '#3d6f8c', skyBottom: '#0a1a26', sunCol: '#cfe8ff', sunSize: 1.2, stars: 0.25, cloud: 0.9,
+    fog: '#5d8298', fogDen: 0.016, deep: '#8fb8cf', shallow: '#dff2ff', skyRef: '#7fa8c2', sunDir: [0.3, 0.35, -0.88], spec: 0.5,
+    hemiSky: '#a9d6ea', hemiGround: '#2a4658', hemiI: 0.9, sunI: 1.25, sunLightCol: '#cfe8ff', neon: 0, waveAmp: 0.08,
+    cable: '#111111', tower: '#3d5566', accent: '#00e5ff', buoyA: '#ff5252', buoyB: '#ffffff', exposure: 1.02,
   },
 ];
 
@@ -1515,7 +1618,79 @@ const Env = (() => {
     return { group, recs, followers, theme: th, embers, haze };
   }
 
-  const builders = [buildTropical, buildLake, buildNeon, buildArctic, buildVolcano];
+  // ---- snowboard mountain routes: shared snow park builder, three moods ----
+  function buildSnowPark(th, variant) {
+    const group = new THREE.Group(); const recs = []; const followers = [];
+    const snowTex = canvasTex(256, 256, (c, w, h) => {
+      noiseFill(c, w, h, variant === 2 ? '#dff2ff' : '#f4fbff', 0.05, 2400);
+      for (let i = 0; i < 32; i++) { c.fillStyle = 'rgba(150,190,220,0.22)'; c.fillRect(rand(0, w), rand(0, h), rand(20, 70), rand(2, 5)); }
+    }, [8, 60]);
+    for (const s of [-1, 1]) {
+      const p = new THREE.Mesh(new THREE.PlaneGeometry(80, 340), new THREE.MeshLambertMaterial({ map: snowTex.clone() }));
+      p.material.map.needsUpdate = true; p.material.map.repeat.set(8, 60);
+      p.rotation.x = -Math.PI / 2; p.rotation.z = s * 0.02; p.userData = { side: s, off: 44 }; p.position.y = 0.34;
+      group.add(p); followers.push(p);
+    }
+    // ploughed snow banks along the piste
+    recs.push(new Recycler(group, [{ geo: rockGeo('#eef8ff', 1.1, 1), mat: lambertVC(), per: 2 }], 26, 9, (s, set) => {
+      const r = seeded(s.seed);
+      for (let k = 0; k < 2; k++) {
+        const side = k ? 1 : -1;
+        set(0, k, mat(side * (W.laneHalf + 1.6 + r() * 2), -0.5, s.z - k * 4, 0, r() * 6, 0, 1.6 + r() * 1.6, 0.55 + r() * 0.5, 2.4 + r() * 3));
+      }
+    }));
+    // pine forest (denser on the powder route)
+    const sp = snowPineGeo();
+    recs.push(new Recycler(group, [{ geo: sp, mat: lambertVC(), per: 6 }], variant === 1 ? 30 : 24, (variant === 1 ? 7 : 9) / Q.decor, (s, set) => {
+      const r = seeded(s.seed);
+      for (let k = 0; k < 6; k++) {
+        const side = k % 2 ? 1 : -1; const x = side * (W.laneHalf + 9 + r() * (variant === 1 ? 20 : 34));
+        const sc = 0.85 + r() * 1.05;
+        set(0, k, mat(x, 0, s.z + r() * 7, 0, r() * 6, 0, sc, sc * (0.9 + r() * 0.5), sc));
+      }
+    }));
+    // rocky, snow-capped valley walls
+    recs.push(new Recycler(group, [{ geo: rockGeo(variant === 2 ? '#cfe9f6' : '#a8bccb', 1.8, 1), mat: lambertVC(), per: 2 }], 18, 16, (s, set) => {
+      const r = seeded(s.seed + 0.5);
+      for (let k = 0; k < 2; k++) {
+        const side = k ? 1 : -1, sc = 1.4 + r() * 2.2;
+        set(0, k, mat(side * (W.laneHalf + 5 + r() * 12), -1, s.z + r() * 8, r(), r() * 6, r(), sc, sc * (1.2 + r() * 1.6), sc));
+      }
+    }));
+    // distant peaks
+    const peaks = new THREE.Group();
+    for (let i = 0; i < 9; i++) {
+      const h = rand(80, 170), r = rand(50, 105);
+      const m = merge([bake(new THREE.ConeGeometry(r, h, 7, 1), i % 2 ? '#6d8ba1' : '#7f9db2', mat(0, h / 2, 0)), bake(new THREE.ConeGeometry(r * 0.36, h * 0.36, 7, 1), '#f4fbff', mat(0, h * 0.83, 0))]);
+      const mm = new THREE.Mesh(jitterGeo(m, 3), new THREE.MeshLambertMaterial({ vertexColors: true, flatShading: true, fog: false }));
+      mm.position.set((i % 2 ? 1 : -1) * rand(120, 300), -6, -rand(220, 400)); peaks.add(mm);
+    }
+    group.add(peaks); followers.push(peaks);
+    // slalom gates + the lift that tows the rider
+    recs.push(buildGateFlags(group, th.buoyA, th.buoyB));
+    const cs = buildCableSystem(group, th); recs.push(cs.rec); followers.push(cs.cable);
+    // snowfall
+    const n = Math.max(110, Math.round(Q.rain * (variant === 1 ? 1.1 : 0.8)));
+    const arr = new Float32Array(n * 6);
+    for (let i = 0; i < n; i++) { const x = rand(-34, 34), y = rand(0, 28), z = rand(-60, 10); arr.set([x, y, z, x + 0.22, y - 0.4, z + 0.1], i * 6); }
+    const sg = new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.BufferAttribute(arr, 3));
+    const snow = new THREE.LineSegments(sg, new THREE.LineBasicMaterial({ color: '#ffffff', transparent: true, opacity: variant === 2 ? 0.85 : 0.5 }));
+    snow.frustumCulled = false; group.add(snow);
+    if (variant === 2) { // glacier: ice spires catching the storm light
+      const spires = new THREE.Group();
+      for (let i = 0; i < 10; i++) {
+        const ice = new THREE.Mesh(new THREE.OctahedronGeometry(rand(1, 2.2), 0), new THREE.MeshLambertMaterial({ color: '#bfe9ff', emissive: '#2a7fa8', emissiveIntensity: 0.35, flatShading: true }));
+        ice.scale.y = rand(3, 6); ice.position.set((i % 2 ? 1 : -1) * rand(W.laneHalf + 6, W.laneHalf + 24), -2, -rand(10, 150)); spires.add(ice);
+      }
+      group.add(spires); followers.push(spires);
+    }
+    return { group, recs, followers, theme: th, snow };
+  }
+  function buildAlpine() { return buildSnowPark(ENV_THEMES[5], 0); }
+  function buildPowder() { return buildSnowPark(ENV_THEMES[6], 1); }
+  function buildGlacier() { return buildSnowPark(ENV_THEMES[7], 2); }
+
+  const builders = [buildTropical, buildLake, buildNeon, buildArctic, buildVolcano, buildAlpine, buildPowder, buildGlacier];
   function applyTheme(th, k = 1) {
     skyUniforms.uTop.value.set(th.skyTop); skyUniforms.uHorizon.value.set(th.skyHorizon); skyUniforms.uBottom.value.set(th.skyBottom);
     skyUniforms.uSunCol.value.set(th.sunCol); skyUniforms.uSunSize.value = th.sunSize; skyUniforms.uStars.value = th.stars; skyUniforms.uCloud.value = th.cloud;
@@ -1535,6 +1710,7 @@ const Env = (() => {
     if (cur) scene.remove(cur.group);
     if (!envs[stageIdx]) envs[stageIdx] = builders[stageIdx]();
     cur = envs[stageIdx]; W.stage = stageIdx;
+    W.snow = !!(STAGES[stageIdx] && STAGES[stageIdx].sport === 'snow');
     scene.add(cur.group);
     applyTheme(cur.theme);
   }
@@ -1603,6 +1779,16 @@ const Env = (() => {
       const flick = 0.82 + 0.18 * Math.sin(t * 6.7) * Math.sin(t * 2.9);
       waterUniforms.uShallow.value.set(cur.theme.shallow).multiplyScalar(0.55 + flick * 0.9);
     }
+    if (W.snow && cur.snow) { // snowboard routes: snowfall drifting with the camera
+      cur.snow.position.set(camera.position.x, 0, camZ);
+      const sn = cur.snow.geometry.attributes.position.array;
+      for (let i = 0; i < sn.length; i += 6) {
+        sn[i + 1] -= 3.6 * dt; sn[i + 4] -= 3.6 * dt;
+        const drift = Math.sin(t * 0.8 + i) * dt * 1.1; sn[i] += drift; sn[i + 3] += drift;
+        if (sn[i + 1] < 0) { sn[i + 1] += 28; sn[i + 4] += 28; }
+      }
+      cur.snow.geometry.attributes.position.needsUpdate = true;
+    }
   }
   return { set, reset, update, rebuildAll, get theme() { return cur && cur.theme; } };
 })();
@@ -1658,6 +1844,13 @@ const Rider = (() => {
   const FOOT_Z = 0.29;
   for (const z of [-FOOT_Z, FOOT_Z]) {
     const boot = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.16, 0.13), mats.boot); boot.position.set(0.02, 0.15, z); boot.rotation.y = z < 0 ? 0.25 : -0.15; boardG.add(boot);
+  }
+  // ---- snowboard (shown on the mountain routes): wider, longer deck with two bindings ----
+  const snowboard = new THREE.Mesh(bgeo, mats.board);
+  snowboard.scale.set(1.3, 1, 1.12); snowboard.position.y = 0.055; snowboard.visible = false; boardG.add(snowboard);
+  for (const z of [-FOOT_Z, FOOT_Z]) {
+    const bind = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.13, 0.17), mats.dark);
+    bind.position.set(0, 0.1, z); bind.rotation.y = z < 0 ? 0.35 : -0.25; snowboard.add(bind);
   }
   // ---- body (limbs repositioned every frame by setPose) ----
   const cyl = new THREE.CylinderGeometry(1, 1, 1, 7); cyl.translate(0, 0.5, 0);
@@ -1756,8 +1949,9 @@ const Rider = (() => {
     scene.add(boardG); boardG.position.copy(wp); boardG.quaternion.copy(wq);
   }
   function reattachBoard() { leanG.add(boardG); boardG.position.set(0, 0, 0); boardG.rotation.set(0, 0, 0); boardG.quaternion.identity(); }
+  function setSport(snow) { board.visible = !snow; snowboard.visible = !!snow; }
   return {
-    root, flipG, spinG, leanG, bodyG, boardG, handle, rope, carrier, shadow, aura, setPose, applyLook, attach, updateRope, handleWorld, detachBoard, reattachBoard, pose,
+    root, flipG, spinG, leanG, bodyG, boardG, handle, rope, carrier, shadow, aura, setPose, applyLook, attach, updateRope, handleWorld, detachBoard, reattachBoard, setSport, pose,
     get fx() { return fxDef; }, glowBase: 0,
   };
 })();
@@ -1779,7 +1973,7 @@ function makeThemeMats(stage) {
     crystal: new THREE.MeshStandardMaterial({ color: '#2a0f3d', emissive: '#7c00ff', emissiveIntensity: 0.55, metalness: 0.5, roughness: 0.25, flatShading: true }),
     foam: new THREE.MeshLambertMaterial({ color: '#ffffff', transparent: true, opacity: 0.85 }),
     waveBody: new THREE.MeshLambertMaterial({ color: ENV_THEMES[stage].shallow, transparent: true, opacity: 0.92 }),
-    float: new THREE.MeshLambertMaterial({ color: ['#e0e0e0', '#3b3b3b', '#16162a', '#dff4ff', '#2a201c'][stage] }),
+    float: new THREE.MeshLambertMaterial({ color: ['#e0e0e0', '#3b3b3b', '#16162a', '#dff4ff', '#2a201c', '#c9dbe8', '#a9c0cc', '#7fa8c0'][stage] || '#c9dbe8' }),
     glowA: new THREE.MeshBasicMaterial({ color: '#ff00e5' }), glowB: new THREE.MeshBasicMaterial({ color: '#00e5ff' }), glowC: new THREE.MeshBasicMaterial({ color: '#fff200' }),
     warn: new THREE.MeshBasicMaterial({ color: '#ff1744' }),
   };
@@ -1805,12 +1999,23 @@ function makeThemeMats(stage) {
     m.buoyA = new THREE.MeshLambertMaterial({ color: '#ff5252' }); m.buoyB = new THREE.MeshLambertMaterial({ color: '#ffffff' });
     m.metal = new THREE.MeshStandardMaterial({ color: '#d7e9f2', metalness: 0.7, roughness: 0.35 });
     m.rockCol = '#b8d8e0'; m.rockCol2 = '#7fa8b8'; m.logCol = '#4a6070'; m.logEnd = '#d9f2fb';
-  } else {
+  } else if (stage === 4) {
     m.log = lambertVC(); m.wood = new THREE.MeshLambertMaterial({ map: plank('#3a2a26', 'rgba(255,90,0,0.5)') });
     m.boxTop = new THREE.MeshLambertMaterial({ color: '#ff6d00' }); m.boxSide = new THREE.MeshLambertMaterial({ color: '#1c1412' });
     m.buoyA = new THREE.MeshLambertMaterial({ color: '#ff3d00' }); m.buoyB = new THREE.MeshLambertMaterial({ color: '#ffd54f' });
     m.metal = new THREE.MeshStandardMaterial({ color: '#8a5a2b', metalness: 0.6, roughness: 0.45 });
     m.rockCol = '#2b2523'; m.rockCol2 = '#3d2a22'; m.logCol = '#2a1f1a'; m.logEnd = '#ff8a00';
+  } else { // snowboard routes: snow-capped wood, alpine metal, ice
+    const pal = [
+      { wood: '#d9b26a', line: 'rgba(70,45,20,0.45)', top: '#eaf7ff', side: '#3f7fa8', a: '#e53935', b: '#1565c0', rock: '#c3d8e6', rock2: '#9dbbcf', log: '#6a4f38', end: '#f0faff' },
+      { wood: '#8d6b45', line: 'rgba(40,25,12,0.5)', top: '#ffffff', side: '#5b7a86', a: '#ffca28', b: '#263238', rock: '#b9cbd4', rock2: '#8fa6b1', log: '#553f2c', end: '#eaf7ff' },
+      { wood: '#bfd6e4', line: 'rgba(20,60,90,0.5)', top: '#dff6ff', side: '#0d4a66', a: '#ff5252', b: '#ffffff', rock: '#cfe9f6', rock2: '#8fbdd4', log: '#3f5866', end: '#eaf9ff' },
+    ][Math.min(2, stage - 5)];
+    m.log = lambertVC(); m.wood = new THREE.MeshLambertMaterial({ map: plank(pal.wood, pal.line) });
+    m.boxTop = new THREE.MeshLambertMaterial({ color: pal.top }); m.boxSide = new THREE.MeshLambertMaterial({ color: pal.side });
+    m.buoyA = new THREE.MeshLambertMaterial({ color: pal.a }); m.buoyB = new THREE.MeshLambertMaterial({ color: pal.b });
+    m.metal = new THREE.MeshStandardMaterial({ color: '#cfd8dc', metalness: 0.7, roughness: 0.35 });
+    m.rockCol = pal.rock; m.rockCol2 = pal.rock2; m.logCol = pal.log; m.logEnd = pal.end;
   }
   return m;
 }
@@ -2093,15 +2298,17 @@ function buildCfg(stage, level) {
   const ex = level >= 1 ? STAGE_EXTRA[stage] : { hazards: [], features: [] };
   let hazards = HAZARDS_BY_LEVEL[level].concat(ex.hazards);
   if (stage === 2) hazards = hazards.map(h => h === 'log' ? 'barrier' : h);
+  if (st.sport === 'snow') hazards = hazards.map(h => h === 'wave' ? 'rock' : h);   // no waves on a mountain
   if (stage === 1 && level >= 1) hazards = hazards.concat(['fallenTree']);
   return Object.assign({}, p, {
     speed: p.speed + st.speedAdd, lane: p.lane + st.laneAdd, hazards, features: FEATURES_BY_LEVEL[level].concat(ex.features), goal: GOALS[stage][level],
+    sport: st.sport || 'water',
   });
 }
 
 // ------------------------------------------------------------------ run control
 let envStage = -1;
-function previewStage(stage) { if (envStage === stage) return; envStage = stage; Env.set(stage); resetPools(stage); W.laneHalf = (LEVEL_PARAMS[0].lane + STAGES[stage].laneAdd) / 2; waterUniforms.uLane.value = W.laneHalf; Env.reset(S.z); if (SND.ready) SND.setStage(stage); }
+function previewStage(stage) { if (envStage === stage) return; envStage = stage; Env.set(stage); Rider.setSport(!!STAGES[stage].sport); resetPools(stage); W.laneHalf = (LEVEL_PARAMS[0].lane + STAGES[stage].laneAdd) / 2; waterUniforms.uLane.value = W.laneHalf; Env.reset(S.z); if (SND.ready) SND.setStage(stage); }
 function startRun(stage, level) {
   S.stage = stage; S.level = level; S.cfg = buildCfg(stage, level);
   SAVE.sel.stage = stage; SAVE.sel.level = level; persist();
@@ -2352,6 +2559,16 @@ function shieldSave(obj) {
   UI.popup('SHIELD SAVED YOU!', 'goal');
 }
 function splash(x, z, k) {
+  if (W.snow) { // powder burst instead of water spray
+    const n = Math.floor(56 * k * Math.max(0.6, Q.particles / 500));
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, sp = rand(1.5, 5.5) * k;
+      Particles.emit(x + Math.cos(a) * 0.3, 0.15, z + Math.sin(a) * 0.4, Math.cos(a) * sp, rand(2, 6) * k, Math.sin(a) * sp - S.speed * 0.15,
+        i % 3 ? '#ffffff' : '#d9f2ff', rand(0.3, 0.7), rand(0.4, 0.9), 7);
+    }
+    Wake.add(x, z, 2.6 * k, 2.6 * k, '#eaf9ff', 1.2, 0, 1.2);
+    return;
+  }
   const fx = Rider.fx;
   const n = Math.floor(48 * k * Math.max(0.6, Q.particles / 500));
   for (let i = 0; i < n; i++) {
@@ -2505,7 +2722,7 @@ function updatePlay(dt) {
   if (S.invuln > 0) S.invuln -= dt;
   if (S.slowCD > 0) S.slowCD -= dt;
   S.boostK = damp(S.boostK, S.pu.boost > 0 ? 1.45 : 1, S.pu.boost > 0 ? 3 : 1.5, dt);
-  if (!S.grinding) S.speed = Math.min(c.speed + c.growth * S.dist, c.speed + c.maxAdd) * S.boostK;
+  if (!S.grinding) S.speed = Math.min(c.speed + c.growth * S.dist, c.speed + c.maxAdd) * S.boostK * (c.sport === 'snow' ? 1.05 : 1);
   const dz = S.speed * dt; S.z -= dz; S.dist += dz;
   const lh = W.laneHalf - 0.45;
   const sens = SAVE.settings.sens;
@@ -2799,21 +3016,26 @@ function updateRiderVisual(dt) {
   // wake & spray
   if (!S.air && S.mode !== 'paused' && !S.grinding && !(S.onFeat)) {
     S.wakeAcc = (S.wakeAcc || 0) + dt;
-    const fx = Rider.fx;
+    const fx = Rider.fx, snow = W.snow;
     const turn = Math.min(1, Math.abs(S.vx) / 8) + (S.carveBoost || 0);
     if (S.wakeAcc > 0.035) {
       S.wakeAcc = 0;
       const col = fx.rainbow ? (tmpCol.setHSL((S.time * 0.4) % 1, 1, 0.65), tmpCol.getHex()) : fx.colors[0];
-      Wake.add(S.x - 0.25, S.z + 0.6, 0.55, 1.2, col, 1.7, 0.25, 2.2);
-      Wake.add(S.x + 0.25, S.z + 0.6, 0.55, 1.2, col, 1.7, -0.25, 2.2);
+      if (snow) { // two narrow carve tracks in the powder, no widening wake
+        Wake.add(S.x - 0.22, S.z + 0.6, 0.28, 1.7, col, 2.6, 0.22, 0.5);
+        Wake.add(S.x + 0.22, S.z + 0.6, 0.28, 1.7, col, 2.6, -0.22, 0.5);
+      } else {
+        Wake.add(S.x - 0.25, S.z + 0.6, 0.55, 1.2, col, 1.7, 0.25, 2.2);
+        Wake.add(S.x + 0.25, S.z + 0.6, 0.55, 1.2, col, 1.7, -0.25, 2.2);
+      }
     }
-    const nSpray = Math.floor((0.6 + turn * 4.5) * (S.speed / 12) * Q.particles / 300 + Math.random());
+    const nSpray = Math.floor((0.6 + turn * 4.5) * (S.speed / 12) * Q.particles / 300 * (snow ? 0.6 : 1) + Math.random());
     // rooster tail behind the board at speed
     if (S.speed > 14 && Math.random() < (S.speed - 13) * 0.12 * Q.particles / 500) Particles.emit(S.x + rand(-0.15, 0.15), S.y + 0.05, S.z + 0.9, rand(-0.8, 0.8), rand(2.5, 4.5) * (S.boostK || 1), rand(3, 6), '#ffffff', rand(0.25, 0.45), rand(0.4, 0.7));
     const side = S.vx < 0 ? 1 : -1;
     for (let i = 0; i < nSpray; i++) {
       Particles.emit(S.x + side * 0.25 + rand(-0.1, 0.1), S.y + 0.05, S.z + rand(0.2, 0.8),
-        side * rand(1, 3 + turn * 6), rand(1.5, 2.5 + turn * 3.5), rand(1, 4), fxColor(fx, i), rand(0.15, 0.32) * (0.7 + turn * 0.6), rand(0.4, 0.8));
+        side * rand(1, 3 + turn * 6), rand(1.5, 2.5 + turn * 3.5), rand(1, 4), snow ? '#eaf9ff' : fxColor(fx, i), rand(0.15, 0.32) * (0.7 + turn * 0.6), rand(0.4, 0.8));
     }
     S.carveBoost = Math.max(0, (S.carveBoost || 0) - dt * 2);
   }
@@ -3351,7 +3573,7 @@ const UI = (() => {
       const done = SAVE.completed[i].reduce((a, b) => a + b, 0);
       const d = document.createElement('button'); d.className = 'card stage' + (unlocked ? '' : ' locked') + (SAVE.sel.stage === i ? ' sel' : '');
       d.style.background = st.card;
-      d.innerHTML = `<div class="cname">${st.name}</div><div class="cblurb">${st.blurb}</div><div class="cprog">${unlocked ? `✓ ${done}/5 levels · ★ ${Meta.stageStars(i)}/15` : '🔒 Complete PRO RIDER in ' + STAGES[i - 1].name}</div>`;
+      d.innerHTML = `<div class="cname">${st.sport === 'snow' ? '❄ ' : ''}${st.name}</div><div class="cblurb">${st.blurb}</div><div class="cprog">${unlocked ? `✓ ${done}/5 levels · ★ ${Meta.stageStars(i)}/15` : '🔒 Complete PRO RIDER in ' + STAGES[i - 1].name}</div>`;
       d.addEventListener('click', (e) => { e.stopPropagation(); click(); if (!unlocked) { SND.sfx('warn'); return; } SAVE.sel.stage = i; levelStage = i; persist(); previewStage(i); show('levels'); });
       box.appendChild(d);
     });
@@ -3359,7 +3581,7 @@ const UI = (() => {
   // ------------------------------------------------ LEVELS
   function renderLevels() {
     const s = levelStage = SAVE.sel.stage;
-    el('lv-title').textContent = STAGES[s].name.toUpperCase();
+    el('lv-title').textContent = (STAGES[s].sport === 'snow' ? '❄ ' : '') + STAGES[s].name.toUpperCase();
     const box = el('level-list'); box.innerHTML = '';
     for (let l = 0; l < 5; l++) {
       const un = isLevelUnlocked(s, l), done = SAVE.completed[s][l];
