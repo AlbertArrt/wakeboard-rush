@@ -76,11 +76,11 @@ input[type=range]{width:150px;accent-color:#00e5ff}
 #h-rubybox{background:rgba(0,0,0,.45);border-radius:12px;padding:3px 10px;font-size:20px;font-weight:900}#h-rubybox.flash{animation:rf .35s}
 @keyframes rf{50%{transform:scale(1.3);background:rgba(255,40,90,.6)}}
 #h-dist,#h-speed{font-size:13px;font-weight:800;background:rgba(0,0,0,.35);border-radius:10px;padding:2px 8px}
-#popups{position:fixed;left:0;right:0;top:30%;z-index:12;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:4px}
-.pop{font-size:clamp(20px,4.4vw,34px);font-weight:900;font-style:italic;text-shadow:0 3px 0 rgba(0,0,0,.5),0 0 14px rgba(0,0,0,.4);animation:pop 1.5s forwards;white-space:nowrap}
-.pop.perfect{color:#69f0ae;font-size:clamp(24px,5.5vw,44px)}.pop.combo{color:#ffd54f}.pop.near{color:#7ff6ff}.pop.big{color:#ff8a00;font-size:clamp(26px,6vw,48px)}.pop.warn{color:#ff5252}.pop.crash{color:#ff1744;font-size:clamp(30px,7vw,56px)}.pop.goal{color:#ffd54f;font-size:clamp(26px,6vw,46px)}.pop.small{font-size:clamp(16px,3.2vw,24px);opacity:.9}.pop.trick{color:#fff}
-@keyframes pop{0%{transform:scale(.3);opacity:0}12%{transform:scale(1.15);opacity:1}22%{transform:scale(1)}75%{opacity:1;transform:translateY(-10px)}100%{opacity:0;transform:translateY(-40px)}}
-#tricklive{position:fixed;left:0;right:0;top:20%;text-align:center;z-index:12;font-size:clamp(18px,3.6vw,28px);font-weight:900;color:#ffd54f;opacity:0;transition:opacity .15s;pointer-events:none;text-shadow:0 2px 0 #000}#tricklive.on{opacity:1}
+#popups{position:fixed;left:0;right:0;top:26%;z-index:12;pointer-events:none;display:flex;flex-direction:column;align-items:center;gap:1px}
+.pop{font-size:clamp(12px,2.2vw,18px);font-weight:900;font-style:italic;line-height:1.1;text-align:center;max-width:min(88vw,540px);text-shadow:0 2px 0 rgba(0,0,0,.55),0 0 10px rgba(0,0,0,.5);animation:pop 1.25s forwards}
+.pop.perfect{color:#69f0ae;font-size:clamp(14px,2.7vw,22px)}.pop.combo{color:#ffd54f}.pop.near{color:#7ff6ff}.pop.big{color:#ff8a00;font-size:clamp(14px,2.8vw,23px)}.pop.warn{color:#ff5252}.pop.crash{color:#ff1744;font-size:clamp(16px,3.2vw,25px)}.pop.goal{color:#ffd54f;font-size:clamp(14px,2.7vw,21px)}.pop.small{font-size:clamp(10px,1.8vw,14px);opacity:.9}.pop.trick{color:#fff}
+@keyframes pop{0%{transform:scale(.4);opacity:0}12%{transform:scale(1.08);opacity:1}22%{transform:scale(1)}72%{opacity:1;transform:translateY(-8px)}100%{opacity:0;transform:translateY(-26px)}}
+#tricklive{position:fixed;left:0;right:0;top:20%;text-align:center;z-index:12;font-size:clamp(13px,2.4vw,19px);font-weight:900;color:#ffd54f;opacity:0;transition:opacity .15s;pointer-events:none;text-shadow:0 2px 0 #000}#tricklive.on{opacity:1}
 #hint{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translate(-50%,30px);z-index:13;background:rgba(0,0,0,.6);padding:9px 16px;border-radius:14px;font-size:14px;font-weight:700;opacity:0;transition:.3s;pointer-events:none;max-width:90vw;text-align:center}#hint.on{opacity:1;transform:translate(-50%,0)}
 body:has(#trickbtns.on) #hint{bottom:110px}
 #trickbtns{position:fixed;inset:auto 0 0 0;z-index:11;display:none;pointer-events:none;padding:0 max(14px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));justify-content:space-between;align-items:flex-end}
@@ -139,7 +139,7 @@ body:has(#trickbtns.on) #hint{bottom:110px}
 .pstat{font-size:12px;opacity:.85;font-weight:700}
 body.portrait .menuwrap{flex-direction:column;gap:10px}
 body.portrait .menuwrap .left,body.portrait .menuwrap .right{flex:none;width:100%}body.portrait .menuwrap .right{max-width:420px}
-body.portrait .pop{font-size:26px}body.portrait .pop.big,body.portrait .pop.goal,body.portrait .pop.perfect{font-size:30px}body.portrait .pop.small{font-size:19px}body.portrait #popups{top:26%;gap:8px}
+body.portrait .pop{font-size:14px}body.portrait .pop.big,body.portrait .pop.goal,body.portrait .pop.perfect{font-size:17px}body.portrait .pop.small{font-size:11px}body.portrait #popups{top:23%;gap:2px}
 body.portrait .stats{grid-template-columns:repeat(2,1fr)}
 @media (max-height:480px){.panel{padding:10px 14px}.b{padding:8px 12px;margin:4px 0;font-size:15px}.b.main{font-size:20px;padding:10px}h1.logo{font-size:clamp(28px,6vw,52px)}.card{min-height:120px}.lvl{padding:6px 10px;margin:4px 0}.stats b{font-size:16px}h2{font-size:21px;margin-bottom:6px}}
 </style>
@@ -3712,9 +3712,10 @@ const UI = (() => {
   function hint(t, ms = 4500) { const h = el('hint'); h.textContent = t; h.classList.add('on'); clearTimeout(hintTimer); hintTimer = setTimeout(() => h.classList.remove('on'), ms); }
   function popup(text, cls = '') {
     const box = el('popups');
-    while (box.children.length > 4) box.removeChild(box.firstChild);
+    // keep the stack short so the achievement texts never cover the run line
+    while (box.children.length > 2) box.removeChild(box.firstChild);
     const d = document.createElement('div'); d.className = 'pop ' + cls; d.textContent = text;
-    box.appendChild(d); setTimeout(() => d.remove(), 1500);
+    box.appendChild(d); setTimeout(() => d.remove(), 1250);
   }
   function trickLive(t) { const e = el('tricklive'); e.textContent = t; e.classList.toggle('on', !!t); }
   function rubyFlash() { const r = el('h-rubybox'); r.classList.remove('flash'); void r.offsetWidth; r.classList.add('flash'); }
