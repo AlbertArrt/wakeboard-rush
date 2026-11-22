@@ -160,7 +160,7 @@ body.portrait .stats{grid-template-columns:repeat(2,1fr)}
 <div id="trickbtns"><div class="grp"><button id="tb-left" class="spin">⟲<br>SPIN</button><button id="tb-right" class="spin">⟳<br>SPIN</button></div><div class="grp"><button id="tb-down" class="spin">FRONT<br>FLIP ↓</button><button id="tb-jump">JUMP ↑</button></div></div>
 
 <div class="screen" id="scr-menu"><div class="wallet"><span class="gem">💎</span> <span id="m-rubies">0</span></div>
-  <div class="menuwrap"><div class="left"><h1 class="logo">WAKEBOARD<br>RUSH<small>3D</small></h1><div class="sel" id="m-sel"></div><div class="tip">BEST SCORE: <b id="m-best">0</b> · STARS: <b id="m-stars">0</b>/45</div></div>
+  <div class="menuwrap"><div class="left"><h1 class="logo">WAKEBOARD<br>RUSH<small>3D</small></h1><div class="sel" id="m-sel"></div><div class="tip">BEST SCORE: <b id="m-best">0</b> · STARS: <b id="m-stars">0</b></div></div>
   <div class="right panel"><button class="b main" id="m-play">▶ PLAY</button><div class="row"><button class="b cyan" id="m-stages">LOCATIONS</button><button class="b cyan" id="m-levels">LEVELS</button></div><button class="b gold" id="m-missions">🏆 MISSIONS &amp; DAILY<span class="badge" id="m-badge" style="display:none">!</span></button><button class="b pink" id="m-garage">🏄 GARAGE</button><div class="row"><button class="b" id="m-scores">HIGH SCORES</button><button class="b" id="m-settings">SETTINGS</button></div><button class="b" id="m-help">HOW TO PLAY · JAK GRAĆ</button><button class="b cyan" id="m-install" style="display:none">📲 INSTALL APP · ZAINSTALUJ</button></div></div></div>
 <div class="screen" id="scr-missions"><div class="panel"><button class="back" data-to="menu">◀ BACK</button><h2>MISSIONS · MISJE</h2><div id="missions-body"></div></div></div>
 
@@ -344,6 +344,8 @@ const STAGE_EXTRA = [
   { hazards: [], features: [] },
   { hazards: ['fallenTree', 'rockGap', 'fallenTree'], features: ['rail', 'bigRamp'] },           // Wild Lake: narrow gaps, fallen trees, long rails, high ramps
   { hazards: ['barrier', 'crystal', 'buoyGate'], features: ['curvedRail', 'kicker', 'bigRamp'] },  // Neon: fast sequences
+  { hazards: ['rockGap', 'driftLog', 'buoyGate'], features: ['rail', 'bigRamp', 'curvedRail'] },     // Arctic: drifting ice, wide gaps
+  { hazards: ['barrier', 'rockGap', 'crystal', 'double'], features: ['highBox', 'bigRamp', 'curvedRail'] }, // Volcano: brutal speed lines
 ];
 const STAGES = [
   {
@@ -361,8 +363,18 @@ const STAGES = [
     blurb: 'Nocny wakepark: neonowe raile, podświetlone boje i elektroniczna muzyka.',
     card: 'linear-gradient(160deg,#0b0221 0%,#2a0a5e 40%,#ff00c8 75%,#00e5ff 100%)',
   },
+  {
+    id: 'arctic', name: 'ARCTIC FJORD', speedAdd: 3, laneAdd: -2,
+    blurb: 'Arktyczny fiord: góry lodowe, śnieg, zorza polarna i skute lodem pomosty. Zimno i szybko.',
+    card: 'linear-gradient(160deg,#0a2a52 0%,#3d8fd0 40%,#8ff0e0 70%,#eaf7ff 100%)',
+  },
+  {
+    id: 'volcano', name: 'VOLCANO LAGOON', speedAdd: 4, laneAdd: -2,
+    blurb: 'Wulkaniczna laguna: bazaltowe skały, lawa, popiół i pomarańczowa poświata. Ekstremalna prędkość.',
+    card: 'linear-gradient(160deg,#0a0505 0%,#3a1208 35%,#ff5a00 70%,#ffd166 100%)',
+  },
 ];
-// 15 level goals
+// 25 level goals
 const GOALS = [
   [
     { type: 'distance', value: 400, text: 'Ride 400 m', pl: 'Przepłyń 400 m' },
@@ -385,12 +397,28 @@ const GOALS = [
     { type: 'trick', trick: 'spin720', value: 1, text: 'Land a 720 spin', pl: 'Wyląduj obrót 720°' },
     { type: 'score', value: 80000, text: 'Score 80,000 points', pl: 'Zdobądź 80 000 pkt' },
   ],
+  [
+    { type: 'distance', value: 900, text: 'Ride 900 m', pl: 'Przepłyń 900 m' },
+    { type: 'rubies', value: 20, text: 'Collect 20 rubies', pl: 'Zbierz 20 rubinów' },
+    { type: 'trick', trick: 'spin540', value: 1, text: 'Land a 540 spin', pl: 'Wyląduj obrót 540°' },
+    { type: 'grind', value: 45, text: 'Grind 45 m on rails/boxes', pl: 'Grinduj łącznie 45 m' },
+    { type: 'score', value: 60000, text: 'Score 60,000 points', pl: 'Zdobądź 60 000 pkt' },
+  ],
+  [
+    { type: 'distance', value: 1000, text: 'Ride 1000 m', pl: 'Przepłyń 1000 m' },
+    { type: 'score', value: 55000, text: 'Score 55,000 points', pl: 'Zdobądź 55 000 pkt' },
+    { type: 'trick', trick: 'backflip', value: 1, text: 'Land a BACKFLIP', pl: 'Wyląduj salto w tył' },
+    { type: 'mult', value: 8, text: 'Reach multiplier x8', pl: 'Osiągnij mnożnik x8' },
+    { type: 'score', value: 120000, text: 'Score 120,000 points', pl: 'Zdobądź 120 000 pkt' },
+  ],
 ];
 // ---- 3 stars per level: ★ goal, ★ score threshold, ★ level mission (all in one run) ----
 const STAR_SCORE = [
   [8000, 15000, 20000, 22000, 40000],
   [20000, 24000, 32000, 45000, 60000],
   [25000, 40000, 55000, 75000, 110000],
+  [30000, 38000, 50000, 70000, 95000],
+  [40000, 55000, 75000, 105000, 150000],
 ];
 // metric names are read by Meta.runVal(): dist, score, rubies, mult, grinds, grindM, perfect, near,
 // flips, spins, combo (spin+flip in one jump), powerups, golden, spin360/540/720, backflip, frontflip
@@ -415,6 +443,20 @@ const LEVEL_MISSIONS = [
     { m: 'perfect', v: 5, text: '5 PERFECT landings', pl: '5 lądowań PERFECT' },
     { m: 'combo', v: 1, text: 'Land a spin + flip combo', pl: 'Wyląduj combo obrót + salto' },
     { m: 'dist', v: 1500, text: 'Ride 1500 m', pl: 'Przepłyń 1500 m' },
+  ],
+  [
+    { m: 'grinds', v: 5, text: 'Do 5 grinds', pl: 'Zrób 5 grindów' },
+    { m: 'near', v: 6, text: '6 near misses', pl: '6 mijanek o włos' },
+    { m: 'powerups', v: 3, text: 'Pick up 3 power-ups', pl: 'Zbierz 3 power-upy' },
+    { m: 'combo', v: 1, text: 'Land a spin + flip combo', pl: 'Wyląduj combo obrót + salto' },
+    { m: 'dist', v: 1800, text: 'Ride 1800 m', pl: 'Przepłyń 1800 m' },
+  ],
+  [
+    { m: 'golden', v: 1, text: 'Grab a golden ruby', pl: 'Złap złoty rubin' },
+    { m: 'perfect', v: 6, text: '6 PERFECT landings', pl: '6 lądowań PERFECT' },
+    { m: 'spin720', v: 1, text: 'Land a 720', pl: 'Wyląduj obrót 720°' },
+    { m: 'near', v: 8, text: '8 near misses', pl: '8 mijanek o włos' },
+    { m: 'score', v: 60000, text: 'Score 60,000 in one run', pl: '60 000 pkt w jednym przejeździe' },
   ],
 ];
 // ---- rotating missions (3 active). run: must happen in one run; total: counted across runs ----
@@ -496,12 +538,13 @@ const GARAGE_TABS = [['board', 'BOARDS'], ['outfit', 'OUTFITS'], ['fx', 'WATER F
 // SAVE (localStorage)
 // ---------------------------------------------------------------------
 const SAVE_KEY = 'wakeboardRush3D_save_v1';
+const STAGE_ROWS = (fill) => STAGES.map(() => Array.from({ length: 5 }, () => fill));
 function defaultSave() {
   return {
     rubies: 0, totalRubies: 0,
-    unlocked: [1, 0, 0],                 // number of unlocked levels per stage (0 = stage locked)
-    completed: [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]],
-    best: [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]],
+    unlocked: STAGES.map((_, i) => (i === 0 ? 1 : 0)),   // number of unlocked levels per stage (0 = stage locked)
+    completed: STAGE_ROWS(0),
+    best: STAGE_ROWS(0),
     bestOverall: 0, runs: [], totalDistance: 0, totalRuns: 0,
     owned: { board: ['classic'], outfit: ['ocean'], fx: ['classic'] },
     equipped: { board: 'classic', outfit: 'ocean', fx: 'classic' },
@@ -509,15 +552,16 @@ function defaultSave() {
     sel: { stage: 0, level: 0 }, tutorialSeen: false,
     // ---- schema v2 (phase 2) ----
     ver: 2,
-    stars: [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]],   // bitmask per level: 1 goal, 2 score, 4 mission
+    stars: STAGE_ROWS(0),                                       // bitmask per level: 1 goal, 2 score, 4 mission
     stats: { grinds: 0, perfect: 0, golden: 0, powerups: 0, shieldSaves: 0, flips: 0, spins: 0, missionsDone: 0, dailyDone: 0 },
     missions: { active: [], next: 0, condNext: 0, condIntro: false }, // active: [{id, base}]
     daily: { date: '', streak: 0, best: 0, lastDone: '', doneDate: '', freezes: 0, freezeUsed: '' },
     lastSeen: '',                                                // launch date, for the comeback bonus
   };
 }
-const SAVE_VERSION = 2;
+const SAVE_VERSION = 3;
 // v1 -> v2: keep every v1 field, derive stars from what the player already achieved.
+// v3: the new locations — pad the per-stage tables and unlock what the old progress already earned.
 function migrateSave(out, raw) {
   const v = raw.ver || 1;
   if (v < 2) {
@@ -528,6 +572,15 @@ function migrateSave(out, raw) {
       out.stars[s][l] = b;
     }
   }
+  const rows = (a) => STAGES.map((_, s) => {
+    const r = Array.isArray(a && a[s]) ? a[s].slice(0, 5) : [];
+    while (r.length < 5) r.push(0);
+    return r;
+  });
+  out.completed = rows(out.completed); out.best = rows(out.best); out.stars = rows(out.stars);
+  out.unlocked = STAGES.map((_, s) => (Array.isArray(out.unlocked) && out.unlocked[s]) || 0);
+  out.unlocked[0] = out.unlocked[0] || 1;
+  for (let s = 1; s < STAGES.length; s++) if (out.unlocked[s - 1] > 2) out.unlocked[s] = Math.max(out.unlocked[s], 1);
   out.ver = SAVE_VERSION;
   return out;
 }
@@ -545,7 +598,7 @@ function loadSave() {
     out.stats = Object.assign(defaultSave().stats, s.stats || {});
     out.missions = Object.assign(defaultSave().missions, s.missions || {});
     out.daily = Object.assign(defaultSave().daily, s.daily || {});
-    if (!Array.isArray(out.stars) || out.stars.length !== 3) out.stars = defaultSave().stars;
+    if (!Array.isArray(out.stars)) out.stars = defaultSave().stars;
     return migrateSave(out, s);
   } catch (e) { return d; }
 }
@@ -570,6 +623,10 @@ const SND = (() => {
       melody: [12, -1, -1, 15, 14, -1, 12, -1, 10, -1, 12, -1, 7, -1, -1, -1] },
     { bpm: 132, chords: [[57, 'm'], [53, 'M'], [55, 'M'], [57, 'm']], lead: 'saw', bass: 'saw', swing: 0.0,
       melody: [12, 15, 19, 15, 24, 19, 15, 12, 12, 15, 19, 22, 19, 15, 12, 7] },
+    { bpm: 112, chords: [[64, 'm'], [60, 'M'], [67, 'M'], [62, 'm']], lead: 'pluck', bass: 'square', swing: 0.05,
+      melody: [12, -1, 15, 19, -1, 17, 15, -1, 12, 10, -1, 7, 10, 12, -1, -1] },
+    { bpm: 142, chords: [[52, 'm'], [55, 'M'], [58, 'M'], [50, 'm']], lead: 'saw', bass: 'saw', swing: 0.0,
+      melody: [12, 12, 15, 12, 18, 15, 12, 7, 12, 12, 15, 19, 18, 15, 12, 7] },
   ];
   const triad = (root, t) => t === 'm' ? [root, root + 3, root + 7] : [root, root + 4, root + 7];
 
@@ -1040,7 +1097,7 @@ class Recycler {
 const HIDE = new THREE.Matrix4().makeScale(0, 0, 0);
 
 // =====================================================================
-//  ENVIRONMENTS — three visually distinct stages
+//  ENVIRONMENTS — five visually distinct stages
 // =====================================================================
 const CABLE_Y = 8.5;
 const W = { laneHalf: 8, stage: 0, time: 0, weather: 0, flash: 0 };
@@ -1071,6 +1128,16 @@ function pineGeo(dark) {
   const parts = [bake(new THREE.CylinderGeometry(0.18, 0.25, 2, 5), '#4a3424', mat(0, 1, 0))];
   const cols = dark ? ['#1d3b2a', '#234832', '#2a5439'] : ['#2e5e3e', '#376d48', '#3f7a51'];
   for (let i = 0; i < 3; i++) parts.push(bake(new THREE.ConeGeometry(1.7 - i * 0.4, 2.6, 7), cols[i], mat(0, 2.2 + i * 1.5, 0)));
+  return merge(parts);
+}
+function snowPineGeo() {
+  const parts = [bake(new THREE.CylinderGeometry(0.18, 0.25, 2, 5), '#4a3424', mat(0, 1, 0))];
+  const cols = ['#1f4a4a', '#2a5b58', '#356b64'];
+  for (let i = 0; i < 3; i++) {
+    const y = 2.2 + i * 1.5, r = 1.7 - i * 0.4;
+    parts.push(bake(new THREE.ConeGeometry(r, 2.6, 7), cols[i], mat(0, y, 0)));
+    parts.push(bake(new THREE.ConeGeometry(r * 0.62, 0.5, 7), '#eaf7ff', mat(0, y + 1.05, 0)));
+  }
   return merge(parts);
 }
 function pierGeo(wood) {
@@ -1135,10 +1202,22 @@ const ENV_THEMES = [
     hemiSky: '#6b4bd6', hemiGround: '#120a2a', hemiI: 0.55, sunI: 0.6, sunLightCol: '#8fa8ff', neon: 1, waveAmp: 0.8,
     cable: '#ff00e5', tower: '#1a1a2e', accent: '#00e5ff', buoyA: '#ff00e5', buoyB: '#00e5ff', exposure: 1.15, neonCable: true,
   },
+  { // ARCTIC FJORD
+    skyTop: '#0a2a52', skyHorizon: '#9fe0f5', skyBottom: '#dff4ff', sunCol: '#eaf8ff', sunSize: 1.1, stars: 0.35, cloud: 0.3,
+    fog: '#d3ecfa', fogDen: 0.009, deep: '#05252f', shallow: '#2a94ad', skyRef: '#c6ecff', sunDir: [-0.3, 0.35, -0.85], spec: 0.7,
+    hemiSky: '#e4f7ff', hemiGround: '#2b5d73', hemiI: 1.1, sunI: 2.0, sunLightCol: '#eefaff', neon: 0, waveAmp: 1.15,
+    cable: '#2b3b4a', tower: '#dbe9f2', accent: '#4fc3f7', buoyA: '#ff5252', buoyB: '#ffffff', exposure: 1.05,
+  },
+  { // VOLCANO LAGOON
+    skyTop: '#160303', skyHorizon: '#8c3208', skyBottom: '#2a0703', sunCol: '#ff8a3d', sunSize: 1.8, stars: 0.15, cloud: 0.55,
+    fog: '#4a1a0e', fogDen: 0.012, deep: '#0b0505', shallow: '#3a1508', skyRef: '#7a2c12', sunDir: [0.35, 0.4, -0.85], spec: 0.6,
+    hemiSky: '#ff9a5a', hemiGround: '#170707', hemiI: 0.85, sunI: 1.6, sunLightCol: '#ffb27a', neon: 0, waveAmp: 1.2,
+    cable: '#2a2a2a', tower: '#3a302c', accent: '#ff6a00', buoyA: '#ff3d00', buoyB: '#ffd54f', exposure: 1.08,
+  },
 ];
 
 const Env = (() => {
-  const envs = [null, null, null];
+  const envs = STAGES.map(() => null);
   let cur = null;
 
   function buildTropical() {
@@ -1304,7 +1383,139 @@ const Env = (() => {
     return { group, recs, followers, theme: th, lasers };
   }
 
-  const builders = [buildTropical, buildLake, buildNeon];
+  function buildArctic() {
+    const th = ENV_THEMES[3]; const group = new THREE.Group(); const recs = []; const followers = [];
+    const snowTex = canvasTex(256, 256, (c, w, h) => {
+      noiseFill(c, w, h, '#eaf7ff', 0.07, 2200);
+      for (let i = 0; i < 40; i++) { c.fillStyle = 'rgba(150,200,225,0.35)'; c.fillRect(rand(0, w), rand(0, h), rand(10, 40), rand(2, 6)); }
+    }, [8, 60]);
+    for (const s of [-1, 1]) {
+      const p = new THREE.Mesh(new THREE.PlaneGeometry(70, 340), new THREE.MeshLambertMaterial({ map: snowTex.clone() }));
+      p.material.map.needsUpdate = true; p.material.map.repeat.set(8, 60);
+      p.rotation.x = -Math.PI / 2; p.userData = { side: s, off: 41 }; p.position.y = 0.3; group.add(p); followers.push(p);
+    }
+    // snow-laden pines on the banks
+    const sp = snowPineGeo();
+    recs.push(new Recycler(group, [{ geo: sp, mat: lambertVC(), per: 5 }], 22, 9 / Q.decor, (s, set) => {
+      const r = seeded(s.seed);
+      for (let k = 0; k < 5; k++) {
+        const side = k % 2 ? 1 : -1; const x = side * (W.laneHalf + 8 + r() * 30); const sc = 0.85 + r() * 1.0;
+        set(0, k, mat(x, 0, s.z + r() * 6, 0, r() * 6, 0, sc, sc * (0.9 + r() * 0.5), sc));
+      }
+    }));
+    // icebergs
+    const iceA = rockGeo('#d6eefb', 1.5, 1), iceB = rockGeo('#a9d3e6', 1.0, 0);
+    recs.push(new Recycler(group, [{ geo: iceA, mat: lambertVC(), per: 1 }, { geo: iceB, mat: lambertVC(), per: 1 }], 20, 19, (s, set) => {
+      const r = seeded(s.seed + 0.4);
+      for (let k = 0; k < 2; k++) {
+        const side = k ? 1 : -1, sc = 1 + r() * 1.8;
+        set(k, 0, mat(side * (W.laneHalf + 5 + r() * 18), -0.4, s.z + r() * 8, 0, r() * 6, 0, sc, sc * (1.1 + r() * 1.4), sc));
+      }
+    }));
+    // ice-bound piers
+    recs.push(new Recycler(group, [{ geo: pierGeo('#8fb7c9'), mat: lambertVC() }], 3, 115, (s, set) => {
+      const side = Math.round(-s.z / 115) % 2 ? 1 : -1;
+      set(0, 0, mat(side * (W.laneHalf + 3), -0.2, s.z, 0, side > 0 ? 0 : Math.PI, 0));
+    }));
+    // snowy peaks
+    const peaks = new THREE.Group();
+    for (let i = 0; i < 12; i++) {
+      const h = rand(70, 160), r = rand(45, 95);
+      const m = merge([bake(new THREE.ConeGeometry(r, h, 7, 1), i % 2 ? '#a7c6d8' : '#bfdcec', mat(0, h / 2, 0)), bake(new THREE.ConeGeometry(r * 0.34, h * 0.34, 7, 1), '#f2fbff', mat(0, h * 0.84, 0))]);
+      const mm = new THREE.Mesh(jitterGeo(m, 3), new THREE.MeshLambertMaterial({ vertexColors: true, flatShading: true, fog: false }));
+      mm.position.set((i % 2 ? 1 : -1) * rand(110, 280), -5, -rand(210, 390)); peaks.add(mm);
+    }
+    group.add(peaks); followers.push(peaks);
+    // aurora
+    const auroraTex = canvasTex(256, 128, (c, w, h) => {
+      const g = c.createLinearGradient(0, 0, 0, h);
+      g.addColorStop(0, 'rgba(60,255,190,0)'); g.addColorStop(0.45, 'rgba(70,255,190,0.8)'); g.addColorStop(1, 'rgba(120,90,255,0)');
+      c.fillStyle = g; c.fillRect(0, 0, w, h);
+    });
+    const aurora = new THREE.Group();
+    for (let i = 0; i < 3; i++) {
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(230, 52), new THREE.MeshBasicMaterial({ map: auroraTex, transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending, depthWrite: false, fog: false, side: THREE.DoubleSide }));
+      m.position.set((i - 1) * 55, 62 + i * 10, -230 - i * 25); m.rotation.z = (i - 1) * 0.15; aurora.add(m);
+    }
+    group.add(aurora); followers.push(aurora);
+    // snowfall
+    const snowN = Math.max(90, Math.round(Q.rain * 0.7)); const sp2 = new Float32Array(snowN * 6);
+    for (let i = 0; i < snowN; i++) { const x = rand(-32, 32), y = rand(0, 26), z = rand(-60, 10); sp2.set([x, y, z, x + 0.25, y - 0.35, z + 0.1], i * 6); }
+    const sg = new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.BufferAttribute(sp2, 3));
+    const snow = new THREE.LineSegments(sg, new THREE.LineBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.55 }));
+    snow.frustumCulled = false; group.add(snow);
+    const cs = buildCableSystem(group, th); recs.push(cs.rec); followers.push(cs.cable);
+    recs.push(buildLaneBuoys(group, th.buoyA, th.buoyB));
+    return { group, recs, followers, theme: th, snow, aurora };
+  }
+
+  function buildVolcano() {
+    const th = ENV_THEMES[4]; const group = new THREE.Group(); const recs = []; const followers = [];
+    const ashTex = canvasTex(256, 256, (c, w, h) => {
+      noiseFill(c, w, h, '#221b18', 0.14, 4200);
+      for (let i = 0; i < 70; i++) { c.fillStyle = `rgba(255,${Math.floor(rand(70, 140))},20,${rand(0.15, 0.5)})`; c.fillRect(rand(0, w), rand(0, h), rand(2, 9), rand(2, 9)); }
+    }, [8, 60]);
+    for (const s of [-1, 1]) {
+      const p = new THREE.Mesh(new THREE.PlaneGeometry(70, 340), new THREE.MeshLambertMaterial({ map: ashTex.clone() }));
+      p.material.map.needsUpdate = true; p.material.map.repeat.set(8, 60);
+      p.rotation.x = -Math.PI / 2; p.userData = { side: s, off: 40 }; p.position.y = 0.25; group.add(p); followers.push(p);
+    }
+    // basalt columns
+    const colGeo = merge([bake(new THREE.CylinderGeometry(0.5, 0.62, 1, 6), '#241d1b', mat(0, 0.5, 0)), bake(new THREE.CylinderGeometry(0.5, 0.5, 0.15, 6), '#3a2a22', mat(0, 1.02, 0))]);
+    recs.push(new Recycler(group, [{ geo: colGeo, mat: lambertVC(), per: 4 }], 20, 13, (s, set) => {
+      const r = seeded(s.seed);
+      for (let k = 0; k < 4; k++) {
+        const side = k % 2 ? 1 : -1; const x = side * (W.laneHalf + 7 + r() * 20); const sc = 0.8 + r() * 1.1;
+        set(0, k, mat(x, -0.2, s.z + r() * 8, 0, r() * 6, 0, sc, 1.5 + r() * 3.5, sc));
+      }
+    }));
+    // jagged rocks
+    recs.push(new Recycler(group, [{ geo: rockGeo('#2b2422', 1.2, 1), mat: lambertVC(), per: 2 }], 18, 15, (s, set) => {
+      const r = seeded(s.seed + 0.6);
+      for (let k = 0; k < 2; k++) {
+        const side = k ? 1 : -1, sc = 1 + r() * 1.6;
+        set(0, k, mat(side * (W.laneHalf + 4 + r() * 9), -0.2, s.z - r() * 6, r(), r() * 6, r(), sc, sc * (0.7 + r()), sc));
+      }
+    }));
+    // lava fissures along the banks
+    const lava = new THREE.MeshBasicMaterial({ color: '#ff5a00' });
+    recs.push(new Recycler(group, [{ geo: new THREE.BoxGeometry(1, 0.08, 1), mat: lava }], 22, 11, (s, set) => {
+      const r = seeded(s.seed + 0.2);
+      const side = Math.round(-s.z / 11) % 2 ? 1 : -1;
+      set(0, 0, mat(side * (W.laneHalf + 11 + r() * 18), 0.32, s.z, 0, r() * 0.6, 0, 2 + r() * 9, 1, 0.5 + r() * 1.2));
+    }));
+    // volcano cones with glowing craters
+    const cones = new THREE.Group();
+    for (let i = 0; i < 5; i++) {
+      const h = rand(80, 150), r = rand(60, 110);
+      const m = merge([bake(new THREE.ConeGeometry(r, h, 8, 1), i % 2 ? '#2b1d18' : '#35241c', mat(0, h / 2, 0)), bake(new THREE.ConeGeometry(r * 0.3, h * 0.18, 8, 1), '#ff6a00', mat(0, h * 0.95, 0))]);
+      const mm = new THREE.Mesh(jitterGeo(m, 4), new THREE.MeshLambertMaterial({ vertexColors: true, flatShading: true, fog: false }));
+      mm.position.set((i % 2 ? 1 : -1) * rand(140, 300), -8, -rand(230, 400)); cones.add(mm);
+      const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: dotTex, color: '#ff7a1a', transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false, fog: false }));
+      glow.scale.set(r * 1.6, r * 1.2, 1); glow.position.set(mm.position.x, h * 0.9 - 6, mm.position.z); cones.add(glow);
+    }
+    group.add(cones); followers.push(cones);
+    // ash haze
+    const hazeMat = new THREE.SpriteMaterial({ map: dotTex, color: '#4a2c22', transparent: true, opacity: 0.28, depthWrite: false, fog: true });
+    const haze = new THREE.Group();
+    for (let i = 0; i < 12; i++) { const hz = new THREE.Sprite(hazeMat); hz.scale.set(rand(30, 55), rand(6, 12), 1); hz.position.set(rand(-60, 60), rand(6, 18), -rand(20, 170)); haze.add(hz); }
+    group.add(haze); followers.push(haze);
+    // rising embers
+    const embers = new THREE.Group();
+    for (let i = 0; i < 60; i++) {
+      const e = new THREE.Sprite(new THREE.SpriteMaterial({ map: dotTex, color: pick(['#ff8a00', '#ff3d00', '#ffd54f']), transparent: true, opacity: rand(0.4, 0.9), blending: THREE.AdditiveBlending, depthWrite: false }));
+      const sc = rand(0.18, 0.5); e.scale.set(sc, sc, 1);
+      e.position.set(rand(-26, 26), rand(0, 26), -rand(5, 90));
+      e.userData.v = rand(1.4, 4.5);
+      embers.add(e);
+    }
+    group.add(embers); followers.push(embers);
+    const cs = buildCableSystem(group, th); recs.push(cs.rec); followers.push(cs.cable);
+    recs.push(buildLaneBuoys(group, th.buoyA, th.buoyB));
+    return { group, recs, followers, theme: th, embers, haze };
+  }
+
+  const builders = [buildTropical, buildLake, buildNeon, buildArctic, buildVolcano];
   function applyTheme(th, k = 1) {
     skyUniforms.uTop.value.set(th.skyTop); skyUniforms.uHorizon.value.set(th.skyHorizon); skyUniforms.uBottom.value.set(th.skyBottom);
     skyUniforms.uSunCol.value.set(th.sunCol); skyUniforms.uSunSize.value = th.sunSize; skyUniforms.uStars.value = th.stars; skyUniforms.uCloud.value = th.cloud;
@@ -1329,7 +1540,7 @@ const Env = (() => {
   }
   function reset(z) { if (!cur) return; for (const r of cur.recs) r.reset(z); }
   function rebuildAll() { // quality change: drop caches
-    for (let i = 0; i < 3; i++) { if (envs[i]) { if (cur === envs[i]) scene.remove(envs[i].group); envs[i] = null; } }
+    for (let i = 0; i < envs.length; i++) { if (envs[i]) { if (cur === envs[i]) scene.remove(envs[i].group); envs[i] = null; } }
     const s = W.stage; cur = null; set(s);
   }
   function update(dt, camZ, riderZ, t) {
@@ -1364,6 +1575,33 @@ const Env = (() => {
       cur.lasers.children.forEach((l, i) => { l.rotation.z = Math.sin(t * 0.6 + l.userData.ph) * 0.5; l.rotation.x = Math.cos(t * 0.4 + l.userData.ph) * 0.3; });
       const h = (t * 0.1) % 1;
       waterUniforms.uNeonA.value.setHSL(0.86 + Math.sin(t * 0.3) * 0.04, 1, 0.5); waterUniforms.uNeonB.value.setHSL(0.52 + Math.sin(t * 0.25) * 0.03, 1, 0.5);
+    }
+    if (W.stage === 3) { // arctic: snowfall + drifting aurora
+      if (cur.snow) {
+        cur.snow.position.set(camera.position.x, 0, camZ);
+        const sp3 = cur.snow.geometry.attributes.position.array;
+        for (let i = 0; i < sp3.length; i += 6) {
+          sp3[i + 1] -= 3.2 * dt; sp3[i + 4] -= 3.2 * dt;
+          const drift = Math.sin(t * 0.6 + i) * dt * 0.7; sp3[i] += drift; sp3[i + 3] += drift;
+          if (sp3[i + 1] < 0) { sp3[i + 1] += 26; sp3[i + 4] += 26; }
+        }
+        cur.snow.geometry.attributes.position.needsUpdate = true;
+      }
+      if (cur.aurora) cur.aurora.children.forEach((m, i) => {
+        m.material.opacity = 0.22 + 0.16 * Math.sin(t * 0.45 + i * 1.9);
+        m.position.x = (i - 1) * 55 + Math.sin(t * 0.13 + i * 2.1) * 9;
+      });
+    }
+    if (W.stage === 4) { // volcano: embers, ash and flickering lava glow
+      if (cur.embers) {
+        cur.embers.children.forEach((e, i) => {
+          e.position.y += e.userData.v * dt; e.position.x += Math.sin(t * 0.8 + i) * dt * 1.4;
+          if (e.position.y > 28) { e.position.y = -1; e.position.z = -rand(5, 90); }
+        });
+        cur.haze.children.forEach((hz, i) => { hz.material.opacity = 0.2 + 0.1 * Math.sin(t * 0.25 + i); });
+      }
+      const flick = 0.82 + 0.18 * Math.sin(t * 6.7) * Math.sin(t * 2.9);
+      waterUniforms.uShallow.value.set(cur.theme.shallow).multiplyScalar(0.55 + flick * 0.9);
     }
   }
   return { set, reset, update, rebuildAll, get theme() { return cur && cur.theme; } };
@@ -1534,7 +1772,6 @@ const pools = {};       // type -> [entity]
 let themeMats = null;
 
 function makeThemeMats(stage) {
-  const neon = stage === 2;
   const plank = (base, line) => canvasTex(128, 128, (c, w, h) => { noiseFill(c, w, h, base, 0.12, 900); c.fillStyle = line; for (let y = 0; y < h; y += 16) c.fillRect(0, y, w, 2); }, [1, 2]);
   const m = {
     rock: lambertVC(), log: null, wood: null, metal: new THREE.MeshStandardMaterial({ color: '#cfd8dc', metalness: 0.85, roughness: 0.3 }),
@@ -1542,7 +1779,7 @@ function makeThemeMats(stage) {
     crystal: new THREE.MeshStandardMaterial({ color: '#2a0f3d', emissive: '#7c00ff', emissiveIntensity: 0.55, metalness: 0.5, roughness: 0.25, flatShading: true }),
     foam: new THREE.MeshLambertMaterial({ color: '#ffffff', transparent: true, opacity: 0.85 }),
     waveBody: new THREE.MeshLambertMaterial({ color: ENV_THEMES[stage].shallow, transparent: true, opacity: 0.92 }),
-    float: new THREE.MeshLambertMaterial({ color: neon ? '#16162a' : stage === 1 ? '#3b3b3b' : '#e0e0e0' }),
+    float: new THREE.MeshLambertMaterial({ color: ['#e0e0e0', '#3b3b3b', '#16162a', '#dff4ff', '#2a201c'][stage] }),
     glowA: new THREE.MeshBasicMaterial({ color: '#ff00e5' }), glowB: new THREE.MeshBasicMaterial({ color: '#00e5ff' }), glowC: new THREE.MeshBasicMaterial({ color: '#fff200' }),
     warn: new THREE.MeshBasicMaterial({ color: '#ff1744' }),
   };
@@ -1556,12 +1793,24 @@ function makeThemeMats(stage) {
     m.boxTop = new THREE.MeshLambertMaterial({ color: '#9e9e9e' }); m.boxSide = new THREE.MeshLambertMaterial({ color: '#4e342e' });
     m.buoyA = new THREE.MeshLambertMaterial({ color: '#ffeb3b' }); m.buoyB = new THREE.MeshLambertMaterial({ color: '#263238' });
     m.rockCol = '#6e777b'; m.rockCol2 = '#4f6a4a'; m.logCol = '#4e3b2b'; m.logEnd = '#a88b66';
-  } else {
+  } else if (stage === 2) {
     m.log = lambertVC({ emissive: '#220022' }); m.wood = new THREE.MeshLambertMaterial({ map: plank('#1b1833', 'rgba(255,0,229,0.6)'), emissive: '#0a0018' });
     m.boxTop = new THREE.MeshBasicMaterial({ color: '#00e5ff' }); m.boxSide = new THREE.MeshLambertMaterial({ color: '#141228', emissive: '#100020' });
     m.buoyA = new THREE.MeshBasicMaterial({ color: '#ff00e5' }); m.buoyB = new THREE.MeshBasicMaterial({ color: '#00e5ff' });
     m.metal = new THREE.MeshBasicMaterial({ color: '#39ff14' });
     m.rockCol = '#24203a'; m.rockCol2 = '#1a1730'; m.logCol = '#2b1a3a'; m.logEnd = '#ff00e5';
+  } else if (stage === 3) {
+    m.log = lambertVC(); m.wood = new THREE.MeshLambertMaterial({ map: plank('#8fb7c9', 'rgba(30,70,95,0.55)') });
+    m.boxTop = new THREE.MeshLambertMaterial({ color: '#c9f2ff' }); m.boxSide = new THREE.MeshLambertMaterial({ color: '#0277bd' });
+    m.buoyA = new THREE.MeshLambertMaterial({ color: '#ff5252' }); m.buoyB = new THREE.MeshLambertMaterial({ color: '#ffffff' });
+    m.metal = new THREE.MeshStandardMaterial({ color: '#d7e9f2', metalness: 0.7, roughness: 0.35 });
+    m.rockCol = '#b8d8e0'; m.rockCol2 = '#7fa8b8'; m.logCol = '#4a6070'; m.logEnd = '#d9f2fb';
+  } else {
+    m.log = lambertVC(); m.wood = new THREE.MeshLambertMaterial({ map: plank('#3a2a26', 'rgba(255,90,0,0.5)') });
+    m.boxTop = new THREE.MeshLambertMaterial({ color: '#ff6d00' }); m.boxSide = new THREE.MeshLambertMaterial({ color: '#1c1412' });
+    m.buoyA = new THREE.MeshLambertMaterial({ color: '#ff3d00' }); m.buoyB = new THREE.MeshLambertMaterial({ color: '#ffd54f' });
+    m.metal = new THREE.MeshStandardMaterial({ color: '#8a5a2b', metalness: 0.6, roughness: 0.45 });
+    m.rockCol = '#2b2523'; m.rockCol2 = '#3d2a22'; m.logCol = '#2a1f1a'; m.logEnd = '#ff8a00';
   }
   return m;
 }
@@ -2430,7 +2679,7 @@ function checkGoal() {
     const first = !SAVE.completed[s][l];
     SAVE.completed[s][l] = 1;
     SAVE.unlocked[s] = Math.max(SAVE.unlocked[s], Math.min(5, l + 2));
-    if (l >= 2 && s < 2) SAVE.unlocked[s + 1] = Math.max(SAVE.unlocked[s + 1], 1);
+    if (l >= 2 && s < STAGES.length - 1) SAVE.unlocked[s + 1] = Math.max(SAVE.unlocked[s + 1], 1);
     const reward = first ? 20 + l * 15 + s * 20 : 5;
     SAVE.rubies += reward; S.reward = reward; S.firstClear = first;
     persist();
@@ -2773,7 +3022,7 @@ const Meta = (() => {
     coverMissed(t, D);
     const rng = mulberry32(hashStr('wbr-daily-' + t));
     const def = DAILY_POOL[Math.floor(rng() * DAILY_POOL.length)], tier = Math.floor(rng() * 3);
-    const stages = [0, 1, 2].filter(isStageUnlocked);
+    const stages = STAGES.map((_, i) => i).filter(isStageUnlocked);
     const stage = stages[Math.floor(rng() * stages.length)];
     Object.assign(D, { date: t, m: def.m, v: def.v[tier], text: def.text.replace('{v}', fmtV(def.m, def.v[tier])), pl: def.pl.replace('{v}', fmtV(def.m, def.v[tier])), stage, best: 0, done: false });
     D.bestStreak = Math.max(D.bestStreak || 0, D.streak || 0);
@@ -2843,7 +3092,7 @@ const Meta = (() => {
   }
   const countBits = (b) => (b & 1) + ((b >> 1) & 1) + ((b >> 2) & 1);
   function stageStars(s) { return SAVE.stars[s].reduce((a, b) => a + countBits(b), 0); }
-  function totalStars() { return stageStars(0) + stageStars(1) + stageStars(2); }
+  function totalStars() { return STAGES.reduce((a, _, s) => a + stageStars(s), 0); }
 
   function tick() {
     if (!S.cfg || !S.stats) return;
@@ -3043,7 +3292,7 @@ const UI = (() => {
     el('m-sel').innerHTML = `<b>${STAGES[s].name}</b> · ${LEVEL_NAMES[l]}<br><span>${GOALS[s][l].text}</span>`;
     el('m-sel').innerHTML += `<div class="lstars">${starsHtml(SAVE.stars[s][l])}</div>`;
     el('m-best').textContent = fmt(SAVE.bestOverall);
-    el('m-stars').textContent = Meta.totalStars();
+    el('m-stars').textContent = Meta.totalStars() + ' / ' + STAGES.length * 15;
     const D = Meta.ensureDaily(); Meta.ensureMissions();
     el('m-badge').style.display = D.done ? 'none' : '';
     el('m-badge').textContent = D.done ? '' : 'DAILY';
@@ -3075,8 +3324,8 @@ const UI = (() => {
       const def = Meta.byId(a.id), pr = Meta.missionProg(a);
       h += `<div class="mitem"><div class="mt">${def.text}<i>${def.pl}${/przejeźdz|łącznie/.test(def.pl) ? '' : (def.run ? ' · w jednym przejeździe' : ' · łącznie')}${def.cond ? `<b class="cond">🔒 ${Meta.COND_LABEL[def.cond]}</b>` : ''}</i>${bar(pr / def.v)}</div><div class="mr">${Meta.fmtV(def.m, pr)} / ${Meta.fmtV(def.m, def.v)}<br>💎 +${def.r}</div><button class="mini" data-rr="${i}" title="Swap for 10 rubies">↻ 💎10</button></div>`;
     });
-    h += `</div><div class="msec"><div class="mhead">★ STARS <span>${Meta.totalStars()} / 45</span></div>`;
-    for (let s = 0; s < 3; s++) h += `<div class="mitem"><div class="mt">${STAGES[s].name}<i>${SAVE.stars[s].map((b, l) => `${LEVEL_NAMES[l]} ${starsHtml(b)}`).join(' · ')}</i></div><div class="mr">${Meta.stageStars(s)} / 15</div></div>`;
+    h += `</div><div class="msec"><div class="mhead">★ STARS <span>${Meta.totalStars()} / ${STAGES.length * 15}</span></div>`;
+    for (let s = 0; s < STAGES.length; s++) h += `<div class="mitem"><div class="mt">${STAGES[s].name}<i>${SAVE.stars[s].map((b, l) => `${LEVEL_NAMES[l]} ${starsHtml(b)}`).join(' · ')}</i></div><div class="mr">${Meta.stageStars(s)} / 15</div></div>`;
     h += `</div>`;
     el('missions-body').innerHTML = h;
     const pd = el('ms-daily'); if (pd) pd.addEventListener('click', (e) => { e.stopPropagation(); click(); startRun(D.stage, lvl); });
@@ -3153,7 +3402,7 @@ const UI = (() => {
   function renderScores() {
     const runs = SAVE.runs.length ? SAVE.runs.map((r, i) => `<tr><td>${i + 1}</td><td><b>${fmt(r.score)}</b></td><td>${STAGES[r.stage].name.split(' ')[0]} · ${LEVEL_NAMES[r.level]}</td><td>${fmt(r.dist)} m</td><td>💎${r.rubies}</td><td>${r.date}</td></tr>`).join('') : '<tr><td colspan="6">No runs yet — go ride!</td></tr>';
     let grid = '<tr><th></th>' + LEVEL_NAMES.map(n => `<th>${n}</th>`).join('') + '</tr>';
-    for (let s = 0; s < 3; s++) grid += `<tr><th>${STAGES[s].name}</th>` + SAVE.best[s].map((b, l) => `<td class="${SAVE.completed[s][l] ? 'cdone' : ''}">${b ? fmt(b) : '—'}${SAVE.completed[s][l] ? ' ✓' : ''}</td>`).join('') + '</tr>';
+    for (let s = 0; s < STAGES.length; s++) grid += `<tr><th>${STAGES[s].name}</th>` + SAVE.best[s].map((b, l) => `<td class="${SAVE.completed[s][l] ? 'cdone' : ''}">${b ? fmt(b) : '—'}${SAVE.completed[s][l] ? ' ✓' : ''}</td>`).join('') + '</tr>';
     el('scores-body').innerHTML = `<div class="stats"><div>BEST<b>${fmt(SAVE.bestOverall)}</b></div><div>RUNS<b>${fmt(SAVE.totalRuns)}</b></div><div>DISTANCE<b>${fmt(SAVE.totalDistance)} m</b></div><div>RUBIES EVER<b>${fmt(SAVE.totalRubies)}</b></div></div>
       <h3>TOP RUNS</h3><table class="tbl"><tr><th>#</th><th>Score</th><th>Level</th><th>Dist</th><th>Rubies</th><th>Date</th></tr>${runs}</table>
       <h3>BEST PER LEVEL</h3><div class="tblwrap"><table class="tbl grid">${grid}</table></div>`;
@@ -3278,12 +3527,12 @@ const UI = (() => {
     let un = [];
     if (S.firstClear) {
       if (l < 4) un.push(`Unlocked level: <b>${LEVEL_NAMES[l + 1]}</b>`);
-      if (l === 2 && s < 2) un.push(`New location: <b>${STAGES[s + 1].name}</b>`);
+      if (l === 2 && s < STAGES.length - 1) un.push(`New location: <b>${STAGES[s + 1].name}</b>`);
       if (l === 4) un.push(`<b>${STAGES[s].name} mastered!</b>`);
     }
     const ex = runExtras(); if (ex) un.push(ex);
     el('c-unlock').innerHTML = un.join('<br>');
-    el('c-next').style.display = l < 4 ? '' : (s < 2 && isStageUnlocked(s + 1) ? '' : 'none');
+    el('c-next').style.display = l < 4 ? '' : (s < STAGES.length - 1 && isStageUnlocked(s + 1) ? '' : 'none');
     el('c-next').textContent = l < 4 ? 'NEXT LEVEL ▶' : 'NEXT LOCATION ▶';
   }
 
@@ -3356,7 +3605,7 @@ const UI = (() => {
       try {
         const data = JSON.parse(rd.result);
         const sv = data && data.save ? data.save : (data && data.rubies !== undefined ? data : null);
-        const okRows = (a) => Array.isArray(a) && a.length === 3 && a.every(r => Array.isArray(r) && r.length === 5);
+        const okRows = (a) => Array.isArray(a) && a.length > 0 && a.every(r => Array.isArray(r) && r.length === 5);
         if (!sv || !okRows(sv.best) || !okRows(sv.completed) || !okRows(sv.stars)) throw new Error('format');
         if (!confirm('Import zastąpi obecny postęp. Kontynuować?\nImport will replace current progress. Continue?')) return;
         localStorage.setItem(SAVE_KEY, JSON.stringify(sv));
@@ -3412,7 +3661,12 @@ const UI = (() => {
     el('save-file').addEventListener('change', (e) => { const f = e.target.files && e.target.files[0]; if (f) importSave(f); e.target.value = ''; });
     btn('f-levels', () => { toMenu(); show('levels'); });
     btn('f-menu', () => toMenu());
-    btn('c-next', () => { endRunRecord(); const s = S.stage, l = S.level; if (l < 4) { SAVE.sel.level = l + 1; startRun(s, l + 1); } else { SAVE.sel.stage = s + 1; SAVE.sel.level = 0; startRun(s + 1, 0); } });
+    btn('c-next', () => {
+      endRunRecord(); const s = S.stage, l = S.level;
+      if (l < 4) { SAVE.sel.level = l + 1; startRun(s, l + 1); }
+      else if (s < STAGES.length - 1) { SAVE.sel.stage = s + 1; SAVE.sel.level = 0; startRun(s + 1, 0); }
+      else { SAVE.sel.stage = s; SAVE.sel.level = 0; toMenu(); show('stages'); }
+    });
     btn('c-keep', () => { S.mode = 'play'; show('hud'); last = performance.now(); });
     btn('c-replay', () => { endRunRecord(); startRun(S.stage, S.level); });
     btn('c-menu', () => toMenu());
