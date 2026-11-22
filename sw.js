@@ -1,11 +1,23 @@
 // WAKEBOARD RUSH 3D — service worker: cache every game file for full offline play.
 // Bump VERSION whenever any published file changes so clients pick up the update.
-const VERSION = 'wbr3d-v2.0.7';
+const VERSION = 'wbr3d-v2.1.0';
 const FILES = [
   './',
   './index.html',
   './manifest.webmanifest',
   './vendor/three.module.js',
+  './vendor/jsm/postprocessing/EffectComposer.js',
+  './vendor/jsm/postprocessing/Pass.js',
+  './vendor/jsm/postprocessing/ShaderPass.js',
+  './vendor/jsm/postprocessing/MaskPass.js',
+  './vendor/jsm/postprocessing/RenderPass.js',
+  './vendor/jsm/postprocessing/UnrealBloomPass.js',
+  './vendor/jsm/postprocessing/SMAAPass.js',
+  './vendor/jsm/postprocessing/OutputPass.js',
+  './vendor/jsm/shaders/CopyShader.js',
+  './vendor/jsm/shaders/LuminosityHighPassShader.js',
+  './vendor/jsm/shaders/SMAAShader.js',
+  './vendor/jsm/shaders/OutputShader.js',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-192.png',

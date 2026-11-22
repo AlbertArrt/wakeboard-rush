@@ -20,6 +20,12 @@ Przeglądarkowa gra 3D (three.js r160) o wakeboardingu za wyciągiem linowym. Mo
 - **Wyzwanie dnia**: generowane z daty (każdy gracz ma tego dnia to samo), na wskazanej lokacji, w jednym przejeździe. Nagroda rośnie z **serią dni (streak)** – 50 💎 + 10 za każdy kolejny dzień (maks. +70). Opuszczony dzień zeruje serię, chyba że masz **❄ streak freeze** (30 💎, maks. 2) – jeden freeze chroni dokładnie jeden opuszczony dzień.
 - **Nagroda za powrót**: po 3 lub więcej dniach przerwy dostajesz +20 💎 i misję „powrót” (600 m w jednym przejeździe) – przerwa nie jest karana, tylko nagradzana powrotem.
 
+**Post‑processing (bloom + SMAA)**
+- **Bloom** (UnrealBloomPass): świecą woda, słońce, neonowe akcenty i złote rubiny. Siła 0.42 na MED, 0.55 na HIGH.
+- **SMAA** (Subpixel Morphological Anti‑Aliasing): wygładza krawędzie, bo render trafia do bufora HDR bez MSAA.
+- **LOW** renderuje bez post‑processingu (czysty `renderer.render`), a przy spadku FPS auto‑jakość sama schodzi z HIGH → MED → LOW. Wyłącznik: SETTINGS → POST FX.
+- Karta wyniku i zrzut z canvasa nadal działają: kompozycja i kopiowanie do 1080×1080 odbywają się w tym samym takcie co render.
+
 **Duch i power‑upy**
 - **Duch najlepszego przejazdu** (półprzezroczysty, błękitny) dla każdego poziomu; w HUD widać przewagę/stratę w metrach. Wyłącznik: SETTINGS → GHOST.
 - **Power‑upy** na trasie: 🧲 **MAGNES** (przyciąga rubiny), 🛡️ **TARCZA** (pochłania jedną wywrotkę), ⚡ **BOOST** (przyspieszenie, rozbija przeszkody), ✖2 **SCORE x2**. Każdy ma licznik czasu w HUD, własny efekt i dźwięk.
@@ -40,6 +46,7 @@ Zapis jest **zgodny wstecz**: stare postępy (rubiny, garaż, odblokowania, reko
 | `manifest.webmanifest` | Manifest PWA |
 | `sw.js` | Service worker (offline) |
 | `vendor/three.module.js` | three.js r160 (lokalnie, bez CDN) |
+| `vendor/jsm/` | passes z three.js (EffectComposer, UnrealBloomPass, SMAAPass, OutputPass + shadery), lokalnie, bez bundlera |
 | `icons/` | Ikony aplikacji (generuje `tools/make_icons.py`, PIL) |
 | `index.src.html` | Szablon HTML/CSS (znacznik `<!--GAME-->`) |
 | `src/*.js` | Kod źródłowy (core, audio, świat, otoczenie, rider, obiekty, gra, meta: misje/gwiazdki/duch/PWA, UI) |

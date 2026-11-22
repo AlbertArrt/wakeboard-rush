@@ -178,6 +178,7 @@ body.portrait .stats{grid-template-columns:repeat(2,1fr)}
   <div class="set">Camera shake<button class="tg" id="set-shake">ON</button></div>
   <div class="set">Ghost rider (your best run)<button class="tg" id="set-ghost">ON</button></div>
   <div class="set">Slow motion on big landings<button class="tg" id="set-slowmo">ON</button></div>
+  <div class="set">Post FX — bloom + SMAA <small>(off on LOW)</small><button class="tg" id="set-postfx">ON</button></div>
   <div class="set"><span>App &amp; offline<br><small class="pstat" id="set-pwa">…</small></span><button class="tg on" id="set-install" style="display:none">INSTALL</button></div>
   <div class="set"><span>Save backup · kopia zapisu<br><small class="pstat">Export a file or restore progress on another device</small></span><div class="seg"><button id="set-export">EXPORT</button><button id="set-import">IMPORT</button></div></div>
   <input type="file" id="save-file" accept="application/json,.json" style="display:none">
@@ -203,6 +204,11 @@ body.portrait .stats{grid-template-columns:repeat(2,1fr)}
 //  WAKEBOARD RUSH 3D  —  core: utils, data, save
 // =====================================================================
 import * as THREE from 'three';
+import { EffectComposer } from './vendor/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from './vendor/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from './vendor/jsm/postprocessing/UnrealBloomPass.js';
+import { SMAAPass } from './vendor/jsm/postprocessing/SMAAPass.js';
+import { OutputPass } from './vendor/jsm/postprocessing/OutputPass.js';
 
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => Array.from(document.querySelectorAll(s));
@@ -499,7 +505,7 @@ function defaultSave() {
     bestOverall: 0, runs: [], totalDistance: 0, totalRuns: 0,
     owned: { board: ['classic'], outfit: ['ocean'], fx: ['classic'] },
     equipped: { board: 'classic', outfit: 'ocean', fx: 'classic' },
-    settings: { sound: true, music: true, volume: 0.8, quality: 'auto', sens: 1.0, trickButtons: true, shake: true, ghost: true, slowmo: true },
+    settings: { sound: true, music: true, volume: 0.8, quality: 'auto', sens: 1.0, trickButtons: true, shake: true, ghost: true, slowmo: true, postfx: true },
     sel: { stage: 0, level: 0 }, tutorialSeen: false,
     // ---- schema v2 (phase 2) ----
     ver: 2,
@@ -750,9 +756,31 @@ const camera = new THREE.PerspectiveCamera(62, 1, 0.1, 700);
 scene.add(camera);
 scene.fog = new THREE.FogExp2(0xbfe9ff, 0.006);
 
+// ---------------- post-processing (three's own passes; bloom on HIGH, SMAA on MED+) ----------------
+const postfx = { composer: null, bloom: null, smaa: null };
+{
+  const composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), qualityName === 'medium' ? 0.42 : 0.55, 0.5, 0.72);
+  composer.addPass(bloom);
+  composer.addPass(new OutputPass());   // tone map + sRGB after the HDR bloom
+  const smaa = new SMAAPass(1, 1);
+  composer.addPass(smaa);
+  postfx.composer = composer; postfx.bloom = bloom; postfx.smaa = smaa;
+}
+const postfxOn = () => qualityName !== 'low' && SAVE.settings.postfx !== false;
+const bloomOn = () => postfxOn();   // LOW renders without post FX; MED gets a gentler glow
+// one entry point for every frame and for the share-card snapshot (canvas has no preserveDrawingBuffer)
+function renderScene() {
+  if (!postfxOn()) { renderer.render(scene, camera); return; }
+  postfx.bloom.enabled = bloomOn(); postfx.smaa.enabled = true;
+  postfx.composer.render();
+}
+
 function applyPixelRatio() {
   const dpr = window.devicePixelRatio || 1;
   renderer.setPixelRatio(Math.max(0.5, Math.min(dpr, Q.pr) * prScale));
+  if (postfx.composer) { postfx.composer.setPixelRatio(renderer.getPixelRatio()); postfx.composer.setSize(window.innerWidth, window.innerHeight); }
 }
 function onResize() {
   const w = window.innerWidth, h = window.innerHeight;
@@ -2616,7 +2644,7 @@ function frame(now) {
   water.position.set(0, 0, Math.round((camera.position.z - 140) / 4) * 4);
   sky.position.copy(camera.position);
   Env.update(dt, camera.position.z, S.z, W.time);
-  renderer.render(scene, camera);
+  renderScene();
   // audio
   if (playing) {
     const turn = Math.min(1, Math.abs(S.vx) / 9);
@@ -2638,6 +2666,7 @@ function frame(now) {
 }
 function setQuality(name, auto) {
   qualityName = name; Q = QUALITY[name]; prScale = 1;
+  postfx.bloom.strength = name === 'medium' ? 0.42 : 0.55;
   applyPixelRatio(); buildWater(); Particles.build(Q.particles); Wake.build(Q.wake);
 }
 
@@ -3138,6 +3167,7 @@ const UI = (() => {
     el('set-shake').classList.toggle('on', st.shake); el('set-shake').textContent = st.shake ? 'ON' : 'OFF';
     el('set-ghost').classList.toggle('on', st.ghost !== false); el('set-ghost').textContent = st.ghost !== false ? 'ON' : 'OFF';
     el('set-slowmo').classList.toggle('on', st.slowmo !== false); el('set-slowmo').textContent = st.slowmo !== false ? 'ON' : 'OFF';
+    el('set-postfx').classList.toggle('on', st.postfx !== false); el('set-postfx').textContent = st.postfx !== false ? 'ON' : 'OFF';
     updateInstall();
     el('set-vol').value = Math.round(st.volume * 100); el('set-vol-v').textContent = Math.round(st.volume * 100) + '%';
     el('set-sens').value = Math.round(st.sens * 100); el('set-sens-v').textContent = st.sens.toFixed(2) + 'x';
@@ -3263,7 +3293,7 @@ const UI = (() => {
     let blob = null;
     try {
       // WebGL canvas has no preserveDrawingBuffer: copy it in the same task as a fresh render
-      renderer.render(scene, camera);
+      renderScene();
       const src = renderer.domElement, W = 1080, H = 1080;
       const c = document.createElement('canvas'); c.width = W; c.height = H;
       const g = c.getContext('2d');
@@ -3355,7 +3385,7 @@ const UI = (() => {
     // settings
     const tog = (id, key) => btn(id, () => { SAVE.settings[key] = !SAVE.settings[key]; persist(); SND.applySettings(); renderSettings(); updateMute(); });
     tog('set-sound', 'sound'); tog('set-music', 'music'); tog('set-tb', 'trickButtons'); tog('set-shake', 'shake');
-    tog('set-ghost', 'ghost'); tog('set-slowmo', 'slowmo');
+    tog('set-ghost', 'ghost'); tog('set-slowmo', 'slowmo'); tog('set-postfx', 'postfx');
     el('set-vol').addEventListener('input', (e) => { SAVE.settings.volume = e.target.value / 100; SND.applySettings(); renderSettings(); persist(); });
     el('set-sens').addEventListener('input', (e) => { SAVE.settings.sens = e.target.value / 100; renderSettings(); persist(); });
     document.querySelectorAll('#set-quality button').forEach(b => b.addEventListener('click', (e) => {
@@ -3467,6 +3497,7 @@ function boot() {
     S, get SAVE() { return SAVE; }, ents, startRun, action, crash, addFeature, addObstacle, addRuby, addPowerup, activatePowerup, UI, Meta, Ghost, PWA,
     land, launch, onRamp, persist, toMenu, endRunRecord,
     get fps() { return S.fps; }, quality: () => qualityName, setQuality,
+    postfx: () => ({ on: postfxOn(), bloom: bloomOn(), composer: !!postfx.composer }),
   };
 }
 boot();
