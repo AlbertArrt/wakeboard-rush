@@ -16,7 +16,7 @@ Przeglądarkowa gra 3D (three.js r160) o wakeboardingu za wyciągiem linowym. Mo
 
 **Gwiazdki, misje, wyzwanie dnia**
 - **3 gwiazdki na poziom**: ★ cel poziomu, ★ próg punktów, ★ misja poziomu. Widoczne w wyborze poziomu, w karcie lokacji, w menu i na ekranie ukończenia. Każda nowa gwiazdka = +10 💎. Po ukończeniu celu możesz wybrać **KEEP RIDING**, żeby dobić punkty do gwiazdki.
-- **Misje** (menu → MISSIONS & DAILY): zawsze 3 aktywne, z puli 30; po wykonaniu dostajesz rubiny, a na miejsce wskakuje następna. Misję można wymienić za 10 💎. Część misji ma **ograniczenie** (bez wywrotki, bez power‑upów, bez rubinów, bez ratunku tarczy) – postęp liczy się tylko wtedy, gdy przejazd trzyma warunek, a wywrotka zeruje go do końca biegu.
+- **Misje** (menu → MISSIONS & DAILY): zawsze 3 aktywne, z puli 30; po wykonaniu dostajesz rubiny, a na miejsce wskakuje następna. Misję można wymienić za 10 💎. Część misji ma **ograniczenie** (bez wywrotki, bez power‑upów, bez rubinów, bez ratunku tarczy) – postęp liczy się tylko wtedy, gdy przejazd trzyma warunek, a wywrotka zeruje go do końca biegu. Na tablicy zawsze jest **przynajmniej jedna misja z ograniczeniem** (maks. dwie), więc pojawiają się regularnie.
 - **Wyzwanie dnia**: generowane z daty (każdy gracz ma tego dnia to samo), na wskazanej lokacji, w jednym przejeździe. Nagroda rośnie z **serią dni (streak)** – 50 💎 + 10 za każdy kolejny dzień (maks. +70). Opuszczony dzień zeruje serię, chyba że masz **❄ streak freeze** (30 💎, maks. 2) – jeden freeze chroni dokładnie jeden opuszczony dzień.
 - **Nagroda za powrót**: po 3 lub więcej dniach przerwy dostajesz +20 💎 i misję „powrót” (600 m w jednym przejeździe) – przerwa nie jest karana, tylko nagradzana powrotem.
 
