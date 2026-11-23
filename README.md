@@ -51,6 +51,12 @@ Przeglądarkowa gra 3D (three.js r160) o wakeboardingu za wyciągiem linowym. Mo
 - **Power‑upy** na trasie: 🧲 **MAGNES** (przyciąga rubiny), 🛡️ **TARCZA** (pochłania jedną wywrotkę), ⚡ **BOOST** (przyspieszenie, rozbija przeszkody), ✖2 **SCORE x2**. Każdy ma licznik czasu w HUD, własny efekt i dźwięk.
 - Rzadkie **złote rubiny** (+5 💎 i bonus punktowy).
 
+**Telefon i aktualizacje**
+- W trakcie biegu gra trzyma **Wake Lock** — ekran telefonu nie przygasa i nie blokuje się w środku przejazdu; blokada wraca po powrocie z innej karty i jest zwalniana przy pauzie, wyniku i powrocie do menu.
+- **Wibracje** (Android): krótki impuls na PERFECT, mocniejszy wzór na wywrotkę, średni na ratunek tarczą. Wyłącznik: SETTINGS → Vibration · Wibracje — wiersz pokazuje się tylko tam, gdzie przeglądarka ma Vibration API.
+- W zainstalowanej aplikacji / pełnym ekranie gra blokuje **orientację poziomą**; w zwykłej karcie przeglądarki API na to nie pozwala, więc blokada jest wtedy po cichu pomijana.
+- Gdy w tle pojawi się nowa wersja, na górze wyskakuje pasek **„Nowa wersja gotowa”** z przyciskiem ODŚWIEŻ. Gra nigdy nie przeładowuje się w trakcie biegu — to gracz decyduje, kiedy się zaktualizować.
+
 **Język PL / EN**
 - Cały interfejs mówi w jednym języku naraz: menu, HUD, pauza, ekran wyniku, wyzwanie dnia, misje, garaż, rekordy, ustawienia, ekran pomocy, komunikaty w trakcie jazdy i karta wyniku. Nazwy lokacji, poziomy trudności i opisy tras są tłumaczone, a misje i cele mają własne wersje językowe (EN + PL).
 - Język wybiera się w **SETTINGS → Language · Język** (PL / EN), a przy pierwszym uruchomieniu ustawia się automatycznie według języka przeglądarki. Wybór jest zapisywany w localStorage razem z resztą ustawień, więc zostaje po odświeżeniu i po powrocie do gry.

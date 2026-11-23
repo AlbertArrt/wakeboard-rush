@@ -91,6 +91,10 @@ body:has(#trickbtns.on) #hint{bottom:110px}
 #trickbtns .spin{opacity:.35}#trickbtns.air .spin{opacity:1}
 #tb-jump{width:84px!important;height:84px!important;background:rgba(255,138,0,.45)!important;font-size:14px!important}
 #toast{position:fixed;left:50%;top:14%;transform:translateX(-50%);background:rgba(0,0,0,.75);padding:10px 18px;border-radius:14px;z-index:40;font-weight:800;opacity:0;pointer-events:none}#toast.show{animation:toast 2s}
+#swupd{position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:41;display:none;align-items:center;gap:10px;padding:8px 8px 8px 14px;border-radius:14px;background:rgba(6,42,58,.94);border:1px solid rgba(125,249,255,.4);color:#dff6ff;font:800 13px/1.2 system-ui,sans-serif;box-shadow:0 10px 28px rgba(0,0,0,.45)}
+#swupd.on{display:flex}
+#swupd button{border:0;border-radius:10px;padding:7px 12px;background:#7df9ff;color:#04121c;font:900 12px/1 system-ui,sans-serif;letter-spacing:.04em}
+#swupd button:active{transform:scale(.96)}
 @keyframes toast{10%,80%{opacity:1}100%{opacity:0}}
 .big{font-size:clamp(34px,8vw,60px);font-weight:900;font-style:italic;text-align:center;margin:0}
 #f-title{color:#ff5252;text-shadow:0 4px 0 #4a0000}#c-title{color:#ffd54f;text-shadow:0 4px 0 #6a3a00}
@@ -157,6 +161,7 @@ body.portrait .stats{grid-template-columns:repeat(2,1fr)}
   <div class="hr"><div class="hrbtns"><button id="btn-mute">🔊</button><button id="btn-pause">II</button></div><div id="h-rubybox"><span class="gem">💎</span> <span id="h-rubies">0</span></div><div id="h-dist">0 m</div><div id="h-speed">0 km/h</div><div id="h-ghost"></div></div>
 </div>
 <div id="popups"></div><div id="tricklive"></div><div id="hint"></div><div id="toast"></div>
+<div id="swupd"><span data-i18n="New version ready|Nowa wersja gotowa">New version ready</span><button id="sw-refresh" data-i18n="REFRESH|ODŚWIEŻ">REFRESH</button></div>
 <div id="trickbtns"><div class="grp"><button id="tb-left" class="spin">⟲<br><span data-i18n="SPIN|OBRÓT">SPIN</span></button><button id="tb-right" class="spin">⟳<br><span data-i18n="SPIN|OBRÓT">SPIN</span></button></div><div class="grp"><button id="tb-down" class="spin"><span data-i18n-html="FRONT<br>FLIP ↓|SALTO<br>W PRZÓD ↓">FRONT<br>FLIP ↓</span></button><button id="tb-jump" data-i18n="JUMP ↑|SKOK ↑">JUMP ↑</button></div></div>
 
 <div class="screen" id="scr-menu"><div class="wallet"><span class="gem">💎</span> <span id="m-rubies">0</span></div>
@@ -177,6 +182,7 @@ body.portrait .stats{grid-template-columns:repeat(2,1fr)}
   <div class="set"><span data-i18n="Control sensitivity|Czułość sterowania">Control sensitivity</span> <span><input type="range" id="set-sens" min="50" max="200"> <span id="set-sens-v"></span></span></div>
   <div class="set"><span data-i18n="On-screen trick buttons|Przyciski trików na ekranie">On-screen trick buttons</span><button class="tg" id="set-tb">ON</button></div>
   <div class="set"><span data-i18n="Camera shake|Wstrząsy kamery">Camera shake</span><button class="tg" id="set-shake">ON</button></div>
+  <div class="set"><span data-i18n="Vibration feedback|Wibracje">Vibration feedback</span><button class="tg" id="set-haptic">ON</button></div>
   <div class="set"><span data-i18n="Ghost rider (your best run)|Duch (Twój najlepszy przejazd)">Ghost rider (your best run)</span><button class="tg" id="set-ghost">ON</button></div>
   <div class="set"><span data-i18n="Slow motion on big landings|Slow motion przy dużych lądowaniach">Slow motion on big landings</span><button class="tg" id="set-slowmo">ON</button></div>
   <div class="set"><span><span data-i18n="Post FX — bloom + SMAA|Post FX — bloom + SMAA">Post FX — bloom + SMAA</span> <small data-i18n="(off on LOW)|(wył. na LOW)">(off on LOW)</small></span><button class="tg" id="set-postfx">ON</button></div>
@@ -609,7 +615,7 @@ function defaultSave() {
     bestOverall: 0, runs: [], totalDistance: 0, totalRuns: 0,
     owned: { board: ['classic'], outfit: ['ocean'], fx: ['classic'] },
     equipped: { board: 'classic', outfit: 'ocean', fx: 'classic' },
-    settings: { sound: true, music: true, volume: 0.8, quality: 'auto', sens: 1.0, trickButtons: true, shake: true, ghost: true, slowmo: true, postfx: true, lang: detectLang() },
+    settings: { sound: true, music: true, volume: 0.8, quality: 'auto', sens: 1.0, trickButtons: true, shake: true, haptics: true, ghost: true, slowmo: true, postfx: true, lang: detectLang() },
     sel: { stage: 0, level: 0 }, tutorialSeen: false,
     // ---- schema v2 (phase 2) ----
     ver: 2,
@@ -2562,14 +2568,16 @@ function startRun(stage, level) {
   camera.position.set(0, 3.5, 9);
   S.mode = 'play'; S.recorded = false; S.hintKickerShown = false; S.reward = 0; S.firstClear = false;
   SND.init(); SND.setStage(stage); SND.play(true);
+  Mobile.keepAwake(true); Mobile.landscape();
   PowerFX.reset(); Ghost.startRun(stage, level); Meta.onRunStart();
   UI.onRunStart();
 }
-function pauseGame() { if (S.mode !== 'play') return; S.mode = 'paused'; UI.show('pause'); SND.update(0, 0, 0); persist(); }
-function resumeGame() { if (S.mode !== 'paused' && S.mode !== 'complete') return; S.mode = 'play'; UI.show('hud'); last = performance.now(); }
-function toMenu() { endRunRecord(); S.mode = 'menu'; clearEnts(); Rider.reattachBoard(); Rider.flipG.rotation.set(0, 0, 0); Rider.spinG.rotation.set(0, 0, 0); S.y = 0; SND.setIntensity(0); UI.show('menu'); }
+function pauseGame() { if (S.mode !== 'play') return; S.mode = 'paused'; UI.show('pause'); SND.update(0, 0, 0); Mobile.keepAwake(false); persist(); }
+function resumeGame() { if (S.mode !== 'paused' && S.mode !== 'complete') return; S.mode = 'play'; UI.show('hud'); Mobile.keepAwake(true); last = performance.now(); }
+function toMenu() { endRunRecord(); S.mode = 'menu'; Mobile.keepAwake(false); clearEnts(); Rider.reattachBoard(); Rider.flipG.rotation.set(0, 0, 0); Rider.spinG.rotation.set(0, 0, 0); S.y = 0; SND.setIntensity(0); UI.show('menu'); }
 
 function endRunRecord() {
+  Mobile.keepAwake(false);
   if (S.recorded || !S.cfg || S.score <= 0) { if (!S.recorded && S.cfg) Meta.onRunEnd(); S.recorded = true; return; }
   S.recorded = true;
   const s = S.stage, l = S.level;
@@ -2724,7 +2732,7 @@ function land(surface, feat) {
     if (flipT) { S.stats.flips++; SAVE.stats.flips = (SAVE.stats.flips || 0) + 1; }
     if (spinT && flipT) S.stats.combo++;
     const big = n >= 2 || spinT >= 540 || flipT >= 360 || height > 3.4;
-    if (perfect) { UI.popup(tr('PERFECT LANDING!', 'PERFECT LĄDOWANIE!'), 'perfect'); SND.sfx('perfect'); }
+    if (perfect) { UI.popup(tr('PERFECT LANDING!', 'PERFECT LĄDOWANIE!'), 'perfect'); SND.sfx('perfect'); Mobile.buzz(12); }
     else if (saved) { UI.popup('SAVED IT!', 'warn'); S.stats.saves++; }
     else if (sketchy) UI.popup(tr('SKETCHY...', 'NIEPEWNE LĄDOWANIE...'), 'warn');
     if (!sketchy && (perfect || big) && n) landingFX(perfect, big);
@@ -2766,7 +2774,7 @@ function crash(reason, obj) {
   S.mode = 'crashed'; S.crashT = 0; S.crashReason = crashText(reason);
   if (S.stats) S.stats.crashes++;
   S.mult = 1;
-  SND.sfx('crash'); S.shake = 0.9;
+  SND.sfx('crash'); S.shake = 0.9; Mobile.buzz([30, 50, 30]);
   splash(S.x, S.z, 2.2);
   Rider.detachBoard();
   S.crash = { vy: 5 + Math.random() * 2, vz: -S.speed * 0.5, rx: rand(5, 9) * (Math.random() < 0.5 ? -1 : 1), ry: rand(-6, 6), bvy: 7, bvx: rand(-3, 3), bvz: -S.speed * 0.6, brx: rand(-10, 10), bry: rand(-8, 8), handleZ: 0 };
@@ -2789,7 +2797,7 @@ function shieldSave(obj) {
   S.spin = S.spinTarget = S.flip = S.flipTarget = 0; S.tricksN = 0; S.revert = 0;
   Rider.flipG.rotation.x = 0; Rider.spinG.rotation.y = 0;
   for (let k = 0; k < 40; k++) { const a = k / 40 * Math.PI * 2; Particles.emit(S.x + Math.cos(a) * 1.1, S.y + 0.9 + Math.sin(a * 3) * 0.5, S.z + Math.sin(a) * 1.1, Math.cos(a) * 6, rand(1, 4), Math.sin(a) * 6, '#40c4ff', 0.35, 0.7, 4); }
-  SND.sfx('shield'); S.shake = Math.max(S.shake, 0.4); UI.flash('blue', 0.8);
+  SND.sfx('shield'); S.shake = Math.max(S.shake, 0.4); UI.flash('blue', 0.8); Mobile.buzz(25);
   UI.popup(tr('SHIELD SAVED YOU!', 'TARCZA CIĘ URATOWAŁA!'), 'goal');
 }
 function splash(x, z, k) {
@@ -3684,12 +3692,45 @@ const PowerFX = (() => {
   return { reset, update };
 })();
 
+// ---------------------------------------------------------------- mobile: wake lock, haptics, orientation
+// The screen must not dim mid-run; PERFECTs, wipeouts and shield saves also get a short vibration on
+// Android. Both APIs are missing on some platforms (iOS Safari has no Vibration API), so every call
+// fails silently and nothing depends on them being there.
+const Mobile = (() => {
+  let wake = null, want = false;
+  function release() { const w = wake; wake = null; if (w) { try { w.release().catch(() => { }); } catch (e) { } } }
+  async function acquire() {
+    if (!want || wake || !('wakeLock' in navigator) || document.visibilityState !== 'visible') return;
+    try { wake = await navigator.wakeLock.request('screen'); wake.addEventListener('release', () => { wake = null; }); }
+    catch (e) { wake = null; }
+  }
+  function keepAwake(on) { want = !!on; if (want) acquire(); else release(); }
+  // the browser drops the lock whenever the tab is hidden, so take it back on return
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && want) acquire(); });
+  function buzz(ms) {
+    if (!IS_TOUCH || !navigator.vibrate || SAVE.settings.haptics === false) return;
+    if (S.mode !== 'play' && S.mode !== 'paused') return;
+    try { navigator.vibrate(ms); } catch (e) { }
+  }
+  // the landscape lock only takes effect in fullscreen / an installed app; elsewhere it rejects and is ignored
+  function landscape() {
+    try { const o = screen.orientation; if (o && o.lock) { const p = o.lock('landscape'); if (p && p.catch) p.catch(() => { }); } } catch (e) { }
+  }
+  return { keepAwake, buzz, landscape, get awake() { return !!wake; } };
+})();
+
 // ---------------------------------------------------------------- PWA: service worker + install button
 const PWA = { deferred: null, installed: false, sw: 'off' };
-// ---- updates are silent: a new build is picked up in the background, with no prompt UI
+// ---- a new build is picked up in the background; the player is told with a bar instead of a surprise reload
 let swUpdateLastCheck = 0;
+// a new build finished installing: show the bar instead of swapping the code under a running player
+function showSWBar() { const b = document.getElementById('swupd'); if (b) b.classList.add('on'); }
 function watchSWUpdate(reg) {
   if (!reg) return;
+  reg.addEventListener('updatefound', () => {
+    const w = reg.installing; if (!w) return;
+    w.addEventListener('statechange', () => { if (w.state === 'installed' && navigator.serviceWorker.controller) showSWBar(); });
+  });
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) return;
     const now = Date.now(); if (now - swUpdateLastCheck < 60000) return;
@@ -3708,10 +3749,10 @@ function initPWA() {
     const hadController = !!navigator.serviceWorker.controller;
     let swReloaded = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (!hadController || swReloaded) return; swReloaded = true;
-      // never yank the page away mid-run; the next load already gets the new build
-      if (S.mode === 'play' || S.mode === 'paused' || S.mode === 'crashed') return;
-      location.reload();
+      if (!hadController || swReloaded) return;
+      // never yank the page away mid-run: leave the bar up and let the player refresh between runs
+      if (S.mode === 'play' || S.mode === 'paused' || S.mode === 'crashed') { showSWBar(); return; }
+      swReloaded = true; location.reload();
     });
     const reg = () => navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then((r) => { PWA.sw = 'registered'; UI.updateInstall(); watchSWUpdate(r); r.update().catch(() => { }); return navigator.serviceWorker.ready; })
       .then(() => { PWA.sw = 'ready'; UI.updateInstall(); }).catch((err) => { PWA.sw = 'error'; console.warn('SW registration failed', err); UI.updateInstall(); });
@@ -3892,6 +3933,11 @@ const UI = (() => {
     const st = SAVE.settings;
     const onoff = (id, v) => { el(id).classList.toggle('on', v); el(id).textContent = v ? tr('ON', 'WŁ') : tr('OFF', 'WYŁ'); };
     onoff('set-sound', st.sound); onoff('set-music', st.music); onoff('set-tb', st.trickButtons); onoff('set-shake', st.shake);
+    const hap = el('set-haptic');
+    if (hap) {
+      onoff('set-haptic', st.haptics !== false);
+      const row = hap.closest('.set'); if (row) row.style.display = (IS_TOUCH && navigator.vibrate) ? '' : 'none';
+    }
     onoff('set-ghost', st.ghost !== false); onoff('set-slowmo', st.slowmo !== false); onoff('set-postfx', st.postfx !== false);
     document.querySelectorAll('#set-lang button').forEach(b => b.classList.toggle('on', b.dataset.l === LANG()));
     updateInstall();
@@ -4112,12 +4158,13 @@ const UI = (() => {
       e.stopPropagation(); click(); SAVE.settings.lang = b.dataset.l; persist(); applyI18n();
     }));
     btn('set-install', () => promptInstall());
+    btn('sw-refresh', () => location.reload());
     document.querySelectorAll('.back').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); click(); if (b.closest('#scr-settings')) { show(settingsBack); return; } show(b.dataset.to || 'menu'); }));
     document.querySelectorAll('#g-tabs button').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); click(); garageTab = b.dataset.tab; renderGarage(); }));
     // settings
     const tog = (id, key) => btn(id, () => { SAVE.settings[key] = !SAVE.settings[key]; persist(); SND.applySettings(); renderSettings(); updateMute(); });
     tog('set-sound', 'sound'); tog('set-music', 'music'); tog('set-tb', 'trickButtons'); tog('set-shake', 'shake');
-    tog('set-ghost', 'ghost'); tog('set-slowmo', 'slowmo'); tog('set-postfx', 'postfx');
+    tog('set-ghost', 'ghost'); tog('set-slowmo', 'slowmo'); tog('set-postfx', 'postfx'); tog('set-haptic', 'haptics');
     el('set-vol').addEventListener('input', (e) => { SAVE.settings.volume = e.target.value / 100; SND.applySettings(); renderSettings(); persist(); });
     el('set-sens').addEventListener('input', (e) => { SAVE.settings.sens = e.target.value / 100; renderSettings(); persist(); });
     document.querySelectorAll('#set-quality button').forEach(b => b.addEventListener('click', (e) => {
@@ -4150,7 +4197,7 @@ const UI = (() => {
       else if (s < STAGES.length - 1) { SAVE.sel.stage = s + 1; SAVE.sel.level = 0; startRun(s + 1, 0); }
       else { SAVE.sel.stage = s; SAVE.sel.level = 0; toMenu(); show('stages'); }
     });
-    btn('c-keep', () => { S.mode = 'play'; show('hud'); last = performance.now(); });
+    btn('c-keep', () => { S.mode = 'play'; show('hud'); Mobile.keepAwake(true); last = performance.now(); });
     btn('c-replay', () => { endRunRecord(); startRun(S.stage, S.level); });
     btn('c-menu', () => toMenu());
     initInput();
@@ -4232,7 +4279,7 @@ function boot() {
   requestAnimationFrame(frame);
   // debug / test hook
   window.WBR = {
-    S, get SAVE() { return SAVE; }, ents, startRun, action, crash, addFeature, addObstacle, addRuby, addPowerup, activatePowerup, UI, Meta, Ghost, PWA,
+    S, get SAVE() { return SAVE; }, ents, startRun, action, crash, addFeature, addObstacle, addRuby, addPowerup, activatePowerup, UI, Meta, Ghost, PWA, Mobile,
     land, launch, onRamp, persist, toMenu, endRunRecord,
     get fps() { return S.fps; }, quality: () => qualityName, setQuality,
     postfx: () => ({ on: postfxOn(), bloom: bloomOn(), composer: !!postfx.composer }),

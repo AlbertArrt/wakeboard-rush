@@ -12,4 +12,4 @@ WAKEBOARD RUSH 3D — jak uruchomic
 3. Sterowanie i zasady: patrz ekran startowy i README.md w repozytorium.
 4. Jezyk UI (PL/EN) zmienisz w SETTINGS -> JEZYK / LANGUAGE; wybor zapisuje sie w save.
 
-Wersja: v2.6.0 (cienie + PMREM + grading, linie predkosci, przelacznik PL/EN).
+Wersja: v2.6.1 (cienie + PMREM + grading, linie predkosci, PL/EN, wake lock i wibracje).
