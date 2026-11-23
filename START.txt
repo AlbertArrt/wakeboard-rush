@@ -1,0 +1,14 @@
+WAKEBOARD RUSH 3D — jak uruchomic
+===============================
+
+1. Rozpakuj caly folder (trzymaj razem index.html, vendor/, icons/, sw.js, manifest.webmanifest).
+2. Gra korzysta z modulow ES, wiec NIE otworzy sie dwuklikiem z pliku (file://).
+   Uruchom prosty serwer w folderze gry:
+
+     python3 -m http.server 3000
+
+   i wejdz na http://localhost:3000
+   (albo: npx serve . / dowolny inny statyczny serwer)
+3. Sterowanie i zasady: patrz ekran startowy i README.md w repozytorium.
+
+Wersja: v2.4.0 (cienie kontaktowe + cienie HIGH, PMREM, grading z winieta).

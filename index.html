@@ -209,6 +209,7 @@ import { RenderPass } from './vendor/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from './vendor/jsm/postprocessing/UnrealBloomPass.js';
 import { SMAAPass } from './vendor/jsm/postprocessing/SMAAPass.js';
 import { OutputPass } from './vendor/jsm/postprocessing/OutputPass.js';
+import { ShaderPass } from './vendor/jsm/postprocessing/ShaderPass.js';
 
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => Array.from(document.querySelectorAll(s));
@@ -879,29 +880,61 @@ const renderer = new THREE.WebGLRenderer({ canvas, antialias: Q.antialias, power
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.0;
+// real shadow maps only on HIGH; MED/LOW keep the cheap contact blobs
+renderer.shadowMap.enabled = qualityName === 'high';
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(62, 1, 0.1, 700);
 scene.add(camera);
 scene.fog = new THREE.FogExp2(0xbfe9ff, 0.006);
 
 // ---------------- post-processing (three's own passes; bloom on HIGH, SMAA on MED+) ----------------
-const postfx = { composer: null, bloom: null, smaa: null };
+// cheap final grade: gentle contrast/saturation lift, vignette and film grain (runs after tone mapping)
+const GradeShader = {
+  uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uAspect: { value: 1 }, uVig: { value: 0.3 }, uSat: { value: 1.06 }, uContrast: { value: 1.03 }, uGrain: { value: 0.028 } },
+  vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
+  fragmentShader: `uniform sampler2D tDiffuse; uniform float uTime,uVig,uSat,uContrast,uGrain,uAspect; varying vec2 vUv;
+  void main(){ vec4 t = texture2D(tDiffuse, vUv);
+    vec3 c = (t.rgb - 0.5) * uContrast + 0.5;
+    float l = dot(c, vec3(0.2126,0.7152,0.0722)); c = mix(vec3(l), c, uSat);
+    vec2 p = (vUv - 0.5) * vec2(uAspect, 1.0);
+    c *= 1.0 - uVig * smoothstep(0.45, 1.0, length(p) / 0.75);
+    float n = fract(sin(dot(gl_FragCoord.xy + vec2(uTime*60.0), vec2(12.9898,78.233))) * 43758.5453);
+    c += (n - 0.5) * uGrain;
+    gl_FragColor = vec4(clamp(c, 0.0, 1.0), t.a);
+  }`,
+};
+const postfx = { composer: null, bloom: null, smaa: null, grade: null };
 {
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
   const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), qualityName === 'medium' ? 0.42 : 0.55, 0.5, 0.72);
   composer.addPass(bloom);
   composer.addPass(new OutputPass());   // tone map + sRGB after the HDR bloom
+  const grade = new ShaderPass(GradeShader);
+  composer.addPass(grade);
   const smaa = new SMAAPass(1, 1);
   composer.addPass(smaa);
-  postfx.composer = composer; postfx.bloom = bloom; postfx.smaa = smaa;
+  postfx.composer = composer; postfx.bloom = bloom; postfx.smaa = smaa; postfx.grade = grade;
 }
 const postfxOn = () => qualityName !== 'low' && SAVE.settings.postfx !== false;
 const bloomOn = () => postfxOn();   // LOW renders without post FX; MED gets a gentler glow
+// snow is almost pure white: at the water threshold the bloom smears over the whole piste,
+// so the mountain routes get a much weaker, higher-threshold glow
+function tuneBloom() {
+  const base = qualityName === 'medium' ? 0.42 : 0.55;
+  const dark = W.stage === 2 || W.stage === 3 || W.stage === 4;   // neon, arctic, volcano: keep the full glow
+  if (W.snow) { postfx.bloom.strength = base * 0.4; postfx.bloom.threshold = 1.1; }
+  else if (dark) { postfx.bloom.strength = base; postfx.bloom.threshold = 0.78; }
+  else { postfx.bloom.strength = base * 0.75; postfx.bloom.threshold = 0.95; }
+  postfx.bloom.radius = 0.4;
+}
 // one entry point for every frame and for the share-card snapshot (canvas has no preserveDrawingBuffer)
 function renderScene() {
   if (!postfxOn()) { renderer.render(scene, camera); return; }
   postfx.bloom.enabled = bloomOn(); postfx.smaa.enabled = true;
+  postfx.grade.uniforms.uTime.value = performance.now() / 1000;
+  postfx.grade.uniforms.uAspect.value = camera.aspect;
   postfx.composer.render();
 }
 
@@ -926,6 +959,13 @@ const hemi = new THREE.HemisphereLight(0xcfefff, 0x2a6f6f, 1.1);
 scene.add(hemi);
 const sun = new THREE.DirectionalLight(0xffffff, 2.2);
 sun.position.set(-30, 60, 20); scene.add(sun); scene.add(sun.target);
+// small, sharp shadow frustum around the rider (only enabled on HIGH)
+sun.castShadow = qualityName === 'high';
+sun.shadow.mapSize.set(1024, 1024);
+sun.shadow.bias = -0.0004;
+sun.shadow.normalBias = 0.05;
+Object.assign(sun.shadow.camera, { left: -20, right: 20, top: 24, bottom: -24, near: 1, far: 180 });
+sun.shadow.camera.updateProjectionMatrix();
 const neonLightA = new THREE.PointLight(0xff00e5, 0, 30, 1.6);
 const neonLightB = new THREE.PointLight(0x00e5ff, 0, 30, 1.6);
 scene.add(neonLightA, neonLightB);
@@ -951,6 +991,29 @@ const sky = new THREE.Mesh(new THREE.SphereGeometry(500, 24, 16), new THREE.Shad
 }));
 sky.renderOrder = -10; sky.frustumCulled = false;
 scene.add(sky);
+
+// ---------------- environment reflections ----------------
+// one PMREM snapshot of the sky per theme; it gives the hero materials (board, helmets, metal,
+// rubies) a believable horizon reflection at no per-frame cost
+let envRT = null;
+const pmrem = new THREE.PMREMGenerator(renderer);
+const envScene = new THREE.Scene();
+const envSkyMat = sky.material.clone();
+envSkyMat.uniforms = skyUniforms; envSkyMat.toneMapped = false;
+const envSky = new THREE.Mesh(new THREE.SphereGeometry(100, 32, 16), envSkyMat);
+envSky.frustumCulled = false;
+envScene.add(envSky);
+function refreshEnvironment() {
+  if (qualityName === 'low') {
+    scene.environment = null;
+    if (envRT) { envRT.dispose(); envRT = null; }
+    return;
+  }
+  const rt = pmrem.fromScene(envScene, 0.02, 0.1, 1000);
+  if (envRT) envRT.dispose();
+  envRT = rt; scene.environment = rt.texture;
+  scene.traverse((o) => { if (o.isMesh && o.material && o.material.isMeshStandardMaterial) o.material.needsUpdate = true; });
+}
 
 // ---------------- water ----------------
 // waves: [dirX, dirZ, freq, amp, speed]
@@ -1127,6 +1190,83 @@ const Wake = (() => {
   }
   function clear() { for (const d of data) d.life = 0; }
   return { build, add, update, clear };
+})();
+
+// ---------------- contact shadows (one instanced draw for every prop) ----------------
+// Grounds obstacles and features on the water/snow without a shadow map: on HIGH the rider still
+// gets a real cast shadow, but props keep these soft blobs on every quality level.
+const ContactShadows = (() => {
+  const MAX = 160, VERTS = MAX * 4;
+  const tex = canvasTex(64, 64, (c, w, h) => {
+    const g = c.createRadialGradient(32, 32, 2, 32, 32, 32);
+    g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.5, 'rgba(255,255,255,0.6)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+    c.fillStyle = g; c.fillRect(0, 0, w, h);
+  });
+  // one dynamic mesh of flat quads (4 verts each) instead of instancing, so per-shadow opacity
+  // can ride along as a plain vertex attribute (instanced attrs stay at 0 in this pipeline)
+  const pos = new Float32Array(VERTS * 3), uv = new Float32Array(VERTS * 2), alp = new Float32Array(VERTS);
+  const idx = new Uint16Array(MAX * 6);
+  for (let i = 0; i < MAX; i++) {
+    const b = i * 4, o = i * 6;
+    uv.set([0, 0, 1, 0, 1, 1, 0, 1], b * 2);
+    idx.set([b, b + 2, b + 1, b, b + 3, b + 2], o);
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3).setUsage(THREE.DynamicDrawUsage));
+  geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+  geo.setAttribute('aAlpha', new THREE.BufferAttribute(alp, 1).setUsage(THREE.DynamicDrawUsage));
+  geo.setIndex(new THREE.BufferAttribute(idx, 1));
+  geo.setDrawRange(0, 0);
+  const mat = new THREE.ShaderMaterial({
+    uniforms: { uTex: { value: tex }, uColor: { value: new THREE.Color('#04121a') } },
+    transparent: true, depthWrite: false, fog: false, side: THREE.DoubleSide,
+    vertexShader: `attribute float aAlpha; varying vec2 vUv; varying float vA;
+      void main(){ vUv = uv; vA = aAlpha; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+    fragmentShader: `uniform sampler2D uTex; uniform vec3 uColor; varying vec2 vUv; varying float vA;
+      void main(){ float a = texture2D(uTex, vUv).a * vA; if (a < 0.01) discard; gl_FragColor = vec4(uColor, a); }`,
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.frustumCulled = false; mesh.renderOrder = 2;
+  scene.add(mesh);
+  let n = 0;
+  function add(x, z, sx, sz, y, a) {
+    if (n >= MAX || a <= 0.01) return;
+    const b = n * 4, ox = sx * 0.5, oz = sz * 0.5;
+    const x0 = x - ox, x1 = x + ox, z0 = z - oz, z1 = z + oz;
+    pos[b * 3] = x0; pos[b * 3 + 1] = y; pos[b * 3 + 2] = z0;
+    pos[b * 3 + 3] = x1; pos[b * 3 + 4] = y; pos[b * 3 + 5] = z0;
+    pos[b * 3 + 6] = x1; pos[b * 3 + 7] = y; pos[b * 3 + 8] = z1;
+    pos[b * 3 + 9] = x0; pos[b * 3 + 10] = y; pos[b * 3 + 11] = z1;
+    alp[b] = alp[b + 1] = alp[b + 2] = alp[b + 3] = a;
+    n++;
+  }
+  function update() {
+    n = 0;
+    const cz = camera.position.z;
+    const base = W.snow ? 0.6 : 0.66;
+    for (const e of ents) {
+      if (!e.active || !e.mesh.visible || e.type === 'wave') continue;
+      const z = e.mesh.position.z, dz = cz - z;
+      if (dz > 95 || dz < -6) continue;
+      const fade = base * clamp(1 - Math.max(0, dz) / 95, 0, 1);
+      if (e.kind === 'obs') {
+        let sx, sz;
+        if (e.type === 'buoy') { sx = sz = 1.5; }
+        else if (e.shape === 'circle') { sx = sz = (e.r || 0.6) * 2.9; }
+        else { sx = (e.hw || 1) * 2.1; sz = (e.hl || 0.4) * 3.4; }
+        const x = e.mesh.position.x, y = W.snow ? 0.37 : waterHeight(x, z, W.time) + 0.12;
+        add(x, z, sx, sz, y, fade);
+      } else if (e.kind === 'feat') {
+        const len = Math.abs(e.z0 - e.z1), cx = e.def && e.def.curved ? e.fx(e.z) : e.x, cz2 = (e.z0 + e.z1) / 2;
+        const y = W.snow ? 0.37 : waterHeight(cx, cz2, W.time) + 0.12;
+        add(cx, cz2, (e.hw || 1) * 2.1, len * 0.9, y, fade * 0.85);
+      }
+    }
+    geo.attributes.position.needsUpdate = true;
+    geo.attributes.aAlpha.needsUpdate = true;
+    geo.setDrawRange(0, n * 6);
+  }
+  return { update };
 })();
 
 // ---------------- Recycler for instanced scenery ----------------
@@ -1705,6 +1845,8 @@ const Env = (() => {
     neonLightA.intensity = neonLightB.intensity = th.neon ? 25 : 0;
     waveAmp = th.waveAmp; waterUniforms.uAmp.value = th.waveAmp;
     renderer.toneMappingExposure = th.exposure;
+    refreshEnvironment();
+    tuneBloom();
   }
   function set(stageIdx) {
     if (cur) scene.remove(cur.group);
@@ -1712,6 +1854,8 @@ const Env = (() => {
     cur = envs[stageIdx]; W.stage = stageIdx;
     W.snow = !!(STAGES[stageIdx] && STAGES[stageIdx].sport === 'snow');
     scene.add(cur.group);
+    // ground planes can catch the HIGH-quality sun shadow
+    cur.group.traverse((o) => { if (o.isMesh && o.geometry && o.geometry.type === 'PlaneGeometry') o.receiveShadow = true; });
     applyTheme(cur.theme);
   }
   function reset(z) { if (!cur) return; for (const r of cur.recs) r.reset(z); }
@@ -1956,6 +2100,9 @@ const Rider = (() => {
   };
 })();
 Rider.attach();
+// HIGH quality casts the rider's silhouette onto the snow; other tiers keep only the soft blob
+Rider.root.traverse((o) => { if (o.isMesh) o.castShadow = true; });
+Rider.shadow.castShadow = false; Rider.aura.castShadow = false;
 
 // =====================================================================
 //  ENTITIES — obstacles, trick features, rubies; pooled & themed per stage
@@ -2983,7 +3130,7 @@ let camOrbit = 0;
 function updateRiderVisual(dt) {
   const r = Rider.root;
   r.position.set(S.x, S.y, S.z);
-  if (S.mode === 'crashed' || S.mode === 'over') { Rider.carrier.position.set(0, CABLE_Y, S.z - 16 - S.crashT * 8); Rider.updateRope(); Rider.shadow.position.set(S.x, waterHeight(S.x, S.z, W.time) + 0.04, S.z); return; }
+  if (S.mode === 'crashed' || S.mode === 'over') { Rider.carrier.position.set(0, CABLE_Y, S.z - 16 - S.crashT * 8); Rider.updateRope(); Rider.shadow.position.set(S.x, W.snow ? 0.36 : waterHeight(S.x, S.z, W.time) + 0.04, S.z); return; }
   // lean into carve & yaw toward travel direction
   const leanT = S.air ? 0 : clamp(-S.vx / 10, -0.65, 0.65);
   S.lean = damp(S.lean, leanT, 10, dt);
@@ -3009,8 +3156,9 @@ function updateRiderVisual(dt) {
   // carrier & rope
   Rider.carrier.position.set(0, CABLE_Y, S.z - 17);
   Rider.updateRope();
-  Rider.shadow.position.set(S.x, waterHeight(S.x, S.z, W.time) + 0.04, S.z);
-  const sh = clamp(1 - (S.y - 0.2) / 6, 0.25, 1); Rider.shadow.scale.set(sh, sh, sh); Rider.shadow.material.opacity = sh;
+  Rider.shadow.position.set(S.x, W.snow ? 0.36 : waterHeight(S.x, S.z, W.time) + 0.04, S.z);
+  const sh = clamp(1 - (S.y - 0.2) / 6, 0.25, 1); Rider.shadow.scale.set(sh, sh, sh);
+  Rider.shadow.material.opacity = sh * (W.snow && sun.castShadow ? 0.35 : 1);
   // neon lights follow rider
   if (W.stage === 2) { neonLightA.position.set(S.x - 4, 3, S.z - 3); neonLightB.position.set(S.x + 4, 3, S.z - 6); neonLightA.intensity = 25 + S.glow * 60; }
   // wake & spray
@@ -3115,6 +3263,14 @@ function frame(now) {
   water.position.set(0, 0, Math.round((camera.position.z - 140) / 4) * 4);
   sky.position.copy(camera.position);
   Env.update(dt, camera.position.z, S.z, W.time);
+  // the shadow frustum follows the rider so the 1024 map stays sharp
+  if (sun.castShadow) {
+    const sd = skyUniforms.uSunDir.value;
+    sun.target.position.set(S.x * 0.6, 0, S.z - 5);
+    sun.position.set(sun.target.position.x + sd.x * 70, sun.target.position.y + sd.y * 70, sun.target.position.z + sd.z * 70);
+    sun.target.updateMatrixWorld();
+  }
+  ContactShadows.update();
   renderScene();
   // audio
   if (playing) {
@@ -3137,7 +3293,11 @@ function frame(now) {
 }
 function setQuality(name, auto) {
   qualityName = name; Q = QUALITY[name]; prScale = 1;
-  postfx.bloom.strength = name === 'medium' ? 0.42 : 0.55;
+  tuneBloom();
+  const shadowsOn = name === 'high';
+  renderer.shadowMap.enabled = shadowsOn; sun.castShadow = shadowsOn;
+  scene.traverse((o) => { if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => { m.needsUpdate = true; }); });
+  refreshEnvironment();
   applyPixelRatio(); buildWater(); Particles.build(Q.particles); Wake.build(Q.wake);
 }
 

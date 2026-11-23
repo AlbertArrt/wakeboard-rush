@@ -20,11 +20,17 @@ Przeglądarkowa gra 3D (three.js r160) o wakeboardingu za wyciągiem linowym. Mo
 - **Wyzwanie dnia**: generowane z daty (każdy gracz ma tego dnia to samo), na wskazanej lokacji, w jednym przejeździe. Nagroda rośnie z **serią dni (streak)** – 50 💎 + 10 za każdy kolejny dzień (maks. +70). Opuszczony dzień zeruje serię, chyba że masz **❄ streak freeze** (30 💎, maks. 2) – jeden freeze chroni dokładnie jeden opuszczony dzień.
 - **Nagroda za powrót**: po 3 lub więcej dniach przerwy dostajesz +20 💎 i misję „powrót” (600 m w jednym przejeździe) – przerwa nie jest karana, tylko nagradzana powrotem.
 
-**Post‑processing (bloom + SMAA)**
-- **Bloom** (UnrealBloomPass): świecą woda, słońce, neonowe akcenty i złote rubiny. Siła 0.42 na MED, 0.55 na HIGH.
+**Post‑processing (bloom + SMAA + grading)**
+- **Bloom** (UnrealBloomPass): świecą woda, słońce, neonowe akcenty i złote rubiny. Baza 0.42 na MED i 0.55 na HIGH, strojona per motyw – na śniegu znacznie słabsza i z wyższym progiem, żeby biel trasy nie zalewała kadru.
+- **Grading** (`ShaderPass`, MED+): delikatny kontrast i nasycenie, winieta i drobny grain spinają wszystkie lokacje w jeden filmowy look.
 - **SMAA** (Subpixel Morphological Anti‑Aliasing): wygładza krawędzie, bo render trafia do bufora HDR bez MSAA.
 - **LOW** renderuje bez post‑processingu (czysty `renderer.render`), a przy spadku FPS auto‑jakość sama schodzi z HIGH → MED → LOW. Wyłącznik: SETTINGS → POST FX.
 - Karta wyniku i zrzut z canvasa nadal działają: kompozycja i kopiowanie do 1080×1080 odbywają się w tym samym takcie co render.
+
+**Cienie i odbicia**
+- **Cienie kontaktowe**: każda przeszkoda, skocznia, box i rail dostaje miękką plamę cienia na wodzie/śniegu (jeden instanced draw call). Zawodnik ma własny cień, skalowany wysokością skoku.
+- **Prawdziwe cienie na HIGH**: kierunkowe światło słońca rzuca sylwetkę zawodnika na śnieg, z wąskim frustum 1024 podążającym za graczem. MED i LOW zostają przy samych plamach, więc mobile nie płaci za shadow mapę.
+- **Odbicia środowiskowe (PMREM)**: jednorazowy snapshot nieba na motyw trafia do `scene.environment`, dzięki czemu deska, kask, metal, rubiny i power‑upy odbijają horyzont i słońce.
 
 **Nowe lokacje**
 - **ARCTIC FJORD** (po Neon Night Park): skute lodem pomosty, góry lodowe, ośnieżone sosny, padający śnieg i falująca zorza polarna nad fiordem. Szybsza i węższa od poprzednich tras.
