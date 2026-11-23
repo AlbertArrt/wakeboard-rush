@@ -51,6 +51,11 @@ Przeglądarkowa gra 3D (three.js r160) o wakeboardingu za wyciągiem linowym. Mo
 - **Power‑upy** na trasie: 🧲 **MAGNES** (przyciąga rubiny), 🛡️ **TARCZA** (pochłania jedną wywrotkę), ⚡ **BOOST** (przyspieszenie, rozbija przeszkody), ✖2 **SCORE x2**. Każdy ma licznik czasu w HUD, własny efekt i dźwięk.
 - Rzadkie **złote rubiny** (+5 💎 i bonus punktowy).
 
+**Język PL / EN**
+- Cały interfejs mówi w jednym języku naraz: menu, HUD, pauza, ekran wyniku, wyzwanie dnia, misje, garaż, rekordy, ustawienia, ekran pomocy, komunikaty w trakcie jazdy i karta wyniku. Nazwy lokacji, poziomy trudności i opisy tras są tłumaczone, a misje i cele mają własne wersje językowe (EN + PL).
+- Język wybiera się w **SETTINGS → Language · Język** (PL / EN), a przy pierwszym uruchomieniu ustawia się automatycznie według języka przeglądarki. Wybór jest zapisywany w localStorage razem z resztą ustawień, więc zostaje po odświeżeniu i po powrocie do gry.
+- Encyklopedyczne terminy trików (NEAR MISS, PERFECT, BAILED, SAVED IT, grindy) zostają w obu językach — tak samo nazywają się w pomocy i na ekranie wyniku.
+
 **Offline + PWA**
 - `manifest.webmanifest`, ikony 192/512 (też „maskable”), orientacja pozioma, kolor motywu.
 - Service worker (`sw.js`) zapisuje w pamięci podręcznej wszystkie pliki – po pierwszym uruchomieniu gra działa bez internetu.

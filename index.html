@@ -148,7 +148,7 @@ body.portrait .stats{grid-template-columns:repeat(2,1fr)}
 <body>
 <canvas id="game"></canvas>
 <div id="touch"></div>
-<div id="loading">WAKEBOARD RUSH 3D — loading…</div>
+<div id="loading">WAKEBOARD RUSH 3D — <span data-i18n="loading…|wczytywanie…">loading…</span></div>
 
 <div id="flash"></div><div id="speedfx"></div>
 <div id="hud">
@@ -157,48 +157,37 @@ body.portrait .stats{grid-template-columns:repeat(2,1fr)}
   <div class="hr"><div class="hrbtns"><button id="btn-mute">🔊</button><button id="btn-pause">II</button></div><div id="h-rubybox"><span class="gem">💎</span> <span id="h-rubies">0</span></div><div id="h-dist">0 m</div><div id="h-speed">0 km/h</div><div id="h-ghost"></div></div>
 </div>
 <div id="popups"></div><div id="tricklive"></div><div id="hint"></div><div id="toast"></div>
-<div id="trickbtns"><div class="grp"><button id="tb-left" class="spin">⟲<br>SPIN</button><button id="tb-right" class="spin">⟳<br>SPIN</button></div><div class="grp"><button id="tb-down" class="spin">FRONT<br>FLIP ↓</button><button id="tb-jump">JUMP ↑</button></div></div>
+<div id="trickbtns"><div class="grp"><button id="tb-left" class="spin">⟲<br><span data-i18n="SPIN|OBRÓT">SPIN</span></button><button id="tb-right" class="spin">⟳<br><span data-i18n="SPIN|OBRÓT">SPIN</span></button></div><div class="grp"><button id="tb-down" class="spin"><span data-i18n-html="FRONT<br>FLIP ↓|SALTO<br>W PRZÓD ↓">FRONT<br>FLIP ↓</span></button><button id="tb-jump" data-i18n="JUMP ↑|SKOK ↑">JUMP ↑</button></div></div>
 
 <div class="screen" id="scr-menu"><div class="wallet"><span class="gem">💎</span> <span id="m-rubies">0</span></div>
-  <div class="menuwrap"><div class="left"><h1 class="logo">WAKEBOARD<br>RUSH<small>3D</small></h1><div class="sel" id="m-sel"></div><div class="tip">BEST SCORE: <b id="m-best">0</b> · STARS: <b id="m-stars">0</b></div></div>
-  <div class="right panel"><button class="b main" id="m-play">▶ PLAY</button><div class="row"><button class="b cyan" id="m-stages">LOCATIONS</button><button class="b cyan" id="m-levels">LEVELS</button></div><button class="b gold" id="m-missions">🏆 MISSIONS &amp; DAILY<span class="badge" id="m-badge" style="display:none">!</span></button><button class="b pink" id="m-garage">🏄 GARAGE</button><div class="row"><button class="b" id="m-scores">HIGH SCORES</button><button class="b" id="m-settings">SETTINGS</button></div><button class="b" id="m-help">HOW TO PLAY · JAK GRAĆ</button><button class="b cyan" id="m-install" style="display:none">📲 INSTALL APP · ZAINSTALUJ</button></div></div></div>
-<div class="screen" id="scr-missions"><div class="panel"><button class="back" data-to="menu">◀ BACK</button><h2>MISSIONS · MISJE</h2><div id="missions-body"></div></div></div>
+  <div class="menuwrap"><div class="left"><h1 class="logo">WAKEBOARD<br>RUSH<small>3D</small></h1><div class="sel" id="m-sel"></div><div class="tip"><span data-i18n="BEST SCORE:|NAJLEPSZY WYNIK:">BEST SCORE:</span> <b id="m-best">0</b> · <span data-i18n="STARS:|GWIAZDKI:">STARS:</span> <b id="m-stars">0</b></div></div>
+  <div class="right panel"><button class="b main" id="m-play" data-i18n="▶ PLAY|▶ GRAJ">▶ PLAY</button><div class="row"><button class="b cyan" id="m-stages" data-i18n="LOCATIONS|LOKACJE">LOCATIONS</button><button class="b cyan" id="m-levels" data-i18n="LEVELS|POZIOMY">LEVELS</button></div><button class="b gold" id="m-missions"><span data-i18n="🏆 MISSIONS &amp; DAILY|🏆 MISJE I WYZWANIA">🏆 MISSIONS &amp; DAILY</span><span class="badge" id="m-badge" style="display:none">!</span></button><button class="b pink" id="m-garage" data-i18n="🏄 GARAGE|🏄 GARAŻ">🏄 GARAGE</button><div class="row"><button class="b" id="m-scores" data-i18n="HIGH SCORES|NAJLEPSZE WYNIKI">HIGH SCORES</button><button class="b" id="m-settings" data-i18n="SETTINGS|USTAWIENIA">SETTINGS</button></div><button class="b" id="m-help" data-i18n="HOW TO PLAY|JAK GRAĆ">HOW TO PLAY</button><button class="b cyan" id="m-install" style="display:none" data-i18n="📲 INSTALL APP|📲 ZAINSTALUJ">📲 INSTALL APP</button></div></div></div>
+<div class="screen" id="scr-missions"><div class="panel"><button class="back" data-to="menu" data-i18n="◀ BACK|◀ WSTECZ">◀ BACK</button><h2 data-i18n="MISSIONS|MISJE">MISSIONS</h2><div id="missions-body"></div></div></div>
 
-<div class="screen" id="scr-stages"><div class="panel" style="max-width:900px"><button class="back" data-to="menu">◀ BACK</button><h2>CHOOSE LOCATION</h2><div class="cards" id="stage-list"></div></div></div>
-<div class="screen" id="scr-levels"><div class="panel"><button class="back" data-to="stages">◀ LOCATIONS</button><h2 id="lv-title">LEVELS</h2><div id="level-list"></div></div></div>
-<div class="screen" id="scr-garage"><div class="panel"><button class="back" data-to="menu">◀ BACK</button><h2>GARAGE <span style="font-size:16px">· <span class="gem">💎</span> <span id="g-rubies">0</span></span></h2><div id="g-tabs"><button data-tab="board">BOARDS</button><button data-tab="outfit">OUTFITS</button><button data-tab="fx">WATER FX</button></div><div id="g-items"></div></div></div>
-<div class="screen" id="scr-scores"><div class="panel"><button class="back" data-to="menu">◀ BACK</button><h2>HIGH SCORES</h2><div id="scores-body"></div></div></div>
-<div class="screen" id="scr-settings"><div class="panel" style="max-width:560px"><button class="back">◀ BACK</button><h2>SETTINGS</h2>
-  <div class="set">Sound effects<button class="tg" id="set-sound">ON</button></div>
-  <div class="set">Music<button class="tg" id="set-music">ON</button></div>
-  <div class="set">Volume <span><input type="range" id="set-vol" min="0" max="100"> <span id="set-vol-v"></span></span></div>
-  <div class="set"><span>Graphics quality <small id="set-qnow"></small></span><div class="seg" id="set-quality"><button data-q="auto">AUTO</button><button data-q="low">LOW</button><button data-q="medium">MED</button><button data-q="high">HIGH</button></div></div>
-  <div class="set">Control sensitivity <span><input type="range" id="set-sens" min="50" max="200"> <span id="set-sens-v"></span></span></div>
-  <div class="set">On-screen trick buttons<button class="tg" id="set-tb">ON</button></div>
-  <div class="set">Camera shake<button class="tg" id="set-shake">ON</button></div>
-  <div class="set">Ghost rider (your best run)<button class="tg" id="set-ghost">ON</button></div>
-  <div class="set">Slow motion on big landings<button class="tg" id="set-slowmo">ON</button></div>
-  <div class="set">Post FX — bloom + SMAA <small>(off on LOW)</small><button class="tg" id="set-postfx">ON</button></div>
-  <div class="set"><span>App &amp; offline<br><small class="pstat" id="set-pwa">…</small></span><button class="tg on" id="set-install" style="display:none">INSTALL</button></div>
-  <div class="set"><span>Save backup · kopia zapisu<br><small class="pstat">Export a file or restore progress on another device</small></span><div class="seg"><button id="set-export">EXPORT</button><button id="set-import">IMPORT</button></div></div>
+<div class="screen" id="scr-stages"><div class="panel" style="max-width:900px"><button class="back" data-to="menu" data-i18n="◀ BACK|◀ WSTECZ">◀ BACK</button><h2 data-i18n="CHOOSE LOCATION|WYBIERZ LOKACJĘ">CHOOSE LOCATION</h2><div class="cards" id="stage-list"></div></div></div>
+<div class="screen" id="scr-levels"><div class="panel"><button class="back" data-to="stages" data-i18n="◀ LOCATIONS|◀ LOKACJE">◀ LOCATIONS</button><h2 id="lv-title">LEVELS</h2><div id="level-list"></div></div></div>
+<div class="screen" id="scr-garage"><div class="panel"><button class="back" data-to="menu" data-i18n="◀ BACK|◀ WSTECZ">◀ BACK</button><h2><span data-i18n="GARAGE|GARAŻ">GARAGE</span> <span style="font-size:16px">· <span class="gem">💎</span> <span id="g-rubies">0</span></span></h2><div id="g-tabs"><button data-tab="board" data-i18n="BOARDS|DESKI">BOARDS</button><button data-tab="outfit" data-i18n="OUTFITS|STROJE">OUTFITS</button><button data-tab="fx" data-i18n="WATER FX|EFEKTY WODY">WATER FX</button></div><div id="g-items"></div></div></div>
+<div class="screen" id="scr-scores"><div class="panel"><button class="back" data-to="menu" data-i18n="◀ BACK|◀ WSTECZ">◀ BACK</button><h2 data-i18n="HIGH SCORES|NAJLEPSZE WYNIKI">HIGH SCORES</h2><div id="scores-body"></div></div></div>
+<div class="screen" id="scr-settings"><div class="panel" style="max-width:560px"><button class="back" data-i18n="◀ BACK|◀ WSTECZ">◀ BACK</button><h2 data-i18n="SETTINGS|USTAWIENIA">SETTINGS</h2>
+  <div class="set"><span data-i18n="Language|Język">Language</span><div class="seg" id="set-lang"><button data-l="pl">PL</button><button data-l="en">EN</button></div></div>
+  <div class="set"><span data-i18n="Sound effects|Efekty dźwiękowe">Sound effects</span><button class="tg" id="set-sound">ON</button></div>
+  <div class="set"><span data-i18n="Music|Muzyka">Music</span><button class="tg" id="set-music">ON</button></div>
+  <div class="set"><span data-i18n="Volume|Głośność">Volume</span> <span><input type="range" id="set-vol" min="0" max="100"> <span id="set-vol-v"></span></span></div>
+  <div class="set"><span><span data-i18n="Graphics quality|Jakość grafiki">Graphics quality</span> <small id="set-qnow"></small></span><div class="seg" id="set-quality"><button data-q="auto">AUTO</button><button data-q="low">LOW</button><button data-q="medium">MED</button><button data-q="high">HIGH</button></div></div>
+  <div class="set"><span data-i18n="Control sensitivity|Czułość sterowania">Control sensitivity</span> <span><input type="range" id="set-sens" min="50" max="200"> <span id="set-sens-v"></span></span></div>
+  <div class="set"><span data-i18n="On-screen trick buttons|Przyciski trików na ekranie">On-screen trick buttons</span><button class="tg" id="set-tb">ON</button></div>
+  <div class="set"><span data-i18n="Camera shake|Wstrząsy kamery">Camera shake</span><button class="tg" id="set-shake">ON</button></div>
+  <div class="set"><span data-i18n="Ghost rider (your best run)|Duch (Twój najlepszy przejazd)">Ghost rider (your best run)</span><button class="tg" id="set-ghost">ON</button></div>
+  <div class="set"><span data-i18n="Slow motion on big landings|Slow motion przy dużych lądowaniach">Slow motion on big landings</span><button class="tg" id="set-slowmo">ON</button></div>
+  <div class="set"><span><span data-i18n="Post FX — bloom + SMAA|Post FX — bloom + SMAA">Post FX — bloom + SMAA</span> <small data-i18n="(off on LOW)|(wył. na LOW)">(off on LOW)</small></span><button class="tg" id="set-postfx">ON</button></div>
+  <div class="set"><span><span data-i18n="App &amp; offline|Aplikacja i offline">App &amp; offline</span><br><small class="pstat" id="set-pwa">…</small></span><button class="tg on" id="set-install" style="display:none" data-i18n="INSTALL|ZAINSTALUJ">INSTALL</button></div>
+  <div class="set"><span><span data-i18n="Save backup|Kopia zapisu">Save backup</span><br><small class="pstat" data-i18n="Export a file or restore progress on another device|Eksportuj plik lub przenieś postęp na inne urządzenie">Export a file or restore progress on another device</small></span><div class="seg"><button id="set-export" data-i18n="EXPORT|EKSPORTUJ">EXPORT</button><button id="set-import" data-i18n="IMPORT|IMPORTUJ">IMPORT</button></div></div>
   <input type="file" id="save-file" accept="application/json,.json" style="display:none">
   <button class="b danger" id="set-reset" style="margin-top:12px">RESET PROGRESS</button></div></div>
-<div class="screen" id="scr-help"><div class="panel help"><button class="back" data-to="menu">◀ BACK</button><h2>HOW TO PLAY · JAK GRAĆ</h2>
-  <p>🏄 Wyciąg linowy ciągnie Cię do przodu. <b>Omijaj</b> skały, kłody, pnie, boje, fale i ciemne kryształy. <b>Zbieraj</b> rubiny 💎 i skacz z ramp!</p>
-  <p>📱 <b>Telefon:</b> przeciągnij palcem w lewo/prawo – skręt. Szybki ruch <b>w górę</b> – skok (na rampie = mocny POP). W powietrzu: <b>← / →</b> = obrót 180° (kilka razy = 360/540/720), <b>↑</b> = backflip, <b>↓</b> = frontflip. Na railu: ↑ zeskok, ←/→ zjazd w bok.</p>
-  <p>⌨️ <b>Klawiatura:</b> A/D lub ←/→ – skręt, W/↑/Spacja – skok, w powietrzu strzałki/WASD – triki, P/Esc – pauza, R – restart, M – dźwięk.</p>
-  <p>🎯 Triki możesz wpisać już <b>na rampie</b> – gra je zapamięta i wykona w chwili wybicia. Prawie dokręcony obrót przy lądowaniu zostanie „uratowany” (SAVED IT!). Pojedynczy przypadkowy ruch nigdy nie kończy przejazdu – najwyżej stracisz punkty (BAILED). Długie kombinacje wciąż trzeba dokręcić, inaczej upadek.</p>
-  <p>⭐ Punkty: dystans, rubiny, NEAR MISS, skoki, grindy, obroty, salta, kombinacje i PERFECT LANDING (z efektem slow-motion). <b>Mnożnik</b> ma pasek doświadczenia (różowy): triki, grindy i mijanki go ładują, kolejne poziomy wymagają więcej. Znika po upadku lub ok. 7 s bez akcji.</p>
-  <p>⚡ <b>Power-upy</b> na wodzie: 🧲 magnes na rubiny (9 s), 🛡️ tarcza – pochłania jedną wywrotkę (25 s), 🚀 dopalacz – szybciej i rozbijasz przeszkody (5 s), ✖2 – podwójne punkty (10 s). Czas działania widać pod mnożnikiem. Rzadki <b>złoty rubin</b> = 5 rubinów + bonus.</p>
-  <p>★ Każdy poziom ma <b>3 gwiazdki</b>: cel poziomu, próg punktowy i misja poziomu – wszystko w jednym przejeździe. Za każdą nową gwiazdkę +10 💎.</p>
-  <p>🏆 <b>MISJE</b>: zawsze 3 aktywne zadania (np. 3 grindy w przejeździe, obrót 540°) – po wykonaniu dostajesz rubiny i nową misję. Niechcianą misję możesz wymienić za 10 💎. <b>Wyzwanie dnia</b> zmienia się codziennie – rób je dzień po dniu, by budować serię 🔥 i większe nagrody.</p>
-  <p>👻 <b>Duch</b>: półprzezroczysty rider to Twój najlepszy przejazd na tym poziomie (trasa poziomu jest zawsze taka sama). HUD pokazuje, ile metrów jesteś przed/za nim. Można go wyłączyć w Ustawieniach.</p>
-  <p>🔓 Każda lokacja ma 5 poziomów z celem. Ukończ poziom, aby odblokować następny. Ukończ PRO RIDER, aby odblokować nową lokację. Rubiny wydasz w <b>GARAŻU</b>.</p>
-  <p>📲 Gra działa <b>offline</b>. Na Androidzie (Chrome) użyj przycisku <b>ZAINSTALUJ</b> w menu lub „Dodaj do ekranu głównego”.</p>
-  <p style="opacity:.8"><i>EN: Drag to steer, swipe up to jump, swipe in the air for spins (←/→) and flips (↑/↓); tricks can be queued on the ramp. Grab power-ups, earn 3 stars per level, complete missions and the daily challenge, and race your ghost.</i></p></div></div>
-<div class="screen" id="scr-pause"><div class="panel" style="max-width:380px"><h2>PAUSED</h2><button class="b main" id="p-resume">▶ RESUME</button><button class="b cyan" id="p-restart">↻ RESTART</button><button class="b" id="p-settings">SETTINGS</button><button class="b" id="p-menu">MAIN MENU</button></div></div>
-<div class="screen" id="scr-fail"><div class="panel" style="max-width:560px"><p class="big" id="f-title">WIPEOUT!</p><div class="sub" id="f-reason"></div><div id="f-new">★ NEW BEST! ★</div><div class="stats" id="f-stats"></div><div class="stars3" id="f-stars"></div><div id="f-goal"></div><div class="tip" id="f-extra"></div><button class="b main" id="f-retry">↻ RETRY</button><button class="b cyan" id="f-share">📤 SHARE RESULT · UDOSTĘPNIJ</button><div class="row"><button class="b" id="f-levels">LEVELS</button><button class="b" id="f-menu">MENU</button></div><div class="tip" id="f-tip"></div></div></div>
-<div class="screen" id="scr-complete"><div class="panel" style="max-width:560px"><p class="big" id="c-title">LEVEL COMPLETE!</p><div class="sub" id="c-sub"></div><div class="stars3" id="c-stars"></div><div id="c-goal"></div><div class="stats" id="c-stats"></div><div id="c-unlock"></div><button class="b cyan" id="c-share">📤 SHARE RESULT · UDOSTĘPNIJ</button><button class="b main" id="c-next">NEXT LEVEL ▶</button><div class="row"><button class="b cyan" id="c-keep">KEEP RIDING</button><button class="b" id="c-replay">REPLAY</button><button class="b" id="c-menu">MENU</button></div></div></div>
+<div class="screen" id="scr-help"><div class="panel help"><button class="back" data-to="menu" data-i18n="◀ BACK|◀ WSTECZ">◀ BACK</button><h2 data-i18n="HOW TO PLAY|JAK GRAĆ">HOW TO PLAY</h2><div id="help-body"></div></div></div>
+<div class="screen" id="scr-pause"><div class="panel" style="max-width:380px"><h2 data-i18n="PAUSED|PAUZA">PAUSED</h2><button class="b main" id="p-resume" data-i18n="▶ RESUME|▶ WRÓĆ DO GRY">▶ RESUME</button><button class="b cyan" id="p-restart" data-i18n="↻ RESTART|↻ RESTART">↻ RESTART</button><button class="b" id="p-settings" data-i18n="SETTINGS|USTAWIENIA">SETTINGS</button><button class="b" id="p-menu" data-i18n="MAIN MENU|MENU GŁÓWNE">MAIN MENU</button></div></div>
+<div class="screen" id="scr-fail"><div class="panel" style="max-width:560px"><p class="big" id="f-title">WIPEOUT!</p><div class="sub" id="f-reason"></div><div id="f-new" data-i18n="★ NEW BEST! ★|★ NOWY REKORD! ★">★ NEW BEST! ★</div><div class="stats" id="f-stats"></div><div class="stars3" id="f-stars"></div><div id="f-goal"></div><div class="tip" id="f-extra"></div><button class="b main" id="f-retry" data-i18n="↻ RETRY|↻ JESZCZE RAZ">↻ RETRY</button><button class="b cyan" id="f-share" data-i18n="📤 SHARE RESULT|📤 UDOSTĘPNIJ WYNIK">📤 SHARE RESULT</button><div class="row"><button class="b" id="f-levels" data-i18n="LEVELS|POZIOMY">LEVELS</button><button class="b" id="f-menu">MENU</button></div><div class="tip" id="f-tip"></div></div></div>
+<div class="screen" id="scr-complete"><div class="panel" style="max-width:560px"><p class="big" id="c-title" data-i18n="LEVEL COMPLETE!|POZIOM UKOŃCZONY!">LEVEL COMPLETE!</p><div class="sub" id="c-sub"></div><div class="stars3" id="c-stars"></div><div id="c-goal"></div><div class="stats" id="c-stats"></div><div id="c-unlock"></div><button class="b cyan" id="c-share" data-i18n="📤 SHARE RESULT|📤 UDOSTĘPNIJ WYNIK">📤 SHARE RESULT</button><button class="b main" id="c-next">NEXT LEVEL ▶</button><div class="row"><button class="b cyan" id="c-keep" data-i18n="KEEP RIDING|JEDŹ DALEJ">KEEP RIDING</button><button class="b" id="c-replay" data-i18n="REPLAY|POWTÓRZ">REPLAY</button><button class="b" id="c-menu">MENU</button></div></div></div>
 <script type="module">
 // =====================================================================
 //  WAKEBOARD RUSH 3D  —  core: utils, data, save
@@ -353,44 +342,52 @@ const STAGE_EXTRA = [
 ];
 const STAGES = [
   {
-    id: 'tropical', name: 'TROPICAL PARADISE', speedAdd: 0, laneAdd: 0,
+    id: 'tropical', name: 'TROPICAL PARADISE', namePl: 'TROPIKALNY RAJ', speedAdd: 0, laneAdd: 0,
     blurb: 'Turkusowa woda, palmy, plaże i drewniane pomosty. Słońce i wakacyjny klimat.',
-    card: 'linear-gradient(160deg,#49c6ff 0%,#7ee8fa 45%,#ffe29a 75%,#ff9a5a 100%)',
+    blurbEn: 'Turquoise water, palms, beaches and wooden docks. Sun and holiday vibes.',
+     card: 'linear-gradient(160deg,#49c6ff 0%,#7ee8fa 45%,#ffe29a 75%,#ff9a5a 100%)',
   },
   {
-    id: 'lake', name: 'WILD LAKE', speedAdd: 1, laneAdd: -1,
+    id: 'lake', name: 'WILD LAKE', namePl: 'DZIKIE JEZIORO', speedAdd: 1, laneAdd: -1,
     blurb: 'Górskie jezioro, mgła, lasy i powalone drzewa. Zmienna pogoda i wąskie przejścia.',
-    card: 'linear-gradient(160deg,#3d4f5c 0%,#6b8a8f 40%,#2f5d3a 75%,#1b2d22 100%)',
+    blurbEn: 'A mountain lake: fog, forests and fallen trees. Changing weather and narrow gaps.',
+     card: 'linear-gradient(160deg,#3d4f5c 0%,#6b8a8f 40%,#2f5d3a 75%,#1b2d22 100%)',
   },
   {
-    id: 'neon', name: 'NEON NIGHT PARK', speedAdd: 2, laneAdd: -1.5,
+    id: 'neon', name: 'NEON NIGHT PARK', namePl: 'NEONOWY PARK NOCNY', speedAdd: 2, laneAdd: -1.5,
     blurb: 'Nocny wakepark: neonowe raile, podświetlone boje i elektroniczna muzyka.',
-    card: 'linear-gradient(160deg,#0b0221 0%,#2a0a5e 40%,#ff00c8 75%,#00e5ff 100%)',
+    blurbEn: 'A night wake park: neon rails, lit-up buoys and electronic music.',
+     card: 'linear-gradient(160deg,#0b0221 0%,#2a0a5e 40%,#ff00c8 75%,#00e5ff 100%)',
   },
   {
-    id: 'arctic', name: 'ARCTIC FJORD', speedAdd: 3, laneAdd: -2,
+    id: 'arctic', name: 'ARCTIC FJORD', namePl: 'ARKTYCZNY FIORD', speedAdd: 3, laneAdd: -2,
     blurb: 'Arktyczny fiord: góry lodowe, śnieg, zorza polarna i skute lodem pomosty. Zimno i szybko.',
-    card: 'linear-gradient(160deg,#0a2a52 0%,#3d8fd0 40%,#8ff0e0 70%,#eaf7ff 100%)',
+    blurbEn: 'An arctic fjord: icebergs, snow, northern lights and ice-locked docks. Cold and fast.',
+     card: 'linear-gradient(160deg,#0a2a52 0%,#3d8fd0 40%,#8ff0e0 70%,#eaf7ff 100%)',
   },
   {
-    id: 'volcano', name: 'VOLCANO LAGOON', speedAdd: 4, laneAdd: -2,
+    id: 'volcano', name: 'VOLCANO LAGOON', namePl: 'WULKANICZNA LAGUNA', speedAdd: 4, laneAdd: -2,
     blurb: 'Wulkaniczna laguna: bazaltowe skały, lawa, popiół i pomarańczowa poświata. Ekstremalna prędkość.',
-    card: 'linear-gradient(160deg,#0a0505 0%,#3a1208 35%,#ff5a00 70%,#ffd166 100%)',
+    blurbEn: 'A volcanic lagoon: basalt rocks, lava, ash and an orange glow. Extreme speed.',
+     card: 'linear-gradient(160deg,#0a0505 0%,#3a1208 35%,#ff5a00 70%,#ffd166 100%)',
   },
   {
-    id: 'alpine', sport: 'snow', name: 'ALPINE RIDGE', speedAdd: 5, laneAdd: 1,
+    id: 'alpine', sport: 'snow', name: 'ALPINE RIDGE', namePl: 'ALPEJSKA GRAŃ', speedAdd: 5, laneAdd: 1,
     blurb: 'Snowboardowy zjazd o wschodzie słońca: szeroka trasa, slalomowe bramki, sosny i ostry zakręt w dół.',
-    card: 'linear-gradient(160deg,#123a63 0%,#5a9bd0 40%,#ffd3a8 70%,#f6fbff 100%)',
+    blurbEn: 'A snowboard descent at sunrise: a wide slope, slalom gates, pines and a sharp turn down.',
+     card: 'linear-gradient(160deg,#123a63 0%,#5a9bd0 40%,#ffd3a8 70%,#f6fbff 100%)',
   },
   {
-    id: 'powder', sport: 'snow', name: 'POWDER FOREST', speedAdd: 6, laneAdd: 0,
+    id: 'powder', sport: 'snow', name: 'POWDER FOREST', namePl: 'PUSZYSTY LAS', speedAdd: 6, laneAdd: 0,
     blurb: 'Puszysty śnieg i gęsty las: wąskie przejścia między sosnami, zasypane skocznie i mgła.',
-    card: 'linear-gradient(160deg,#33474f 0%,#7a97a4 40%,#d9e8ef 75%,#f7fdff 100%)',
+    blurbEn: 'Deep powder and a dense forest: narrow gaps between pines, buried kickers and fog.',
+     card: 'linear-gradient(160deg,#33474f 0%,#7a97a4 40%,#d9e8ef 75%,#f7fdff 100%)',
   },
   {
-    id: 'glacier', sport: 'snow', name: 'GLACIER EDGE', speedAdd: 7, laneAdd: -0.5,
+    id: 'glacier', sport: 'snow', name: 'GLACIER EDGE', namePl: 'LODOWCOWA KRAWĘDŹ', speedAdd: 7, laneAdd: -0.5,
     blurb: 'Lodowiec w środku burzy: lód, ostre granie, zamieć i prędkość, od której drętwieją nogi.',
-    card: 'linear-gradient(160deg,#04121f 0%,#2b5d7a 40%,#8fd4ef 70%,#ffffff 100%)',
+    blurbEn: 'A glacier in a storm: ice, sharp ridges, a blizzard and speed that numbs your legs.',
+     card: 'linear-gradient(160deg,#04121f 0%,#2b5d7a 40%,#8fd4ef 70%,#ffffff 100%)',
   },
 ];
 // 25 level goals
@@ -612,7 +609,7 @@ function defaultSave() {
     bestOverall: 0, runs: [], totalDistance: 0, totalRuns: 0,
     owned: { board: ['classic'], outfit: ['ocean'], fx: ['classic'] },
     equipped: { board: 'classic', outfit: 'ocean', fx: 'classic' },
-    settings: { sound: true, music: true, volume: 0.8, quality: 'auto', sens: 1.0, trickButtons: true, shake: true, ghost: true, slowmo: true, postfx: true },
+    settings: { sound: true, music: true, volume: 0.8, quality: 'auto', sens: 1.0, trickButtons: true, shake: true, ghost: true, slowmo: true, postfx: true, lang: detectLang() },
     sel: { stage: 0, level: 0 }, tutorialSeen: false,
     // ---- schema v2 (phase 2) ----
     ver: 2,
@@ -671,6 +668,69 @@ let SAVE = loadSave();
 function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) { } }
 function isLevelUnlocked(s, l) { return SAVE.unlocked[s] > l; }
 function isStageUnlocked(s) { return SAVE.unlocked[s] > 0; }
+
+// ---------------------------------------------------------------------
+// I18N — PL / EN. One language at a time; every visible string has a pair.
+// ---------------------------------------------------------------------
+const LEVEL_NAMES_PL = ['POCZĄTKUJĄCY', 'NOWICJUSZ', 'PRO RIDER', 'EKSPERT', 'LEGENDA'];
+function detectLang() {
+  try { const l = (navigator.languages && navigator.languages[0]) || navigator.language || ''; return /^pl\b/i.test(l) ? 'pl' : 'en'; }
+  catch (e) { return 'en'; }
+}
+function LANG() { return (SAVE.settings && SAVE.settings.lang === 'pl') ? 'pl' : 'en'; }
+function isPL() { return LANG() === 'pl'; }
+const tr = (en, pl) => (isPL() ? pl : en);
+// data entries carry the English text in `text` and the Polish one in `pl`
+const tx = (o) => (!o ? '' : (isPL() ? (o.pl || o.text) : (o.text || o.pl)));
+const sName = (s) => { const st = STAGES[s]; return isPL() ? (st.namePl || st.name) : st.name; };
+const lvName = (l) => (isPL() ? LEVEL_NAMES_PL[l] : LEVEL_NAMES[l]);
+const CRASH_PL = {
+  'COMBO TOO HARD — BAD LANDING': 'ZA TRUDNE COMBO — ZŁE LĄDOWANIE',
+  'UNDER-ROTATED — BAD LANDING': 'NIEDOKRĘCONY OBRÓT — ZŁE LĄDOWANIE',
+  'HIT THE RAIL': 'UDERZENIE W RAIL',
+  'HIT THE BOX': 'UDERZENIE W BOX',
+  'HIT THE RAMP SIDE': 'UDERZENIE W BOK RAMPY',
+  'HIT A ROCK': 'UDERZENIE W SKAŁĘ',
+  'HIT A LOG': 'UDERZENIE W KŁODĘ',
+  'HIT A DRIFTING LOG': 'UDERZENIE W PŁYWAJĄCĄ KŁODĘ',
+  'HIT A STUMP': 'UDERZENIE W PIEŃ',
+  'HIT A FALLEN TREE': 'UDERZENIE W POWALONE DRZEWO',
+  'HIT A BUOY': 'UDERZENIE W BOJĘ',
+  'HIT A BARRIER': 'UDERZENIE W BARIERĘ',
+  'HIT A DARK CRYSTAL': 'UDERZENIE W CIEMNY KRYSZTAŁ',
+  'WIPED OUT BY A WAVE': 'PRZEWRÓCONY PRZEZ FALĘ',
+  'CRASH': 'WYWROTKA',
+};
+const crashText = (r) => (isPL() ? (CRASH_PL[r] || r) : r);
+// help screen paragraphs
+const HELP = {
+  en: [
+    '🏄 The cable pulls you forward. <b>Dodge</b> rocks, logs, stumps, buoys, waves and dark crystals. <b>Collect</b> rubies 💎 and jump off the ramps!',
+    '📱 <b>Phone:</b> drag left/right to steer. A quick swipe <b>up</b> jumps (on a ramp it becomes a strong POP). In the air: <b>← / →</b> = 180° spin (again = 360/540/720), <b>↑</b> = backflip, <b>↓</b> = frontflip. On a rail: ↑ to hop off, ←/→ to slide sideways.',
+    '⌨️ <b>Keyboard:</b> A/D or ←/→ steer, W/↑/Space jump, in the air arrows/WASD for tricks, P/Esc pause, R restart, M sound.',
+    '🎯 You can already queue tricks <b>on the ramp</b> – the game remembers them and fires them at take-off. A nearly-complete rotation at landing gets “saved” (SAVED IT!). One stray swipe never ends the run – you only lose the points (BAILED). Long combos still have to be completed, or you fall.',
+    '⭐ Points: distance, rubies, NEAR MISS, jumps, grinds, spins, flips, combos and PERFECT LANDING (with slow motion). The <b>multiplier</b> has an experience bar (pink): tricks, grinds and near misses fill it, each level needs more. It drops after a fall or about 7 s without action.',
+    '⚡ <b>Power-ups</b> on the water: 🧲 ruby magnet (9 s), 🛡️ shield – absorbs one wipeout (25 s), 🚀 boost – faster and you smash obstacles (5 s), ✖2 – double points (10 s). The remaining time shows under the multiplier. A rare <b>golden ruby</b> = 5 rubies + bonus.',
+    '★ Every level has <b>3 stars</b>: the level goal, the score threshold and the level mission – all in one run. Each new star gives +10 💎.',
+    '🏆 <b>MISSIONS</b>: always 3 active tasks (e.g. 3 grinds in one run, a 540 spin) – finish one to earn rubies and get a new mission. You can swap an unwanted mission for 10 💎. The <b>daily challenge</b> changes every day – play day after day to build a 🔥 streak and bigger rewards.',
+    '👻 <b>Ghost</b>: the translucent rider is your best run on this level (each level’s route is always the same). The HUD shows how many metres ahead/behind you are. You can turn it off in Settings.',
+    '🔓 Each location has 5 levels with a goal. Complete a level to unlock the next one. Complete PRO RIDER to unlock a new location. Spend your rubies in the <b>GARAGE</b>.',
+    '📲 The game works <b>offline</b>. On Android (Chrome) use the <b>INSTALL</b> button in the menu or “Add to home screen”.',
+  ],
+  pl: [
+    '🏄 Wyciąg linowy ciągnie Cię do przodu. <b>Omijaj</b> skały, kłody, pnie, boje, fale i ciemne kryształy. <b>Zbieraj</b> rubiny 💎 i skacz z ramp!',
+    '📱 <b>Telefon:</b> przeciągnij palcem w lewo/prawo – skręt. Szybki ruch <b>w górę</b> – skok (na rampie = mocny POP). W powietrzu: <b>← / →</b> = obrót 180° (kilka razy = 360/540/720), <b>↑</b> = backflip, <b>↓</b> = frontflip. Na railu: ↑ zeskok, ←/→ zjazd w bok.',
+    '⌨️ <b>Klawiatura:</b> A/D lub ←/→ – skręt, W/↑/Spacja – skok, w powietrzu strzałki/WASD – triki, P/Esc – pauza, R – restart, M – dźwięk.',
+    '🎯 Triki możesz wpisać już <b>na rampie</b> – gra je zapamięta i wykona w chwili wybicia. Prawie dokręcony obrót przy lądowaniu zostanie „uratowany” (SAVED IT!). Pojedynczy przypadkowy ruch nigdy nie kończy przejazdu – najwyżej stracisz punkty (BAILED). Długie kombinacje wciąż trzeba dokręcić, inaczej upadek.',
+    '⭐ Punkty: dystans, rubiny, NEAR MISS, skoki, grindy, obroty, salta, kombinacje i PERFECT LANDING (z efektem slow-motion). <b>Mnożnik</b> ma pasek doświadczenia (różowy): triki, grindy i mijanki go ładują, kolejne poziomy wymagają więcej. Znika po upadku lub ok. 7 s bez akcji.',
+    '⚡ <b>Power-upy</b> na wodzie: 🧲 magnes na rubiny (9 s), 🛡️ tarcza – pochłania jedną wywrotkę (25 s), 🚀 dopalacz – szybciej i rozbijasz przeszkody (5 s), ✖2 – podwójne punkty (10 s). Czas działania widać pod mnożnikiem. Rzadki <b>złoty rubin</b> = 5 rubinów + bonus.',
+    '★ Każdy poziom ma <b>3 gwiazdki</b>: cel poziomu, próg punktowy i misja poziomu – wszystko w jednym przejeździe. Za każdą nową gwiazdkę +10 💎.',
+    '🏆 <b>MISJE</b>: zawsze 3 aktywne zadania (np. 3 grindy w przejeździe, obrót 540°) – po wykonaniu dostajesz rubiny i nową misję. Niechcianą misję możesz wymienić za 10 💎. <b>Wyzwanie dnia</b> zmienia się codziennie – rób je dzień po dniu, by budować serię 🔥 i większe nagrody.',
+    '👻 <b>Duch</b>: półprzezroczysty rider to Twój najlepszy przejazd na tym poziomie (trasa poziomu jest zawsze taka sama). HUD pokazuje, ile metrów jesteś przed/za nim. Można go wyłączyć w Ustawieniach.',
+    '🔓 Każda lokacja ma 5 poziomów z celem. Ukończ poziom, aby odblokować następny. Ukończ PRO RIDER, aby odblokować nową lokację. Rubiny wydasz w <b>GARAŻU</b>.',
+    '📲 Gra działa <b>offline</b>. Na Androidzie (Chrome) użyj przycisku <b>ZAINSTALUJ</b> w menu lub „Dodaj do ekranu głównego”.',
+  ],
+};
 
 // =====================================================================
 //  AUDIO — everything synthesized with Web Audio API
@@ -2203,10 +2263,10 @@ const goldRubyMat = new THREE.MeshStandardMaterial({ color: '#ffd54f', emissive:
 const glowMatGold = new THREE.SpriteMaterial({ map: dotTex, color: '#ffcc33', transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false });
 // ----- power-ups: ruby magnet, shield, speed boost, score x2 -----
 const POWERUPS = {
-  magnet: { color: '#ff3d5a', dur: 9, label: 'MAGNET', name: 'RUBY MAGNET', pl: 'Magnes na rubiny', icon: '🧲' },
-  shield: { color: '#40c4ff', dur: 25, label: 'SHIELD', name: 'SHIELD', pl: 'Tarcza', icon: '🛡️' },
-  boost: { color: '#ff9100', dur: 5, label: 'BOOST', name: 'SPEED BOOST', pl: 'Dopalacz', icon: '🚀' },
-  x2: { color: '#ffd54f', dur: 10, label: 'x2', name: 'SCORE x2', pl: 'Punkty x2', icon: '✖2' },
+  magnet: { color: '#ff3d5a', dur: 9, label: 'MAGNET', plLabel: 'MAGNES', name: 'RUBY MAGNET', pl: 'Magnes na rubiny', icon: '🧲' },
+  shield: { color: '#40c4ff', dur: 25, label: 'SHIELD', plLabel: 'TARCZA', name: 'SHIELD', pl: 'Tarcza', icon: '🛡️' },
+  boost: { color: '#ff9100', dur: 5, label: 'BOOST', plLabel: 'DOPALACZ', name: 'SPEED BOOST', pl: 'Dopalacz', icon: '🚀' },
+  x2: { color: '#ffd54f', dur: 10, label: 'x2', plLabel: 'x2', name: 'SCORE x2', pl: 'Punkty x2', icon: '✖2' },
 };
 const POWERUP_TYPES = ['magnet', 'shield', 'boost', 'x2'];
 function powerupMesh(kind) {
@@ -2536,7 +2596,7 @@ function bumpMult(xp) {
   while (S.mult < S.cfg.maxMult && S.multXP >= multNeed(S.mult)) { S.multXP -= multNeed(S.mult); S.mult++; }
   if (S.mult >= S.cfg.maxMult) S.multXP = 0;
   S.maxMult = Math.max(S.maxMult, S.mult);
-  if (S.mult > before && S.mult >= 2) { UI.popup(S.mult === S.cfg.maxMult ? `MAX COMBO x${S.mult}!` : `COMBO x${S.mult}!`, 'combo'); SND.sfx('combo', S.mult); }
+  if (S.mult > before && S.mult >= 2) { UI.popup(tr('COMBO', 'COMBO') + ` x${S.mult}!`, 'combo'); SND.sfx('combo', S.mult); }
 }
 function resetCombo() { S.mult = 1; S.multXP = 0; }
 function trickName() {
@@ -2649,11 +2709,11 @@ function land(surface, feat) {
   if (flipT && S.flipDir < 0) S.flags.frontflip = true;
   const tName = n ? trickNameFrom(spinT, flipT) : '';
   if (bailed) {
-    UI.popup('BAILED — NO POINTS', 'warn'); SND.sfx('bail'); S.multXP = 0;
+    UI.popup(tr('BAILED — NO POINTS', 'BAILED — BEZ PUNKTÓW'), 'warn'); SND.sfx('bail'); S.multXP = 0;
     splash(S.x, S.z, 1.2);
   } else if (S.fromRamp || n || air > 0.9) {
     let base = pts + (S.fromRamp ? 100 + air * 150 : 0);
-    if (height > 3.4) { base += 500; UI.popup('BIG AIR!', 'big'); }
+    if (height > 3.4) { base += 500; UI.popup(tr('BIG AIR!', 'WYSOKI LOT!'), 'big'); }
     if (sketchy) { base *= 0.5; }
     const perfect = !sketchy && (n > 0 || air > 1.0) && (S.time - S.rotDoneT > 0.08);
     if (perfect) { base = base * 1.3 + 250; S.perfectCount++; S.stats.perfect++; SAVE.stats.perfect = (SAVE.stats.perfect || 0) + 1; }
@@ -2664,9 +2724,9 @@ function land(surface, feat) {
     if (flipT) { S.stats.flips++; SAVE.stats.flips = (SAVE.stats.flips || 0) + 1; }
     if (spinT && flipT) S.stats.combo++;
     const big = n >= 2 || spinT >= 540 || flipT >= 360 || height > 3.4;
-    if (perfect) { UI.popup('PERFECT LANDING!', 'perfect'); SND.sfx('perfect'); }
+    if (perfect) { UI.popup(tr('PERFECT LANDING!', 'PERFECT LĄDOWANIE!'), 'perfect'); SND.sfx('perfect'); }
     else if (saved) { UI.popup('SAVED IT!', 'warn'); S.stats.saves++; }
-    else if (sketchy) UI.popup('SKETCHY...', 'warn');
+    else if (sketchy) UI.popup(tr('SKETCHY...', 'NIEPEWNE LĄDOWANIE...'), 'warn');
     if (!sketchy && (perfect || big) && n) landingFX(perfect, big);
     if (!sketchy) bumpMult(Math.max(1, n) + (perfect ? 1 : 0));
     if (n >= 2) S.bestCombo = Math.max(S.bestCombo, n);
@@ -2703,7 +2763,7 @@ function crash(reason, obj) {
   if (S.pu.boost > 0 && obj) { if (obj.kind === 'obs') smashObstacle(obj, true); else S.invuln = 0.5; return false; }
   if (S.pu.shield > 0) { shieldSave(obj); return false; }
   if (S.grinding) S.grinding = false;
-  S.mode = 'crashed'; S.crashT = 0; S.crashReason = reason;
+  S.mode = 'crashed'; S.crashT = 0; S.crashReason = crashText(reason);
   if (S.stats) S.stats.crashes++;
   S.mult = 1;
   SND.sfx('crash'); S.shake = 0.9;
@@ -2719,7 +2779,7 @@ function smashObstacle(e, loud) {
   if (e.hit) return; e.hit = true; e.passed = true; e.mesh.visible = false;
   splash(e.x, e.z, 1.4);
   for (let k = 0; k < 18; k++) Particles.emit(e.x, 0.6, e.z, rand(-4, 4), rand(2, 7), rand(-4, 2), k % 2 ? '#ffffff' : '#ffb74d', rand(0.2, 0.4), 0.8);
-  if (loud) { addScore(100 * S.cfg.scoreMult, 'SMASH!', 'small'); SND.sfx('smash'); S.shake = Math.max(S.shake, 0.25); }
+  if (loud) { addScore(100 * S.cfg.scoreMult, tr('SMASH!', 'ROZBITKA!'), 'small'); SND.sfx('smash'); S.shake = Math.max(S.shake, 0.25); }
 }
 function shieldSave(obj) {
   S.pu.shield = 0; S.invuln = 1.4;
@@ -2730,7 +2790,7 @@ function shieldSave(obj) {
   Rider.flipG.rotation.x = 0; Rider.spinG.rotation.y = 0;
   for (let k = 0; k < 40; k++) { const a = k / 40 * Math.PI * 2; Particles.emit(S.x + Math.cos(a) * 1.1, S.y + 0.9 + Math.sin(a * 3) * 0.5, S.z + Math.sin(a) * 1.1, Math.cos(a) * 6, rand(1, 4), Math.sin(a) * 6, '#40c4ff', 0.35, 0.7, 4); }
   SND.sfx('shield'); S.shake = Math.max(S.shake, 0.4); UI.flash('blue', 0.8);
-  UI.popup('SHIELD SAVED YOU!', 'goal');
+  UI.popup(tr('SHIELD SAVED YOU!', 'TARCZA CIĘ URATOWAŁA!'), 'goal');
 }
 function splash(x, z, k) {
   if (W.snow) { // powder burst instead of water spray
@@ -2892,7 +2952,7 @@ const RIDER_HW = 0.28, RIDER_HL = 0.68;
 function updatePlay(dt) {
   const c = S.cfg; S.time += dt; S.runT += dt;
   // power-up timers
-  for (const k of POWERUP_TYPES) if (S.pu[k] > 0) { S.pu[k] = Math.max(0, S.pu[k] - dt); if (S.pu[k] === 0) UI.popup(POWERUPS[k].name + ' OVER', 'small'); }
+  for (const k of POWERUP_TYPES) if (S.pu[k] > 0) { S.pu[k] = Math.max(0, S.pu[k] - dt); if (S.pu[k] === 0) UI.popup(tr(POWERUPS[k].name, POWERUPS[k].pl) + ' — ' + tr('OVER', 'KONIEC'), 'small'); }
   if (S.invuln > 0) S.invuln -= dt;
   if (S.slowCD > 0) S.slowCD -= dt;
   S.boostK = damp(S.boostK, S.pu.boost > 0 ? 1.45 : 1, S.pu.boost > 0 ? 3 : 1.5, dt);
@@ -2997,7 +3057,7 @@ function updatePlay(dt) {
         S.rubies += n; SAVE.rubies += n; SAVE.totalRubies += n;
         if (e.golden) {
           S.stats.golden++; SAVE.stats.golden = (SAVE.stats.golden || 0) + 1;
-          addScore(400 * S.cfg.scoreMult, 'GOLDEN RUBY  💎+5', 'goal'); SND.sfx('golden'); UI.flash('gold', 0.5);
+          addScore(400 * S.cfg.scoreMult, tr('GOLDEN RUBY', 'ZŁOTY RUBIN') + '  💎+5', 'goal'); SND.sfx('golden'); UI.flash('gold', 0.5);
           for (let k = 0; k < 30; k++) Particles.emit(e.x, e.y, e.z, rand(-4, 4), rand(0, 5), rand(-4, 4), k % 2 ? '#ffd54f' : '#fff8e1', 0.35, 0.8, 3);
         } else {
           addScore(50 * S.cfg.scoreMult, null); SND.sfx('ruby');
@@ -3036,7 +3096,7 @@ function updatePlay(dt) {
   }
   // ---- distance points, combo timer
   S.score += dz * 2 * c.scoreMult * (S.pu.x2 > 0 ? 2 : 1);
-  if ((S.mult > 1 || S.multXP > 0) && !S.air && !S.grinding) { S.comboT -= dt; if (S.comboT <= 0) { if (S.mult > 1) UI.popup('COMBO LOST', 'warn'); resetCombo(); } }
+  if ((S.mult > 1 || S.multXP > 0) && !S.air && !S.grinding) { S.comboT -= dt; if (S.comboT <= 0) { if (S.mult > 1) UI.popup(tr('COMBO LOST', 'COMBO PRZEPADŁO'), 'warn'); resetCombo(); } }
   // ---- goal, stars, missions, ghost
   checkGoal();
   Ghost.record();
@@ -3044,7 +3104,7 @@ function updatePlay(dt) {
   spawnAhead();
   // ---- kicker hint for beginners
   if (S.hintKicker && S.hintKicker.active && S.hintKicker.z0 - S.z > -30 && S.hintKicker.z0 < S.z && S.hintKicker.z0 > S.z - 40 && !S.hintKickerShown) {
-    S.hintKickerShown = true; UI.hint(IS_TOUCH ? 'Przesuń palcem w GÓRĘ na rampie, potem w powietrzu ← → ↑ ↓ = triki!' : 'Na rampie wciśnij W/↑/SPACJA, w powietrzu strzałki = triki!');
+    S.hintKickerShown = true; UI.hint(IS_TOUCH ? tr('Swipe UP on the ramp, then in the air ← → ↑ ↓ = tricks!', 'Przesuń palcem w GÓRĘ na rampie, potem w powietrzu ← → ↑ ↓ = triki!') : tr('Press W/↑/SPACE on the ramp, arrows in the air = tricks!', 'Na rampie wciśnij W/↑/SPACJA, w powietrzu strzałki = triki!'));
   }
   // ---- level complete pause when safe
   if (S.goalDone && !S.completeShown && !S.air && !S.onFeat) { S.completeT += dt; if (S.completeT > 1.0) { S.completeShown = true; S.mode = 'complete'; UI.showComplete(); } }
@@ -3065,7 +3125,7 @@ function checkGoal() {
   if (S.goalDone) return;
   if (goalProgress() >= 1) {
     S.goalDone = true;
-    UI.popup('GOAL COMPLETE!', 'goal'); SND.sfx('complete');
+    UI.popup(tr('GOAL COMPLETE!', 'CEL OSIĄGNIĘTY!'), 'goal'); SND.sfx('complete');
     const s = S.stage, l = S.level;
     const first = !SAVE.completed[s][l];
     SAVE.completed[s][l] = 1;
@@ -3080,7 +3140,7 @@ function checkGoal() {
 function activatePowerup(kind, e) {
   const P = POWERUPS[kind]; e = e || { x: S.x, y: S.y + 1, z: S.z - 1 };
   S.pu[kind] = P.dur; S.stats.powerups++; SAVE.stats.powerups = (SAVE.stats.powerups || 0) + 1;
-  UI.popup(P.icon + ' ' + P.name + '!', 'goal'); SND.sfx('powerup'); UI.flash(kind === 'shield' ? 'blue' : kind === 'x2' ? 'gold' : 'white', 0.45);
+  UI.popup(P.icon + ' ' + tr(P.name, P.pl) + '!', 'goal'); SND.sfx('powerup'); UI.flash(kind === 'shield' ? 'blue' : kind === 'x2' ? 'gold' : 'white', 0.45);
   for (let k = 0; k < 36; k++) { const a = k / 36 * Math.PI * 2; Particles.emit(e.x, e.y, e.z, Math.cos(a) * 5, rand(1, 5), Math.sin(a) * 5, k % 2 ? P.color : '#ffffff', 0.35, 0.7, 4); }
   if (kind === 'boost') { SND.sfx('boost'); S.fovKick = Math.max(S.fovKick, 9); S.shake = Math.max(S.shake, 0.2); }
 }
@@ -3117,7 +3177,7 @@ function updateEntity(e, dt) {
       break;
     }
     case 'wave': {
-      if (dzr > -38 && !e.rising) { e.rising = true; if (!e.warned) { e.warned = true; UI.popup('WAVE!', 'warn'); SND.sfx('warn'); } }
+      if (dzr > -38 && !e.rising) { e.rising = true; if (!e.warned) { e.warned = true; UI.popup(tr('WAVE!', 'FALA!'), 'warn'); SND.sfx('warn'); } }
       e.h = e.rising ? Math.min(e.maxH, (e.h || 0) + dt * 1.6) : 0;
       e.mesh.scale.y = Math.max(0.01, e.h); e.mesh.position.y = -0.1 + Math.sin(e.t * 3) * 0.04;
       if (e.rising && Math.random() < dt * 20) Particles.emit(e.x + rand(-e.hw, e.hw), e.h, e.z, 0, rand(1, 2), rand(0, 1), '#ffffff', 0.35, 0.5, 6);
@@ -3340,7 +3400,7 @@ const Meta = (() => {
   const inRun = () => !!S.cfg && (S.mode === 'play' || S.mode === 'crashed' || S.mode === 'over' || S.mode === 'paused' || S.mode === 'complete') && !!S.stats;
   const byId = (id) => id === 'comeback' ? COMEBACK_MISSION : MISSION_POOL.find(m => m.id === id);
   // mission constraints: progress and completion only count while the run keeps the rule
-  const COND_LABEL = { nocrash: 'bez wywrotki · no wipeout', nopower: 'bez power-upów · no power-ups', noruby: 'bez rubinów · no rubies', noshield: 'bez ratunku tarczy · no shield rescue' };
+  const condLabel = (k) => ({ nocrash: tr('no wipeout', 'bez wywrotki'), nopower: tr('no power-ups', 'bez power-upów'), noruby: tr('no rubies', 'bez rubinów'), noshield: tr('no shield rescue', 'bez ratunku tarczy') }[k] || k);
   function condOk(c) {
     if (!c) return true;
     const st = S.stats || {};
@@ -3409,7 +3469,7 @@ const Meta = (() => {
     SAVE.missions.lastDone = { id: def.id, t: Date.now() };
     ensureMissions();
     if (S.runMissions) S.runMissions.push(def);
-    if (S.mode === 'play' || S.mode === 'crashed') { UI.popup(`✔ MISSION: ${def.text}  💎+${def.r}`, 'goal'); SND.sfx('mission'); }
+    if (S.mode === 'play' || S.mode === 'crashed') { UI.popup(`✔ ${tr('MISSION', 'MISJA')}: ${tx(def)}  💎+${def.r}`, 'goal'); SND.sfx('mission'); }
     persist();
   }
   function reroll(i) {
@@ -3450,7 +3510,7 @@ const Meta = (() => {
     D.lastDone = t; D.done = true; D.best = D.v;
     SAVE.rubies += reward; SAVE.stats.dailyDone = (SAVE.stats.dailyDone || 0) + 1;
     S.dailyJustDone = reward;
-    if (S.mode === 'play' || S.mode === 'crashed') { UI.popup(`📅 DAILY DONE! 🔥${D.streak}  💎+${reward}`, 'goal'); SND.sfx('mission'); }
+    if (S.mode === 'play' || S.mode === 'crashed') { UI.popup(`📅 ${tr('DAILY DONE!', 'WYZWANIE DNIA ZROBIONE!')} 🔥${D.streak}  💎+${reward}`, 'goal'); SND.sfx('mission'); }
     persist();
   }
 
@@ -3488,7 +3548,7 @@ const Meta = (() => {
     if (runVal(lm.m) >= lm.v) b |= 4;
     return b;
   }
-  const STAR_NAMES = ['GOAL', 'SCORE', 'MISSION'];
+  const STAR_NAMES = ['GOAL', 'SCORE', 'MISSION'], STAR_NAMES_PL = ['CEL', 'PUNKTY', 'MISJA'];
   function checkStars() {
     if (!S.cfg) return;
     const s = S.stage, l = S.level, have = SAVE.stars[s][l], live = starBitsLive();
@@ -3496,7 +3556,7 @@ const Meta = (() => {
     const gained = live & ~have;
     if (!gained) return;
     SAVE.stars[s][l] = have | live; S.newStars = (S.newStars || 0) | gained;
-    let n = 0; for (let i = 0; i < 3; i++) if (gained & (1 << i)) { n++; if (S.mode === 'play') UI.popup(`★ STAR: ${STAR_NAMES[i]}  💎+10`, 'big'); }
+    let n = 0; for (let i = 0; i < 3; i++) if (gained & (1 << i)) { n++; if (S.mode === 'play') UI.popup(`★ ${tr('STAR', 'GWIAZDKA')}: ${(isPL() ? STAR_NAMES_PL : STAR_NAMES)[i]}  💎+10`, 'big'); }
     SAVE.rubies += 10 * n; if (S.mode === 'play') SND.sfx('star');
     persist();
   }
@@ -3520,7 +3580,7 @@ const Meta = (() => {
   }
   return {
     runVal, totVal, missionProg, ensureMissions, reroll, byId, ensureDaily, dailyProg, dailyStreak, dailyReward,
-    condOk, COND_LABEL, freezeInfo, buyFreeze, checkComeback,
+    condOk, condLabel, freezeInfo, buyFreeze, checkComeback,
     starBitsLive, stageStars, totalStars, countBits, tick, onRunStart, onRunEnd, today, fmtV,
     setDate(ds) { dateOverride = ds; }, // test hook
   };
@@ -3692,6 +3752,15 @@ const UI = (() => {
     if (name !== 'hud') speedFx(0);
     updateMute();
   }
+  // re-apply every static label + the help text, then redraw the current screen
+  function applyI18n() {
+    document.documentElement.lang = LANG();
+    document.querySelectorAll('[data-i18n]').forEach(e => { const p = e.dataset.i18n.split('|'); e.textContent = isPL() ? p[1] : p[0]; });
+    document.querySelectorAll('[data-i18n-html]').forEach(e => { const p = e.dataset.i18nHtml.split('|'); e.innerHTML = isPL() ? p[1] : p[0]; });
+    el('help-body').innerHTML = (isPL() ? HELP.pl : HELP.en).map(t => `<p>${t}</p>`).join('');
+    lastHud = {};
+    show(cur);
+  }
   const click = () => { SND.init(); SND.sfx('click'); };
   function btn(id, fn) { el(id).addEventListener('click', (e) => { e.stopPropagation(); click(); fn(e); }); }
 
@@ -3699,13 +3768,13 @@ const UI = (() => {
   function renderMenu() {
     el('m-rubies').textContent = fmt(SAVE.rubies);
     const s = SAVE.sel.stage, l = SAVE.sel.level;
-    el('m-sel').innerHTML = `<b>${STAGES[s].name}</b> · ${LEVEL_NAMES[l]}<br><span>${GOALS[s][l].text}</span>`;
+    el('m-sel').innerHTML = `<b>${sName(s)}</b> · ${lvName(l)}<br><span>${tx(GOALS[s][l])}</span>`;
     el('m-sel').innerHTML += `<div class="lstars">${starsHtml(SAVE.stars[s][l])}</div>`;
     el('m-best').textContent = fmt(SAVE.bestOverall);
     el('m-stars').textContent = Meta.totalStars() + ' / ' + STAGES.length * 15;
     const D = Meta.ensureDaily(); Meta.ensureMissions();
     el('m-badge').style.display = D.done ? 'none' : '';
-    el('m-badge').textContent = D.done ? '' : 'DAILY';
+    el('m-badge').textContent = D.done ? '' : tr('DAILY', 'DZIŚ');
     updateInstall();
     previewStage(s);
   }
@@ -3713,7 +3782,7 @@ const UI = (() => {
   // three-star breakdown (fail + complete screens): earned ever = lit, earned this run for the first time = animated
   function starRow(id) {
     const s = S.stage, l = S.level, have = SAVE.stars[s][l], nw = S.newStars || 0, lm = LEVEL_MISSIONS[s][l];
-    const labels = [`🎯 ${S.cfg.goal.text}`, `⭐ ${fmt(STAR_SCORE[s][l])} pts`, `🏅 ${lm.text}`];
+    const labels = [`🎯 ${tx(S.cfg.goal)}`, `⭐ ${fmt(STAR_SCORE[s][l])} pts`, `🏅 ${tx(lm)}`];
     el(id).innerHTML = labels.map((t, i) => `<div class="${have & (1 << i) ? 'on' : ''} ${nw & (1 << i) ? 'new' : ''}" style="animation-delay:${i * 0.15}s"><span class="s" style="animation-delay:${0.2 + i * 0.25}s">★</span>${t}</div>`).join('');
   }
   // ------------------------------------------------ MISSIONS & DAILY
@@ -3722,34 +3791,35 @@ const UI = (() => {
     Meta.ensureMissions(); const D = Meta.ensureDaily();
     const dp = Meta.dailyProg(), streak = Meta.dailyStreak(), fz = Meta.freezeInfo();
     const lvl = SAVE.sel.stage === D.stage ? SAVE.sel.level : 0;
-    let h = `<div class="msec daily"><div class="mhead">📅 DAILY CHALLENGE · WYZWANIE DNIA <span>${D.date}</span></div>
-      <div class="mitem ${D.done ? 'done' : ''}"><div class="mt">${D.text}<i>${D.pl} · 📍 ${STAGES[D.stage].name} (dowolny poziom)</i>${bar(dp / D.v)}</div>
-      <div class="mr">${Meta.fmtV(D.m, dp)} / ${Meta.fmtV(D.m, D.v)}<br>${D.done ? '✓ DONE' : '💎 +' + Meta.dailyReward()}</div></div>
-      <div class="streak">🔥 Streak: <b>${streak}</b> ${streak === 1 ? 'day' : 'days'} · best ${Math.max(D.bestStreak || 0, streak)} · ❄ ${fz.n}/${fz.max} · ${D.done ? 'Come back tomorrow! · Wróć jutro!' : 'Complete it today to keep the streak'}</div>
-      ${D.freezeUsed === Meta.today() ? '<div class="streak" style="color:#7ff6ff">❄ Freeze used — streak saved · Freeze użyty, seria uratowana</div>' : ''}
-      <div class="mrow"><button class="mini" id="ms-freeze">❄ STREAK FREEZE · 💎${fz.cost}</button><span style="opacity:.75;font-size:12px;margin-left:8px">${fz.n >= fz.max ? 'limit reached · limit' : 'covers one missed day · chroni jeden opuszczony dzień'}</span></div>
-      ${D.done ? '' : `<button class="b main" id="ms-daily" style="margin-top:8px">▶ PLAY DAILY · ${STAGES[D.stage].name.toUpperCase()} · ${LEVEL_NAMES[lvl]}</button>`}</div>`;
-    h += `<div class="msec"><div class="mhead">🎯 MISSIONS <span>completed: ${SAVE.stats.missionsDone || 0}</span></div>`;
+    let h = `<div class="msec daily"><div class="mhead">📅 ${tr('DAILY CHALLENGE', 'WYZWANIE DNIA')} <span>${D.date}</span></div>
+      <div class="mitem ${D.done ? 'done' : ''}"><div class="mt">${tx(D)}<i>📍 ${sName(D.stage)} · ${tr('any level', 'dowolny poziom')}</i>${bar(dp / D.v)}</div>
+      <div class="mr">${Meta.fmtV(D.m, dp)} / ${Meta.fmtV(D.m, D.v)}<br>${D.done ? tr('✓ DONE', '✓ ZROBIONE') : '💎 +' + Meta.dailyReward()}</div></div>
+      <div class="streak">🔥 ${tr('Streak', 'Seria')}: <b>${streak}</b> ${streak === 1 ? tr('day', 'dzień') : tr('days', 'dni')} · ${tr('best', 'rekord')} ${Math.max(D.bestStreak || 0, streak)} · ❄ ${fz.n}/${fz.max} · ${D.done ? tr('Come back tomorrow!', 'Wróć jutro!') : tr('Complete it today to keep the streak', 'Zrób je dziś, aby utrzymać serię')}</div>
+      ${D.freezeUsed === Meta.today() ? `<div class="streak" style="color:#7ff6ff">❄ ${tr('Freeze used — streak saved', 'Freeze użyty, seria uratowana')}</div>` : ''}
+      <div class="mrow"><button class="mini" id="ms-freeze">❄ ${tr('STREAK FREEZE', 'ZAMROŹ SERIĘ')} · 💎${fz.cost}</button><span style="opacity:.75;font-size:12px;margin-left:8px">${fz.n >= fz.max ? tr('limit reached', 'limit osiągnięty') : tr('covers one missed day', 'chroni jeden opuszczony dzień')}</span></div>
+      ${D.done ? '' : `<button class="b main" id="ms-daily" style="margin-top:8px">▶ ${tr('PLAY DAILY', 'GRAJ WYZWANIE')} · ${sName(D.stage).toUpperCase()} · ${lvName(lvl)}</button>`}</div>`;
+    h += `<div class="msec"><div class="mhead">🎯 ${tr('MISSIONS', 'MISJE')} <span>${tr('completed', 'zrobione')}: ${SAVE.stats.missionsDone || 0}</span></div>`;
     SAVE.missions.active.forEach((a, i) => {
       const def = Meta.byId(a.id), pr = Meta.missionProg(a);
-      h += `<div class="mitem"><div class="mt">${def.text}<i>${def.pl}${/przejeźdz|łącznie/.test(def.pl) ? '' : (def.run ? ' · w jednym przejeździe' : ' · łącznie')}${def.cond ? `<b class="cond">🔒 ${Meta.COND_LABEL[def.cond]}</b>` : ''}</i>${bar(pr / def.v)}</div><div class="mr">${Meta.fmtV(def.m, pr)} / ${Meta.fmtV(def.m, def.v)}<br>💎 +${def.r}</div><button class="mini" data-rr="${i}" title="Swap for 10 rubies">↻ 💎10</button></div>`;
+      const note = tx(def), runNote = /przejeźdz|łącznie|one run|total/.test(note) ? '' : (def.run ? tr(' · in one run', ' · w jednym przejeździe') : tr(' · total', ' · łącznie'));
+      h += `<div class="mitem"><div class="mt">${note}<i>${runNote}${def.cond ? `<b class="cond">🔒 ${Meta.condLabel(def.cond)}</b>` : ''}</i>${bar(pr / def.v)}</div><div class="mr">${Meta.fmtV(def.m, pr)} / ${Meta.fmtV(def.m, def.v)}<br>💎 +${def.r}</div><button class="mini" data-rr="${i}" title="${tr('Swap for 10 rubies', 'Wymień za 10 rubinów')}">↻ 💎10</button></div>`;
     });
-    h += `</div><div class="msec"><div class="mhead">★ STARS <span>${Meta.totalStars()} / ${STAGES.length * 15}</span></div>`;
-    for (let s = 0; s < STAGES.length; s++) h += `<div class="mitem"><div class="mt">${STAGES[s].name}<i>${SAVE.stars[s].map((b, l) => `${LEVEL_NAMES[l]} ${starsHtml(b)}`).join(' · ')}</i></div><div class="mr">${Meta.stageStars(s)} / 15</div></div>`;
+    h += `</div><div class="msec"><div class="mhead">★ ${tr('STARS', 'GWIAZDKI')} <span>${Meta.totalStars()} / ${STAGES.length * 15}</span></div>`;
+    for (let s = 0; s < STAGES.length; s++) h += `<div class="mitem"><div class="mt">${sName(s)}<i>${SAVE.stars[s].map((b, l) => `${lvName(l)} ${starsHtml(b)}`).join(' · ')}</i></div><div class="mr">${Meta.stageStars(s)} / 15</div></div>`;
     h += `</div>`;
     el('missions-body').innerHTML = h;
     const pd = el('ms-daily'); if (pd) pd.addEventListener('click', (e) => { e.stopPropagation(); click(); startRun(D.stage, lvl); });
     const fzb = el('ms-freeze'); if (fzb) fzb.addEventListener('click', (e) => {
       e.stopPropagation(); SND.init();
       const r = Meta.buyFreeze();
-      if (r === 'ok') { SND.sfx('buy'); popupMenu('Streak freeze bought · ❄'); }
-      else if (r === 'poor') { SND.sfx('warn'); popupMenu('Need 30 rubies · Potrzeba 30 💎'); }
-      else { SND.sfx('warn'); popupMenu('You already hold 2 freezes · Masz już 2'); }
+      if (r === 'ok') { SND.sfx('buy'); popupMenu(tr('Streak freeze bought ❄', 'Kupiono zamrożenie serii ❄')); }
+      else if (r === 'poor') { SND.sfx('warn'); popupMenu(tr('Need 30 rubies', 'Potrzeba 30 💎')); }
+      else { SND.sfx('warn'); popupMenu(tr('You already hold 2 freezes', 'Masz już 2 zamrożenia')); }
       renderMissions();
     });
     el('missions-body').querySelectorAll('[data-rr]').forEach(b => b.addEventListener('click', (e) => {
       e.stopPropagation(); SND.init();
-      if (Meta.reroll(+b.dataset.rr)) { SND.sfx('buy'); popupMenu('New mission!'); } else { SND.sfx('warn'); popupMenu('Need 10 rubies to swap'); }
+      if (Meta.reroll(+b.dataset.rr)) { SND.sfx('buy'); popupMenu(tr('New mission!', 'Nowa misja!')); } else { SND.sfx('warn'); popupMenu(tr('Need 10 rubies to swap', 'Potrzeba 10 rubinów na wymianę')); }
       renderMissions();
     }));
   }
@@ -3761,7 +3831,7 @@ const UI = (() => {
       const done = SAVE.completed[i].reduce((a, b) => a + b, 0);
       const d = document.createElement('button'); d.className = 'card stage' + (unlocked ? '' : ' locked') + (SAVE.sel.stage === i ? ' sel' : '');
       d.style.background = st.card;
-      d.innerHTML = `<div class="cname">${st.sport === 'snow' ? '❄ ' : ''}${st.name}</div><div class="cblurb">${st.blurb}</div><div class="cprog">${unlocked ? `✓ ${done}/5 levels · ★ ${Meta.stageStars(i)}/15` : '🔒 Complete PRO RIDER in ' + STAGES[i - 1].name}</div>`;
+      d.innerHTML = `<div class="cname">${st.sport === 'snow' ? '❄ ' : ''}${sName(i)}</div><div class="cblurb">${tr(st.blurbEn, st.blurb)}</div><div class="cprog">${unlocked ? `✓ ${done}/5 ${tr('levels', 'poziomów')} · ★ ${Meta.stageStars(i)}/15` : `🔒 ${tr('Complete PRO RIDER in', 'Ukończ PRO RIDER w')} ${sName(i - 1)}`}</div>`;
       d.addEventListener('click', (e) => { e.stopPropagation(); click(); if (!unlocked) { SND.sfx('warn'); return; } SAVE.sel.stage = i; levelStage = i; persist(); previewStage(i); show('levels'); });
       box.appendChild(d);
     });
@@ -3769,15 +3839,15 @@ const UI = (() => {
   // ------------------------------------------------ LEVELS
   function renderLevels() {
     const s = levelStage = SAVE.sel.stage;
-    el('lv-title').textContent = (STAGES[s].sport === 'snow' ? '❄ ' : '') + STAGES[s].name.toUpperCase();
+    el('lv-title').textContent = (STAGES[s].sport === 'snow' ? '❄ ' : '') + sName(s).toUpperCase();
     const box = el('level-list'); box.innerHTML = '';
     for (let l = 0; l < 5; l++) {
       const un = isLevelUnlocked(s, l), done = SAVE.completed[s][l];
       const g = GOALS[s][l];
       const d = document.createElement('button'); d.className = 'lvl' + (un ? '' : ' locked') + (done ? ' done' : '');
       const lm = LEVEL_MISSIONS[s][l], sb = SAVE.stars[s][l];
-      d.innerHTML = `<div class="lnum">${l + 1}</div><div class="linfo"><div class="lname">${LEVEL_NAMES[l]} ${done ? '<span class="chk">✓</span>' : ''} <span class="lstars">${starsHtml(sb)}</span></div><div class="lgoal">🎯 ${g.text} <i>(${g.pl})</i></div><div class="lmis">${sb & 2 ? '✓' : '⭐'} ${fmt(STAR_SCORE[s][l])} pts · ${sb & 4 ? '✓' : '🏅'} ${lm.text} <i>(${lm.pl})</i>${Ghost.has(s, l) ? ' · 👻' : ''}</div></div><div class="lbest">${un ? 'BEST<br><b>' + fmt(SAVE.best[s][l]) + '</b>' : '🔒'}</div>`;
-      d.addEventListener('click', (e) => { e.stopPropagation(); click(); if (!un) { SND.sfx('warn'); popupMenu('Complete the previous level first'); return; } SAVE.sel.level = l; persist(); startRun(s, l); });
+      d.innerHTML = `<div class="lnum">${l + 1}</div><div class="linfo"><div class="lname">${lvName(l)} ${done ? '<span class="chk">✓</span>' : ''} <span class="lstars">${starsHtml(sb)}</span></div><div class="lgoal">🎯 ${tx(g)}</div><div class="lmis">${sb & 2 ? '✓' : '⭐'} ${fmt(STAR_SCORE[s][l])} pts · ${sb & 4 ? '✓' : '🏅'} ${tx(lm)}${Ghost.has(s, l) ? ' · 👻' : ''}</div></div><div class="lbest">${un ? tr('BEST', 'REKORD') + '<br><b>' + fmt(SAVE.best[s][l]) + '</b>' : '🔒'}</div>`;
+      d.addEventListener('click', (e) => { e.stopPropagation(); click(); if (!un) { SND.sfx('warn'); popupMenu(tr('Complete the previous level first', 'Najpierw ukończ poprzedni poziom')); return; } SAVE.sel.level = l; persist(); startRun(s, l); });
       box.appendChild(d);
     }
   }
@@ -3797,11 +3867,11 @@ const UI = (() => {
       const owned = SAVE.owned[garageTab].includes(it.id), eq = SAVE.equipped[garageTab] === it.id;
       const afford = SAVE.rubies >= it.cost;
       const d = document.createElement('button'); d.className = 'gitem' + (eq ? ' eq' : '') + (!owned && !afford ? ' poor' : '');
-      d.innerHTML = `<div class="gsw" style="background:${swatch(garageTab, it)}"></div><div class="gname">${it.name}</div><div class="gstate">${eq ? 'EQUIPPED' : owned ? 'EQUIP' : (afford ? 'BUY 💎 ' + it.cost : '💎 ' + it.cost + ' <small>(need ' + (it.cost - SAVE.rubies) + ')</small>')}</div>`;
+      d.innerHTML = `<div class="gsw" style="background:${swatch(garageTab, it)}"></div><div class="gname">${it.name}</div><div class="gstate">${eq ? tr('EQUIPPED', 'ZAŁOŻONE') : owned ? tr('EQUIP', 'ZAŁÓŻ') : (afford ? tr('BUY', 'KUP') + ' 💎 ' + it.cost : '💎 ' + it.cost + ' <small>(' + tr('need', 'brakuje') + ' ' + (it.cost - SAVE.rubies) + ')</small>')}</div>`;
       d.addEventListener('click', (e) => {
         e.stopPropagation(); SND.init();
         if (eq) return;
-        if (!owned) { if (!afford) { SND.sfx('warn'); popupMenu('Not enough rubies — ride and collect more!'); return; } SAVE.rubies -= it.cost; SAVE.owned[garageTab].push(it.id); SND.sfx('buy'); popupMenu('Unlocked: ' + it.name + '!'); }
+        if (!owned) { if (!afford) { SND.sfx('warn'); popupMenu(tr('Not enough rubies — ride and collect more!', 'Za mało rubinów — jedź i zbieraj dalej!')); return; } SAVE.rubies -= it.cost; SAVE.owned[garageTab].push(it.id); SND.sfx('buy'); popupMenu(tr('Unlocked: ', 'Odblokowano: ') + it.name + '!'); }
         else SND.sfx('click');
         SAVE.equipped[garageTab] = it.id; persist(); Rider.applyLook(); renderGarage();
       });
@@ -3810,36 +3880,35 @@ const UI = (() => {
   }
   // ------------------------------------------------ SCORES
   function renderScores() {
-    const runs = SAVE.runs.length ? SAVE.runs.map((r, i) => `<tr><td>${i + 1}</td><td><b>${fmt(r.score)}</b></td><td>${STAGES[r.stage].name.split(' ')[0]} · ${LEVEL_NAMES[r.level]}</td><td>${fmt(r.dist)} m</td><td>💎${r.rubies}</td><td>${r.date}</td></tr>`).join('') : '<tr><td colspan="6">No runs yet — go ride!</td></tr>';
-    let grid = '<tr><th></th>' + LEVEL_NAMES.map(n => `<th>${n}</th>`).join('') + '</tr>';
-    for (let s = 0; s < STAGES.length; s++) grid += `<tr><th>${STAGES[s].name}</th>` + SAVE.best[s].map((b, l) => `<td class="${SAVE.completed[s][l] ? 'cdone' : ''}">${b ? fmt(b) : '—'}${SAVE.completed[s][l] ? ' ✓' : ''}</td>`).join('') + '</tr>';
-    el('scores-body').innerHTML = `<div class="stats"><div>BEST<b>${fmt(SAVE.bestOverall)}</b></div><div>RUNS<b>${fmt(SAVE.totalRuns)}</b></div><div>DISTANCE<b>${fmt(SAVE.totalDistance)} m</b></div><div>RUBIES EVER<b>${fmt(SAVE.totalRubies)}</b></div></div>
-      <h3>TOP RUNS</h3><table class="tbl"><tr><th>#</th><th>Score</th><th>Level</th><th>Dist</th><th>Rubies</th><th>Date</th></tr>${runs}</table>
-      <h3>BEST PER LEVEL</h3><div class="tblwrap"><table class="tbl grid">${grid}</table></div>`;
+    const runs = SAVE.runs.length ? SAVE.runs.map((r, i) => `<tr><td>${i + 1}</td><td><b>${fmt(r.score)}</b></td><td>${sName(r.stage).split(' ')[0]} · ${lvName(r.level)}</td><td>${fmt(r.dist)} m</td><td>💎${r.rubies}</td><td>${r.date}</td></tr>`).join('') : `<tr><td colspan="6">${tr('No runs yet — go ride!', 'Brak przejazdów — jedź!')}</td></tr>`;
+    let grid = '<tr><th></th>' + LEVEL_NAMES.map((n, i) => `<th>${lvName(i)}</th>`).join('') + '</tr>';
+    for (let s = 0; s < STAGES.length; s++) grid += `<tr><th>${sName(s)}</th>` + SAVE.best[s].map((b, l) => `<td class="${SAVE.completed[s][l] ? 'cdone' : ''}">${b ? fmt(b) : '—'}${SAVE.completed[s][l] ? ' ✓' : ''}</td>`).join('') + '</tr>';
+    el('scores-body').innerHTML = `<div class="stats"><div>${tr('BEST', 'REKORD')}<b>${fmt(SAVE.bestOverall)}</b></div><div>${tr('RUNS', 'PRZEJAZDY')}<b>${fmt(SAVE.totalRuns)}</b></div><div>${tr('DISTANCE', 'DYSTANS')}<b>${fmt(SAVE.totalDistance)} m</b></div><div>${tr('RUBIES EVER', 'RUBINY ŁĄCZNIE')}<b>${fmt(SAVE.totalRubies)}</b></div></div>
+      <h3>${tr('TOP RUNS', 'NAJLEPSZE PRZEJAZDY')}</h3><table class="tbl"><tr><th>#</th><th>${tr('Score', 'Punkty')}</th><th>${tr('Level', 'Poziom')}</th><th>${tr('Dist', 'Dyst.')}</th><th>${tr('Rubies', 'Rubiny')}</th><th>${tr('Date', 'Data')}</th></tr>${runs}</table>
+      <h3>${tr('BEST PER LEVEL', 'REKORDY POZIOMÓW')}</h3><div class="tblwrap"><table class="tbl grid">${grid}</table></div>`;
   }
   // ------------------------------------------------ SETTINGS
   function renderSettings() {
     const st = SAVE.settings;
-    el('set-sound').classList.toggle('on', st.sound); el('set-sound').textContent = st.sound ? 'ON' : 'OFF';
-    el('set-music').classList.toggle('on', st.music); el('set-music').textContent = st.music ? 'ON' : 'OFF';
-    el('set-tb').classList.toggle('on', st.trickButtons); el('set-tb').textContent = st.trickButtons ? 'ON' : 'OFF';
-    el('set-shake').classList.toggle('on', st.shake); el('set-shake').textContent = st.shake ? 'ON' : 'OFF';
-    el('set-ghost').classList.toggle('on', st.ghost !== false); el('set-ghost').textContent = st.ghost !== false ? 'ON' : 'OFF';
-    el('set-slowmo').classList.toggle('on', st.slowmo !== false); el('set-slowmo').textContent = st.slowmo !== false ? 'ON' : 'OFF';
-    el('set-postfx').classList.toggle('on', st.postfx !== false); el('set-postfx').textContent = st.postfx !== false ? 'ON' : 'OFF';
+    const onoff = (id, v) => { el(id).classList.toggle('on', v); el(id).textContent = v ? tr('ON', 'WŁ') : tr('OFF', 'WYŁ'); };
+    onoff('set-sound', st.sound); onoff('set-music', st.music); onoff('set-tb', st.trickButtons); onoff('set-shake', st.shake);
+    onoff('set-ghost', st.ghost !== false); onoff('set-slowmo', st.slowmo !== false); onoff('set-postfx', st.postfx !== false);
+    document.querySelectorAll('#set-lang button').forEach(b => b.classList.toggle('on', b.dataset.l === LANG()));
     updateInstall();
     el('set-vol').value = Math.round(st.volume * 100); el('set-vol-v').textContent = Math.round(st.volume * 100) + '%';
     el('set-sens').value = Math.round(st.sens * 100); el('set-sens-v').textContent = st.sens.toFixed(2) + 'x';
     document.querySelectorAll('#set-quality button').forEach(b => b.classList.toggle('on', b.dataset.q === st.quality));
-    el('set-qnow').textContent = `(now: ${qualityName}${st.quality === 'auto' ? ', ' + Math.round(prScale * 100) + '% res' : ''})`;
-    el('set-reset').textContent = 'RESET PROGRESS';
+    el('set-qnow').textContent = `(${tr('now', 'teraz')}: ${qualityName}${st.quality === 'auto' ? ', ' + Math.round(prScale * 100) + '% ' + tr('res', 'rozdz.') : ''})`;
+    el('set-reset').textContent = tr('RESET PROGRESS', 'RESETUJ POSTĘP');
   }
   function updateMute() { el('btn-mute').textContent = SAVE.settings.sound ? '🔊' : '🔇'; }
   function updateInstall() {
     const can = !!PWA.deferred && !PWA.installed;
     el('m-install').style.display = can ? '' : 'none'; el('set-install').style.display = can ? '' : 'none';
-    const sw = { ready: '✓ offline ready (cached)', registered: 'caching for offline…', error: 'offline cache failed', off: location.protocol === 'file:' ? 'offline/install needs http(s) – see README' : 'offline cache not available (needs HTTPS or localhost)' }[PWA.sw];
-    el('set-pwa').textContent = (PWA.installed ? '✓ installed · ' : can ? 'installable · ' : '') + sw;
+    const sw = isPL()
+      ? { ready: '✓ offline gotowe (w pamięci)', registered: 'zapisywanie do pamięci offline…', error: 'błąd pamięci offline', off: location.protocol === 'file:' ? 'offline/instalacja wymaga http(s) – patrz README' : 'pamięć offline niedostępna (wymaga HTTPS lub localhost)' }[PWA.sw]
+      : { ready: '✓ offline ready (cached)', registered: 'caching for offline…', error: 'offline cache failed', off: location.protocol === 'file:' ? 'offline/install needs http(s) – see README' : 'offline cache not available (needs HTTPS or localhost)' }[PWA.sw];
+    el('set-pwa').textContent = (PWA.installed ? tr('✓ installed · ', '✓ zainstalowane · ') : can ? tr('installable · ', 'można zainstalować · ') : '') + sw;
   }
   function flash(kind = 'white', k = 1) {
     const f = el('flash'); const c = { white: 'rgba(255,255,255,1)', gold: 'radial-gradient(circle,rgba(255,240,180,.9),rgba(255,170,0,.55))', blue: 'radial-gradient(circle,rgba(160,230,255,.6),rgba(0,140,255,.6))' }[kind] || kind;
@@ -3853,7 +3922,7 @@ const UI = (() => {
   function setText(id, v) { if (lastHud[id] !== v) { lastHud[id] = v; el(id).textContent = v; } }
   function hud() {
     setText('h-score', fmt(Math.floor(S.score)));
-    setText('h-best', 'BEST ' + fmt(Math.max(SAVE.best[S.stage][S.level], Math.floor(S.score))));
+    setText('h-best', tr('BEST ', 'REKORD ') + fmt(Math.max(SAVE.best[S.stage][S.level], Math.floor(S.score))));
     setText('h-rubies', fmt(S.rubies));
     setText('h-dist', fmt(Math.floor(S.dist)) + ' m');
     setText('h-mult', 'x' + S.mult + (S.mult >= S.cfg.maxMult ? ' MAX' : ''));
@@ -3862,7 +3931,7 @@ const UI = (() => {
     el('h-xp').style.width = (S.mult >= S.cfg.maxMult ? 100 : clamp(S.multXP / multNeed(S.mult), 0, 1) * 100) + '%';
     // power-up timers
     let ph = '';
-    for (const k of POWERUP_TYPES) if (S.pu[k] > 0) { const P = POWERUPS[k]; ph += `<div class="pup ${S.pu[k] < 2 ? 'low' : ''}" style="--c:${P.color}"><span class="pi">${P.icon}</span>${P.label} <span class="pb"><i style="width:${(S.pu[k] / P.dur * 100).toFixed(0)}%"></i></span>${Math.ceil(S.pu[k])}s</div>`; }
+    for (const k of POWERUP_TYPES) if (S.pu[k] > 0) { const P = POWERUPS[k]; ph += `<div class="pup ${S.pu[k] < 2 ? 'low' : ''}" style="--c:${P.color}"><span class="pi">${P.icon}</span>${tr(P.label, P.plLabel)} <span class="pb"><i style="width:${(S.pu[k] / P.dur * 100).toFixed(0)}%"></i></span>${Math.ceil(S.pu[k])}s</div>`; }
     if (lastHud.pups !== ph) { lastHud.pups = ph; el('h-pups').innerHTML = ph; }
     const gg = Ghost.gap;
     const gt = gg === null || !Ghost.visible ? '' : (Math.round(gg) === 0 ? '👻 ±0 m' : `👻 ${gg > 0 ? '+' : '−'}${Math.abs(Math.round(gg))} m`);
@@ -3877,24 +3946,24 @@ const UI = (() => {
       case 'score': pt = `${fmt(Math.min(g.value, Math.floor(S.score)))} / ${fmt(g.value)}`; break;
       case 'grind': pt = `${Math.min(g.value, Math.floor(S.grindTotal + (S.grinding ? S.dist - S.grindStart : 0)))} / ${g.value} m`; break;
       case 'mult': pt = `best x${S.maxMult} / x${g.value}`; break;
-      default: pt = S.flags[g.trick] ? 'DONE!' : 'not yet';
+      default: pt = S.flags[g.trick] ? tr('DONE!', 'ZROBIONE!') : tr('not yet', 'jeszcze nie');
     }
-    setText('h-goalp', S.goalDone ? '✓ GOAL COMPLETE' : pt);
+    setText('h-goalp', S.goalDone ? tr('✓ GOAL COMPLETE', '✓ CEL OSIĄGNIĘTY') : pt);
     el('h-goalbox').classList.toggle('done', S.goalDone);
     const air = S.air;
-    if (lastHud.air !== air) { lastHud.air = air; el('tb-jump').textContent = air ? 'BACK FLIP ↑' : 'JUMP ↑'; el('trickbtns').classList.toggle('air', air); }
+    if (lastHud.air !== air) { lastHud.air = air; el('tb-jump').innerHTML = (air ? tr('BACK FLIP', 'SALTO W TYŁ') : tr('JUMP', 'SKOK')) + ' ↑'; el('trickbtns').classList.toggle('air', air); }
     el('h-speed').textContent = Math.round(S.speed * 3.6) + ' km/h';
   }
   function onRunStart() {
     lastHud = {}; el('popups').innerHTML = ''; trickLive('');
-    setText('h-level', `${STAGES[S.stage].name.toUpperCase()} · ${LEVEL_NAMES[S.level].toUpperCase()}`);
-    el('h-goal').textContent = '🎯 ' + S.cfg.goal.text;
+    setText('h-level', `${sName(S.stage).toUpperCase()} · ${lvName(S.level).toUpperCase()}`);
+    el('h-goal').textContent = '🎯 ' + tx(S.cfg.goal);
     show('hud'); hud();
-    UI.popup(LEVEL_NAMES[S.level].toUpperCase() + '!', 'goal');
-    setTimeout(() => S.mode === 'play' && UI.popup(S.cfg.goal.text, 'small'), 700);
+    UI.popup(lvName(S.level).toUpperCase() + '!', 'goal');
+    setTimeout(() => S.mode === 'play' && UI.popup(tx(S.cfg.goal), 'small'), 700);
     if (S.level === 0 && S.stage === 0) {
-      hint(IS_TOUCH ? 'Przeciągnij palcem w lewo/prawo, aby skręcać. Omijaj skały i kłody!' : 'A/D lub ←/→ – skręt. Omijaj skały i kłody!', 5000);
-    } else hint(`Cel: ${S.cfg.goal.pl}`, 3500);
+      hint(IS_TOUCH ? tr('Drag left/right to steer. Dodge the rocks and logs!', 'Przeciągnij palcem w lewo/prawo, aby skręcać. Omijaj skały i kłody!') : tr('A/D or ←/→ to steer. Dodge the rocks and logs!', 'A/D lub ←/→ – skręt. Omijaj skały i kłody!'), 5000);
+    } else hint(tr('Goal', 'Cel') + `: ${tx(S.cfg.goal)}`, 3500);
   }
   let hintTimer = 0;
   function hint(t, ms = 4500) { const h = el('hint'); h.textContent = t; h.classList.add('on'); clearTimeout(hintTimer); hintTimer = setTimeout(() => h.classList.remove('on'), ms); }
@@ -3911,40 +3980,40 @@ const UI = (() => {
   function showFail() {
     show('fail');
     const s = S.stage, l = S.level;
-    el('f-title').textContent = S.goalDone ? 'RUN OVER' : 'WIPEOUT!';
+    el('f-title').textContent = S.goalDone ? tr('RUN OVER', 'KONIEC PRZEJAZDU') : 'WIPEOUT!';
     el('f-reason').textContent = S.crashReason;
     const p = Math.floor(clamp(goalProgress(), 0, 1) * 100);
-    el('f-stats').innerHTML = `<div>SCORE<b>${fmt(Math.floor(S.score))}</b></div><div>BEST<b>${fmt(SAVE.best[s][l])}</b></div><div>DISTANCE<b>${fmt(Math.floor(S.dist))} m</b></div><div>RUBIES<b>💎 ${S.rubies}</b></div>`;
+    el('f-stats').innerHTML = `<div>${tr('SCORE', 'PUNKTY')}<b>${fmt(Math.floor(S.score))}</b></div><div>${tr('BEST', 'REKORD')}<b>${fmt(SAVE.best[s][l])}</b></div><div>${tr('DISTANCE', 'DYSTANS')}<b>${fmt(Math.floor(S.dist))} m</b></div><div>${tr('RUBIES', 'RUBINY')}<b>💎 ${S.rubies}</b></div>`;
     el('f-new').style.display = S.newBest ? 'block' : 'none';
-    el('f-goal').innerHTML = S.goalDone ? `✓ Level goal completed: ${S.cfg.goal.text}` : `🎯 ${S.cfg.goal.text} — ${p}%<div class="bar"><i style="width:${p}%"></i></div>`;
+    el('f-goal').innerHTML = S.goalDone ? `✓ ${tr('Level goal completed', 'Cel poziomu osiągnięty')}: ${tx(S.cfg.goal)}` : `🎯 ${tx(S.cfg.goal)} — ${p}%<div class="bar"><i style="width:${p}%"></i></div>`;
     starRow('f-stars');
     el('f-extra').innerHTML = runExtras();
-    el('f-tip').textContent = pick(['Wskazówka: przesuń w górę NA rampie, aby zrobić POP i polecieć wyżej.', 'Wskazówka: triki możesz wpisać już na rampie – wykonają się przy wybiciu.', 'Wskazówka: mijaj przeszkody o włos, by zdobyć NEAR MISS.', 'Wskazówka: grind na railu ładuje mnożnik.', 'Wskazówka: tarcza 🛡️ pochłania jedną wywrotkę.', 'Wskazówka: trasa poziomu jest stała – ścigaj swojego ducha 👻!', 'Wskazówka: rubiny wydasz w GARAŻU na deski i stroje.']);
+    el('f-tip').textContent = pick(isPL() ? ['Wskazówka: przesuń w górę NA rampie, aby zrobić POP i polecieć wyżej.', 'Wskazówka: triki możesz wpisać już na rampie – wykonają się przy wybiciu.', 'Wskazówka: mijaj przeszkody o włos, by zdobyć NEAR MISS.', 'Wskazówka: grind na railu ładuje mnożnik.', 'Wskazówka: tarcza 🛡️ pochłania jedną wywrotkę.', 'Wskazówka: trasa poziomu jest stała – ścigaj swojego ducha 👻!', 'Wskazówka: rubiny wydasz w GARAŻU na deski i stroje.'] : ['Tip: swipe up ON the ramp for a POP and more air.', 'Tip: you can queue tricks on the ramp – they fire at take-off.', 'Tip: pass obstacles close for a NEAR MISS.', 'Tip: grinding a rail charges the multiplier.', 'Tip: the 🛡️ shield absorbs one wipeout.', 'Tip: each level’s route is fixed – chase your ghost 👻!', 'Tip: spend rubies in the GARAGE on boards and outfits.']);
   }
   function runExtras() {
     const out = [];
-    if (S.runMissions && S.runMissions.length) out.push('✔ ' + S.runMissions.map(m => `${m.text} (💎+${m.r})`).join(' · '));
-    if (S.dailyJustDone) out.push(`📅 Daily challenge done! 🔥 ${SAVE.daily.streak} · 💎+${S.dailyJustDone}`);
-    if (S.newGhost) out.push('👻 New ghost saved for this level');
+    if (S.runMissions && S.runMissions.length) out.push('✔ ' + S.runMissions.map(m => `${tx(m)} (💎+${m.r})`).join(' · '));
+    if (S.dailyJustDone) out.push(`📅 ${tr('Daily challenge done!', 'Wyzwanie dnia zrobione!')} 🔥 ${SAVE.daily.streak} · 💎+${S.dailyJustDone}`);
+    if (S.newGhost) out.push(tr('👻 New ghost saved for this level', '👻 Zapisano nowego ducha dla tego poziomu'));
     return out.join('<br>');
   }
   function showComplete() {
     show('complete'); SND.sfx('complete');
     const s = S.stage, l = S.level;
     Meta.tick(); starRow('c-stars');
-    el('c-sub').textContent = `${STAGES[s].name} · ${LEVEL_NAMES[l]}`;
-    el('c-goal').textContent = '✓ ' + S.cfg.goal.text;
-    el('c-stats').innerHTML = `<div>SCORE<b>${fmt(Math.floor(S.score))}</b></div><div>DISTANCE<b>${fmt(Math.floor(S.dist))} m</b></div><div>RUBIES<b>💎 ${S.rubies}</b></div><div>REWARD<b>💎 +${S.reward}</b></div>`;
+    el('c-sub').textContent = `${sName(s)} · ${lvName(l)}`;
+    el('c-goal').textContent = '✓ ' + tx(S.cfg.goal);
+    el('c-stats').innerHTML = `<div>${tr('SCORE', 'PUNKTY')}<b>${fmt(Math.floor(S.score))}</b></div><div>${tr('DISTANCE', 'DYSTANS')}<b>${fmt(Math.floor(S.dist))} m</b></div><div>${tr('RUBIES', 'RUBINY')}<b>💎 ${S.rubies}</b></div><div>${tr('REWARD', 'NAGRODA')}<b>💎 +${S.reward}</b></div>`;
     let un = [];
     if (S.firstClear) {
-      if (l < 4) un.push(`Unlocked level: <b>${LEVEL_NAMES[l + 1]}</b>`);
-      if (l === 2 && s < STAGES.length - 1) un.push(`New location: <b>${STAGES[s + 1].name}</b>`);
-      if (l === 4) un.push(`<b>${STAGES[s].name} mastered!</b>`);
+      if (l < 4) un.push(`${tr('Unlocked level:', 'Odblokowano poziom:')} <b>${lvName(l + 1)}</b>`);
+      if (l === 2 && s < STAGES.length - 1) un.push(`${tr('New location:', 'Nowa lokacja:')} <b>${sName(s + 1)}</b>`);
+      if (l === 4) un.push(`<b>${sName(s)} — ${tr('mastered!', 'opanowana!')}</b>`);
     }
     const ex = runExtras(); if (ex) un.push(ex);
     el('c-unlock').innerHTML = un.join('<br>');
     el('c-next').style.display = l < 4 ? '' : (s < STAGES.length - 1 && isStageUnlocked(s + 1) ? '' : 'none');
-    el('c-next').textContent = l < 4 ? 'NEXT LEVEL ▶' : 'NEXT LOCATION ▶';
+    el('c-next').textContent = l < 4 ? tr('NEXT LEVEL ▶', 'NASTĘPNY POZIOM ▶') : tr('NEXT LOCATION ▶', 'NASTĘPNA LOKACJA ▶');
   }
 
   // ------------------------------------------------ share card + save backup
@@ -3965,28 +4034,28 @@ const UI = (() => {
       g.fillStyle = '#ffd54f'; g.fillRect(48, 48, 140, 8);
       g.fillStyle = '#7ff6ff'; g.font = 'italic 900 42px "Trebuchet MS", sans-serif'; g.fillText('WAKEBOARD RUSH 3D', 48, 112);
       g.fillStyle = 'rgba(255,255,255,.85)'; g.font = '700 30px "Trebuchet MS", sans-serif';
-      g.fillText(`${STAGES[S.stage].name} · ${LEVEL_NAMES[S.level]}`, 48, 160);
+      g.fillText(`${sName(S.stage)} · ${lvName(S.level)}`, 48, 160);
       if (S.newBest) {
         g.fillStyle = '#ffd54f'; g.font = '900 28px "Trebuchet MS", sans-serif'; g.textAlign = 'right';
-        g.fillText('★ NEW BEST ★', W - 48, 114); g.textAlign = 'left';
+        g.fillText(tr('★ NEW BEST ★', '★ NOWY REKORD ★'), W - 48, 114); g.textAlign = 'left';
       }
-      g.fillStyle = 'rgba(255,255,255,.7)'; g.font = '700 28px "Trebuchet MS", sans-serif'; g.fillText('SCORE', 48, 784);
+      g.fillStyle = 'rgba(255,255,255,.7)'; g.font = '700 28px "Trebuchet MS", sans-serif'; g.fillText(tr('SCORE', 'PUNKTY'), 48, 784);
       g.fillStyle = '#ffd54f'; g.font = 'italic 900 138px "Trebuchet MS", sans-serif'; g.fillText(fmt(Math.floor(S.score)), 44, 896);
       g.fillStyle = '#fff'; g.font = '700 34px "Trebuchet MS", sans-serif';
-      g.fillText(`${fmt(Math.floor(S.dist))} m  ·  ${S.rubies} RUBIES  ·  x${S.maxMult} MAX`, 48, 946);
+      g.fillText(`${fmt(Math.floor(S.dist))} m  ·  ${S.rubies} ${tr('RUBIES', 'RUBINY')}  ·  x${S.maxMult} ${tr('MAX', 'MAKS')}`, 48, 946);
       g.fillStyle = 'rgba(255,255,255,.72)'; g.font = '600 26px "Trebuchet MS", sans-serif';
-      g.fillText(`PERFECT ${S.perfectCount}  ·  NEAR MISS ${S.nearMiss}  ·  BEST COMBO ${S.bestCombo}`, 48, 988);
+      g.fillText(`PERFECT ${S.perfectCount}  ·  NEAR MISS ${S.nearMiss}  ·  ${tr('BEST COMBO', 'NAJLEPSZE COMBO')} ${S.bestCombo}`, 48, 988);
       g.fillStyle = 'rgba(255,255,255,.5)'; g.font = '600 24px "Trebuchet MS", sans-serif';
       g.fillText(location.host || 'wakeboarding arcade', 48, 1036);
       blob = await new Promise((r) => c.toBlob(r, 'image/png'));
     } catch (e) { blob = null; }
-    if (!blob) { popupMenu('Nie udało się utworzyć karty · could not create card'); return; }
+    if (!blob) { popupMenu(tr('Could not create the card', 'Nie udało się utworzyć karty')); return; }
     const file = new File([blob], 'wakeboard-rush.png', { type: 'image/png' });
-    const text = `Mój wynik: ${fmt(Math.floor(S.score))} pkt — ${STAGES[S.stage].name}, ${LEVEL_NAMES[S.level]}`;
+    const text = `${tr('My score', 'Mój wynik')}: ${fmt(Math.floor(S.score))} ${tr('pts', 'pkt')} — ${sName(S.stage)}, ${lvName(S.level)}`;
     try {
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
         await navigator.share({ files: [file], title: 'WAKEBOARD RUSH 3D', text });
-        popupMenu('Udostępniono! · Shared!');
+        popupMenu(tr('Shared!', 'Udostępniono!'));
       } else throw new Error('no file share');
     } catch (e) {
       if (e && e.name === 'AbortError') return; // user closed the share sheet
@@ -3994,8 +4063,8 @@ const UI = (() => {
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'wakeboard-rush.png';
         document.body.appendChild(a); a.click(); a.remove();
         setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-        popupMenu('Karta wyniku zapisana · card saved');
-      } catch (e2) { popupMenu('Udostępnianie niedostępne'); }
+        popupMenu(tr('Result card saved', 'Karta wyniku zapisana'));
+      } catch (e2) { popupMenu(tr('Sharing unavailable', 'Udostępnianie niedostępne')); }
     }
   }
   function exportSave() {
@@ -4006,11 +4075,11 @@ const UI = (() => {
       a.download = `wakeboard-rush-save-${new Date().toISOString().slice(0, 10)}.json`;
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-      popupMenu('Zapis wyeksportowany · save exported');
-    } catch (e) { popupMenu('Eksport nieudany · export failed'); }
+      popupMenu(tr('Save exported', 'Zapis wyeksportowany'));
+    } catch (e) { popupMenu(tr('Export failed', 'Eksport nieudany')); }
   }
   function importSave(file) {
-    if (!file || file.size > 2 * 1024 * 1024) { popupMenu('Plik za duży · file too large'); return; }
+    if (!file || file.size > 2 * 1024 * 1024) { popupMenu(tr('File too large', 'Plik za duży')); return; }
     const rd = new FileReader();
     rd.onload = () => {
       try {
@@ -4022,9 +4091,9 @@ const UI = (() => {
         localStorage.setItem(SAVE_KEY, JSON.stringify(sv));
         if (typeof data.ghosts === 'string' && data.ghosts.length < 1024 * 1024) localStorage.setItem('wakeboardRush3D_ghosts_v1', data.ghosts);
         location.reload();
-      } catch (e) { popupMenu('Nieprawidłowy plik zapisu · invalid save file'); }
+      } catch (e) { popupMenu(tr('Invalid save file', 'Nieprawidłowy plik zapisu')); }
     };
-    rd.onerror = () => popupMenu('Nie udało się odczytać pliku');
+    rd.onerror = () => popupMenu(tr('Could not read the file', 'Nie udało się odczytać pliku'));
     rd.readAsText(file);
   }
 
@@ -4039,6 +4108,9 @@ const UI = (() => {
     btn('m-help', () => show('help'));
     btn('m-missions', () => show('missions'));
     btn('m-install', () => promptInstall());
+    document.querySelectorAll('#set-lang button').forEach(b => b.addEventListener('click', (e) => {
+      e.stopPropagation(); click(); SAVE.settings.lang = b.dataset.l; persist(); applyI18n();
+    }));
     btn('set-install', () => promptInstall());
     document.querySelectorAll('.back').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); click(); if (b.closest('#scr-settings')) { show(settingsBack); return; } show(b.dataset.to || 'menu'); }));
     document.querySelectorAll('#g-tabs button').forEach(b => b.addEventListener('click', (e) => { e.stopPropagation(); click(); garageTab = b.dataset.tab; renderGarage(); }));
@@ -4054,8 +4126,8 @@ const UI = (() => {
     }));
     let resetArm = false;
     btn('set-reset', () => {
-      if (!resetArm) { resetArm = true; el('set-reset').textContent = 'TAP AGAIN TO CONFIRM'; setTimeout(() => { resetArm = false; if (cur === 'settings') renderSettings(); }, 3000); return; }
-      resetArm = false; const st = SAVE.settings; SAVE = defaultSave(); SAVE.settings = st; persist(); Ghost.clear(); Rider.applyLook(); popupMenu('Progress reset'); renderSettings();
+      if (!resetArm) { resetArm = true; el('set-reset').textContent = tr('TAP AGAIN TO CONFIRM', 'DOTKNIJ PONOWNIE'); setTimeout(() => { resetArm = false; if (cur === 'settings') renderSettings(); }, 3000); return; }
+      resetArm = false; const st = SAVE.settings; SAVE = defaultSave(); SAVE.settings = st; persist(); Ghost.clear(); Rider.applyLook(); popupMenu(tr('Progress reset', 'Postęp zresetowany')); renderSettings();
     });
     // pause / fail / complete
     btn('btn-pause', () => pauseGame());
@@ -4141,7 +4213,7 @@ const UI = (() => {
     document.addEventListener('visibilitychange', () => { if (document.hidden) { pauseGame(); persist(); } });
     addEventListener('blur', () => { S.keys = {}; });
   }
-  return { init, show, hud, popup, popupMenu, trickLive, rubyFlash, showFail, showComplete, onRunStart, hint, flash, speedFx, updateInstall, renderMissions, get cur() { return cur; } };
+  return { init, show, applyI18n, hud, popup, popupMenu, trickLive, rubyFlash, showFail, showComplete, onRunStart, hint, flash, speedFx, updateInstall, renderMissions, get cur() { return cur; } };
 })();
 
 // ------------------------------------------------ BOOT
@@ -4151,9 +4223,10 @@ function boot() {
   previewStage(SAVE.sel.stage);
   onResize(); addEventListener('resize', onResize);
   UI.init();
+  UI.applyI18n();
   initPWA();
   const cb = Meta.checkComeback();
-  if (cb) setTimeout(() => UI.popupMenu(`Witaj z powrotem! · Welcome back!  💎+${cb.rubies} · +1 mission`), 600);
+  if (cb) setTimeout(() => UI.popupMenu(`${tr('Welcome back!', 'Witaj z powrotem!')}  💎+${cb.rubies} · ${tr('+1 mission', '+1 misja')}`), 600);
   document.getElementById('loading').remove();
   last = performance.now();
   requestAnimationFrame(frame);
