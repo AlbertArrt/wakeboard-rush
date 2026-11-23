@@ -10,5 +10,6 @@ WAKEBOARD RUSH 3D — jak uruchomic
    i wejdz na http://localhost:3000
    (albo: npx serve . / dowolny inny statyczny serwer)
 3. Sterowanie i zasady: patrz ekran startowy i README.md w repozytorium.
+4. Jezyk UI (PL/EN) zmienisz w SETTINGS -> JEZYK / LANGUAGE; wybor zapisuje sie w save.
 
-Wersja: v2.4.0 (cienie kontaktowe + cienie HIGH, PMREM, grading z winieta).
+Wersja: v2.6.0 (cienie + PMREM + grading, linie predkosci, przelacznik PL/EN).
