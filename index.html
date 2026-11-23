@@ -889,16 +889,33 @@ scene.add(camera);
 scene.fog = new THREE.FogExp2(0xbfe9ff, 0.006);
 
 // ---------------- post-processing (three's own passes; bloom on HIGH, SMAA on MED+) ----------------
-// cheap final grade: gentle contrast/saturation lift, vignette and film grain (runs after tone mapping)
+// cheap final grade: gentle contrast/saturation lift, vignette, film grain and radial speed
+// streaks (runs after tone mapping; uSpeed is 0 whenever we are not riding fast, so it costs
+// almost nothing while parked in the menus)
 const GradeShader = {
-  uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uAspect: { value: 1 }, uVig: { value: 0.3 }, uSat: { value: 1.06 }, uContrast: { value: 1.03 }, uGrain: { value: 0.028 } },
+  uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uAspect: { value: 1 }, uVig: { value: 0.3 }, uSat: { value: 1.06 }, uContrast: { value: 1.03 }, uGrain: { value: 0.028 }, uSpeed: { value: 0 } },
   vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
-  fragmentShader: `uniform sampler2D tDiffuse; uniform float uTime,uVig,uSat,uContrast,uGrain,uAspect; varying vec2 vUv;
+  fragmentShader: `uniform sampler2D tDiffuse; uniform float uTime,uVig,uSat,uContrast,uGrain,uAspect,uSpeed; varying vec2 vUv;
   void main(){ vec4 t = texture2D(tDiffuse, vUv);
     vec3 c = (t.rgb - 0.5) * uContrast + 0.5;
     float l = dot(c, vec3(0.2126,0.7152,0.0722)); c = mix(vec3(l), c, uSat);
     vec2 p = (vUv - 0.5) * vec2(uAspect, 1.0);
     c *= 1.0 - uVig * smoothstep(0.45, 1.0, length(p) / 0.75);
+    // thin streaks rushing outwards from the centre; the middle stays clean so the rider reads
+    if (uSpeed > 0.002) {
+      vec2 d = vUv - 0.5;
+      float r = length(d);
+      float a = atan(d.y, d.x) * 0.15915494 + 0.5;   // 1/(2*pi)
+      float bands = 72.0;
+      float cell = floor(a * bands);
+      float rnd = fract(sin(cell * 12.9898) * 43758.5453);
+      float on = step(0.62, rnd);
+      float thin = 1.0 - smoothstep(0.05, 0.3, abs(fract(a * bands) - 0.5));
+      float edge = smoothstep(0.16, 0.6, r);
+      float flow = fract(r * 1.15 - uTime * (1.1 + rnd * 1.5) + rnd * 5.0);
+      float dash = smoothstep(0.08, 0.45, flow) * smoothstep(1.0, 0.68, flow);
+      c += on * thin * edge * dash * uSpeed * 0.65;
+    }
     float n = fract(sin(dot(gl_FragCoord.xy + vec2(uTime*60.0), vec2(12.9898,78.233))) * 43758.5453);
     c += (n - 0.5) * uGrain;
     gl_FragColor = vec4(clamp(c, 0.0, 1.0), t.a);
@@ -928,6 +945,16 @@ function tuneBloom() {
   else if (dark) { postfx.bloom.strength = base; postfx.bloom.threshold = 0.78; }
   else { postfx.bloom.strength = base * 0.75; postfx.bloom.threshold = 0.95; }
   postfx.bloom.radius = 0.4;
+}
+// speed streaks follow the same curve as the CSS speed overlay and the camera rumble, but are
+// smoothed so a single frame of braking does not flicker the effect off
+let spdLines = 0;
+function updateSpeedLines(dt) {
+  const target = S.mode === 'play'
+    ? Math.min(1, Math.max(0, (S.speed - 12) / 12) * 0.9 + (S.pu.boost > 0 ? 0.25 : 0))
+    : 0;
+  spdLines = target === 0 ? 0 : damp(spdLines, target, 6, dt);
+  if (postfx.grade) postfx.grade.uniforms.uSpeed.value = spdLines;
 }
 // one entry point for every frame and for the share-card snapshot (canvas has no preserveDrawingBuffer)
 function renderScene() {
@@ -3271,6 +3298,7 @@ function frame(now) {
     sun.target.updateMatrixWorld();
   }
   ContactShadows.update();
+  updateSpeedLines(realDt);
   renderScene();
   // audio
   if (playing) {

@@ -23,6 +23,7 @@ Przeglądarkowa gra 3D (three.js r160) o wakeboardingu za wyciągiem linowym. Mo
 **Post‑processing (bloom + SMAA + grading)**
 - **Bloom** (UnrealBloomPass): świecą woda, słońce, neonowe akcenty i złote rubiny. Baza 0.42 na MED i 0.55 na HIGH, strojona per motyw – na śniegu znacznie słabsza i z wyższym progiem, żeby biel trasy nie zalewała kadru.
 - **Grading** (`ShaderPass`, MED+): delikatny kontrast i nasycenie, winieta i drobny grain spinają wszystkie lokacje w jeden filmowy look.
+- **Linie prędkości**: ten sam pass dorysowuje cienkie smugi uciekające promieniowo od środka kadru, z siłą rosnącą od ~12 m/s w górę i mocniej przy dopalaczu. Środek ekranu zostaje czysty, więc zawodnik i przeszkody są czytelne; przy zwolnieniu, pauzie i na ekranie wyniku efekt wygasa do zera.
 - **SMAA** (Subpixel Morphological Anti‑Aliasing): wygładza krawędzie, bo render trafia do bufora HDR bez MSAA.
 - **LOW** renderuje bez post‑processingu (czysty `renderer.render`), a przy spadku FPS auto‑jakość sama schodzi z HIGH → MED → LOW. Wyłącznik: SETTINGS → POST FX.
 - Karta wyniku i zrzut z canvasa nadal działają: kompozycja i kopiowanie do 1080×1080 odbywają się w tym samym takcie co render.
